@@ -23,7 +23,7 @@ a {
 
 /* --- VARIABLES COULEURS --- */
 :root {
-    --primary-color: #0A2540; /* Bleu Nuit Profond (Style Corporate) */
+    --primary-color: #0A2540; /* Bleu Nuit Profond */
     --accent-color: #007BFF;  /* Bleu Tech dynamique */
     --text-light: #ffffff;
     --text-dark: #333333;
@@ -82,10 +82,10 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh; /* Prend toute la hauteur de l'écran */
+    height: 100vh;
     padding: 0 10%;
     background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-    padding-top: 80px; /* Pour compenser la navbar fixe */
+    padding-top: 80px;
 }
 
 .hero-content {
@@ -171,101 +171,113 @@ h2 {
     width: 350px;
     height: 350px;
     object-fit: cover;
-    border-radius: 50%; /* Cercle parfait */
+    border-radius: 50%;
     border: 5px solid white;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
-/* --- MOBILE RESPONSIVE (CORRECTIF) --- */
-@media (max-width: 768px) {
-    /* 1. On débloque la hauteur pour que le contenu ne se chevauche pas */
-    .hero-section {
-        height: auto; 
-        min-height: 100vh;
-        padding-top: 100px; /* Plus d'espace sous le menu */
-        padding-bottom: 50px;
-    }
-
-    /* 2. On inverse l'ordre : Texte en premier, Image en dessous */
-    .hero-content {
-        flex-direction: column; /* Texte d'abord, image ensuite */
-        text-align: center;
-        gap: 2rem;
-    }
-    
-    /* 3. On réduit drastiquement la taille de l'image sur mobile */
-    .img-placeholder img {
-        width: 180px;  /* Beaucoup plus petit */
-        height: 180px;
-        border-width: 3px;
-    }
-    
-    .hero-image {
-        justify-content: center;
-        margin-top: 1rem;
-        order: -1; /* Optionnel : Si tu veux l'image tout en haut, laisse ça. Sinon enlève cette ligne pour avoir le texte en haut. */
-    }
-
-    /* 4. On ajuste les textes */
-    h1 { 
-        font-size: 2.2rem;
-        margin-top: 0.5rem;
-    }
-    
-    .tagline {
-        font-size: 1rem;
-        max-width: 100%;
-    }
-    
-    /* 5. On empile les boutons proprement */
-    .cta-buttons {
-        flex-direction: column;
-        gap: 1rem;
-        width: 100%;
-    }
-    
-    .btn {
-        width: 100%; /* Boutons pleine largeur sur mobile */
-        display: block;
-        text-align: center;
-    }
-
-    /* 6. On corrige la section "À propos" qui était cassée aussi */
-    .about-content {
-        flex-direction: column;
-        gap: 2rem;
-    }
-    
-    .about-text, .about-stats {
-        width: 100%;
-    }
-    
-    /* Ajustement du menu mobile (on le cache ou on le simplifie) */
-    .nav-links {
-        display: none; /* Cache le menu sur mobile pour l'instant pour éviter qu'il dépasse */
-    }
+/* --- SECTION À PROPOS (C'est ce qui manquait !) --- */
+.about-section {
+    padding: 5rem 10%;
+    background-color: #fff;
 }
 
-/* Mobile Responsive pour About */
-@media (max-width: 768px) {
-    .about-content {
-        flex-direction: column;
-        gap: 2rem;
-    }
-    .about-text, .about-stats {
-        width: 100%;
-    }
+.section-title {
+    text-align: center;
+    font-size: 2.2rem;
+    color: var(--primary-color);
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--accent-color);
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+.about-content {
+    display: flex;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about-text {
+    flex: 3;
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.about-text p {
+    margin-bottom: 1.5rem;
+}
+
+.about-text strong {
+    color: var(--primary-color);
+}
+
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.skill-item {
+    background-color: #f0f4f8;
+    color: var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid #e1e8ed;
+}
+
+.about-stats {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background-color: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 5px solid var(--accent-color);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateX(5px);
+}
+
+.stat-card h3 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.3rem;
+}
+
+.stat-card p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
 }
 
 /* --- SECTION PROJETS --- */
 .projects-section {
     padding: 5rem 10%;
-    background-color: #f8f9fa; /* Gris très léger pour contraster avec le blanc */
+    background-color: #f8f9fa;
 }
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive automatique */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
 }
 
@@ -280,11 +292,10 @@ h2 {
 }
 
 .project-card:hover {
-    transform: translateY(-5px); /* La carte monte un peu au survol */
+    transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-/* Fausses images (Dégradés) en attendant tes vraies captures */
 .card-image {
     height: 180px;
     width: 100%;
@@ -292,13 +303,13 @@ h2 {
     background-position: center;
 }
 
-.project-1-bg { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); } /* Vert/Bleu */
-.project-2-bg { background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%); } /* Bleu Ciel */
-.project-3-bg { background: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%); } /* Orange/Violet */
+.project-1-bg { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); }
+.project-2-bg { background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%); }
+.project-3-bg { background: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%); }
 
 .card-content {
     padding: 1.5rem;
-    flex-grow: 1; /* Pour que le contenu remplisse la carte */
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
@@ -322,10 +333,9 @@ h2 {
     font-size: 0.95rem;
     color: #666;
     margin-bottom: 1.5rem;
-    flex-grow: 1; /* Pousse les éléments du bas vers le bas */
+    flex-grow: 1;
 }
 
-/* Tags techniques (Python, SQL...) */
 .tech-stack {
     display: flex;
     flex-wrap: wrap;
@@ -346,7 +356,7 @@ h2 {
     color: var(--accent-color);
     font-weight: 600;
     font-size: 0.95rem;
-    margin-top: auto; /* Colle le bouton tout en bas */
+    margin-top: auto;
 }
 
 .btn-text:hover {
@@ -372,16 +382,15 @@ h2 {
 }
 
 .footer-cta p {
-    color: #a0aec0; /* Gris clair pour être lisible sur fond foncé */
+    color: #a0aec0;
     margin-bottom: 2rem;
     font-size: 1.1rem;
 }
 
-/* Bouton spécial pour le footer (plus grand) */
 .btn-lg {
     padding: 1rem 2.5rem;
     font-size: 1.1rem;
-    background-color: var(--accent-color); /* Bleu clair dynamique */
+    background-color: var(--accent-color);
     border: none;
     color: #fff;
     display: inline-block;
@@ -411,6 +420,76 @@ h2 {
 .copyright {
     font-size: 0.9rem;
     color: #718096;
-    border-top: 1px solid rgba(255,255,255,0.1); /* Ligne fine de séparation */
+    border-top: 1px solid rgba(255,255,255,0.1);
     padding-top: 2rem;
+}
+
+/* --- MOBILE RESPONSIVE (CORRECTIF FINAL) --- */
+@media (max-width: 768px) {
+    /* 1. On débloque la hauteur pour que le contenu ne se chevauche pas */
+    .hero-section {
+        height: auto; 
+        min-height: 100vh;
+        padding-top: 100px; /* Plus d'espace sous le menu */
+        padding-bottom: 50px;
+    }
+
+    /* 2. On inverse l'ordre : Texte en premier, Image en dessous */
+    .hero-content {
+        flex-direction: column; /* Texte d'abord, image ensuite */
+        text-align: center;
+        gap: 2rem;
+    }
+    
+    /* 3. On réduit drastiquement la taille de l'image sur mobile */
+    .img-placeholder img {
+        width: 180px;  /* Beaucoup plus petit */
+        height: 180px;
+        border-width: 3px;
+    }
+    
+    .hero-image {
+        justify-content: center;
+        margin-top: 1rem;
+        order: -1; 
+    }
+
+    /* 4. On ajuste les textes */
+    h1 { 
+        font-size: 2.2rem;
+        margin-top: 0.5rem;
+    }
+    
+    .tagline {
+        font-size: 1rem;
+        max-width: 100%;
+    }
+    
+    /* 5. On empile les boutons proprement */
+    .cta-buttons {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%; /* Boutons pleine largeur sur mobile */
+        display: block;
+        text-align: center;
+    }
+
+    /* 6. On corrige la section "À propos" sur mobile */
+    .about-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .about-text, .about-stats {
+        width: 100%;
+    }
+    
+    /* Cache le menu sur mobile */
+    .nav-links {
+        display: none; 
+    }
 }
