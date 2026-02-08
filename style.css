@@ -305,3 +305,99 @@ h2 {
         width: 100%;
     }
 }
+
+/* --- SECTION PROJETS --- */
+.projects-section {
+    padding: 5rem 10%;
+    background-color: #f8f9fa; /* Gris très léger pour contraster avec le blanc */
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive automatique */
+    gap: 2rem;
+}
+
+.project-card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    transform: translateY(-5px); /* La carte monte un peu au survol */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Fausses images (Dégradés) en attendant tes vraies captures */
+.card-image {
+    height: 180px;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.project-1-bg { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); } /* Vert/Bleu */
+.project-2-bg { background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%); } /* Bleu Ciel */
+.project-3-bg { background: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%); } /* Orange/Violet */
+
+.card-content {
+    padding: 1.5rem;
+    flex-grow: 1; /* Pour que le contenu remplisse la carte */
+    display: flex;
+    flex-direction: column;
+}
+
+.project-tag {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.project-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary-color);
+}
+
+.project-card p {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+    flex-grow: 1; /* Pousse les éléments du bas vers le bas */
+}
+
+/* Tags techniques (Python, SQL...) */
+.tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.tech-stack span {
+    background-color: #eef2f7;
+    color: var(--primary-color);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.btn-text {
+    color: var(--accent-color);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: auto; /* Colle le bouton tout en bas */
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
