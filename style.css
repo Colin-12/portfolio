@@ -198,3 +198,110 @@ h2 {
         display: none; /* On cachera le menu sur mobile plus tard */
     }
 }
+
+/* --- SECTION À PROPOS --- */
+.about-section {
+    padding: 5rem 10%;
+    background-color: #fff;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.2rem;
+    color: var(--primary-color);
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+/* Petite ligne bleue sous le titre pour faire pro */
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--accent-color);
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+.about-content {
+    display: flex;
+    gap: 4rem;
+    align-items: center; /* Centre verticalement */
+}
+
+.about-text {
+    flex: 3; /* Le texte prend plus de place */
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.about-text p {
+    margin-bottom: 1.5rem;
+}
+
+.about-text strong {
+    color: var(--primary-color);
+}
+
+/* Grille pour les compétences (tags) */
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.skill-item {
+    background-color: #f0f4f8;
+    color: var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid #e1e8ed;
+}
+
+/* Colonne de droite (Cartes Stats) */
+.about-stats {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background-color: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 5px solid var(--accent-color); /* Bordure bleue à gauche */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateX(5px); /* Petit mouvement au survol */
+}
+
+.stat-card h3 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.3rem;
+}
+
+.stat-card p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+/* Mobile Responsive pour About */
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    .about-text, .about-stats {
+        width: 100%;
+    }
+}
