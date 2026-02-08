@@ -88,67 +88,160 @@
     </section>
 
     <section id="projects" class="projects-section">
-        <div class="container">
-            <h2 class="section-title">Projets Récents</h2>
-            <div class="projects-grid">
-                
-                <article class="project-card">
-                    <div class="card-image project-1-bg"></div>
-                    <div class="card-content">
-                        <span class="project-tag">Marketing Analytics</span>
-                        <h3>Optimisation Ciblage CRM</h3>
-                        <p>
-                            Pilotage de campagnes multicanales (Email/SMS) pour un réseau de distribution.
-                            Analyse des KPIs commerciaux (ROI, Panier moyen) et segmentation client.
-                        </p>
-                        <div class="tech-stack">
-                            <span>SQL</span>
-                            <span>Excel</span>
-                            <span>A/B Testing</span>
-                            <span>Dataiku</span>
-                        </div>
-                        <a href="#" class="btn-text">Voir les détails &rarr;</a>
-                    </div>
-                </article>
+  <div class="container">
+    <h2 class="section-title">Projets</h2>
 
-                <article class="project-card">
-                    <div class="card-image project-2-bg"></div>
-                    <div class="card-content">
-                        <span class="project-tag">Machine Learning</span>
-                        <h3>Prédiction de Consommation</h3>
-                        <p>
-                            Développement d'un modèle de régression pour anticiper la consommation énergétique d'un Data Center.
-                            Réduction des coûts opérationnels via l'anticipation des pics.
-                        </p>
-                        <div class="tech-stack">
-                            <span>Python</span>
-                            <span>Scikit-learn</span>
-                            <span>Pandas</span>
-                        </div>
-                        <a href="#" class="btn-text">Voir le code &rarr;</a>
-                    </div>
-                </article>
+    <p class="projects-intro">
+      Une sélection de projets orientés <strong>valeur métier</strong> : transformation de données, BI et analytics.
+      Chaque projet est présenté avec le contexte, la méthode, et des livrables (code, démo, PDF).
+    </p>
 
-                <article class="project-card">
-                    <div class="card-image project-3-bg"></div>
-                    <div class="card-content">
-                        <span class="project-tag">Business Intelligence</span>
-                        <h3>Tableau de Bord Décisionnel</h3>
-                        <p>
-                            Conception de dashboards interactifs pour le suivi d'activité.
-                            Transformation de données brutes en indicateurs visuels pour la direction.
-                        </p>
-                        <div class="tech-stack">
-                            <span>Power BI</span>
-                            <span>Data Storytelling</span>
-                        </div>
-                        <a href="#" class="btn-text">Voir la démo &rarr;</a>
-                    </div>
-                </article>
+    <div class="projects-grid">
 
-            </div>
+      <!-- PROJECT 1 -->
+      <article class="project-card project-card--detailed">
+        <div class="card-image project-1-bg"></div>
+
+        <div class="card-content">
+          <div class="project-head">
+            <span class="project-tag">Marketing Analytics</span>
+            <h3>Optimisation du ciblage CRM (Email/SMS)</h3>
+          </div>
+
+          <p class="project-context">
+            <strong>Contexte :</strong> pilotage de campagnes multicanales pour un réseau de distribution, avec une logique de groupes témoins et surpression.
+          </p>
+
+          <div class="project-body">
+            <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
+            <ul class="project-bullets">
+              <li>Définition des KPIs de pilotage (ROI, panier moyen, taux de conversion, uplift).</li>
+              <li>Segmentation client et ciblage (RFM / fréquence / récence) pour optimiser l’efficacité campagne.</li>
+              <li>Mise en place d’une méthodologie témoin et analyse incrémentale (A/B testing).</li>
+              <li>Automatisation de l’extraction et des agrégations pour fiabiliser les reportings.</li>
+            </ul>
+
+            <p class="project-impact">
+              <strong>Résultat :</strong> une lecture actionnable de la performance par segment + recommandations de ciblage et d’intensité canal.
+            </p>
+          </div>
+
+          <div class="tech-stack">
+            <span>SQL</span>
+            <span>Excel</span>
+            <span>A/B Testing</span>
+            <span>Dataiku</span>
+          </div>
+
+          <div class="project-links">
+            <a class="btn-link" href="#" target="_blank" rel="noopener">
+              <i class="fa-brands fa-github"></i> Code
+            </a>
+            <a class="btn-link" href="#" target="_blank" rel="noopener">
+              <i class="fa-solid fa-chart-line"></i> Dashboard
+            </a>
+            <a class="btn-link" href="#" target="_blank" rel="noopener">
+              <i class="fa-regular fa-file-pdf"></i> PDF
+            </a>
+          </div>
         </div>
-    </section>
+      </article>
+
+      <!-- PROJECT 2 -->
+      <article class="project-card project-card--detailed">
+        <div class="card-image project-2-bg"></div>
+
+        <div class="card-content">
+          <div class="project-head">
+            <span class="project-tag">Machine Learning</span>
+            <h3>Prédiction de consommation (régression)</h3>
+          </div>
+
+          <p class="project-context">
+            <strong>Contexte :</strong> anticiper la consommation énergétique d’un data center pour mieux gérer les pics et limiter les coûts.
+          </p>
+
+          <div class="project-body">
+            <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
+            <ul class="project-bullets">
+              <li>Exploration, nettoyage et préparation des données (features temporelles, variables météo/charge si présentes).</li>
+              <li>Entraînement et comparaison de modèles de régression (baseline → modèle optimisé).</li>
+              <li>Évaluation (MAE/RMSE) + validation et interprétation des résultats.</li>
+              <li>Packaging du pipeline pour exécution reproductible.</li>
+            </ul>
+
+            <p class="project-impact">
+              <strong>Résultat :</strong> modèle utilisable pour prévoir la charge et alimenter un reporting opérationnel.
+            </p>
+          </div>
+
+          <div class="tech-stack">
+            <span>Python</span>
+            <span>scikit-learn</span>
+            <span>Pandas</span>
+            <span>Feature Engineering</span>
+          </div>
+
+          <div class="project-links">
+            <a class="btn-link" href="#" target="_blank" rel="noopener">
+              <i class="fa-brands fa-github"></i> Code
+            </a>
+            <a class="btn-link" href="#" target="_blank" rel="noopener">
+              <i class="fa-regular fa-file-lines"></i> Notebook
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 3 -->
+      <article class="project-card project-card--detailed">
+        <div class="card-image project-3-bg"></div>
+
+        <div class="card-content">
+          <div class="project-head">
+            <span class="project-tag">Business Intelligence</span>
+            <h3>Dashboard décisionnel (pilotage d’activité)</h3>
+          </div>
+
+          <p class="project-context">
+            <strong>Contexte :</strong> fournir à la direction une lecture rapide et fiable des indicateurs clés via un tableau de bord interactif.
+          </p>
+
+          <div class="project-body">
+            <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
+            <ul class="project-bullets">
+              <li>Modélisation des données (tables propres, mesures, définitions KPI).</li>
+              <li>Création d’un dashboard avec filtres, vues par segment et tendances temporelles.</li>
+              <li>Travail de data storytelling pour rendre la lecture “décisionnelle”.</li>
+              <li>Itérations avec les utilisateurs métier (feedback → amélioration).</li>
+            </ul>
+
+            <p class="project-impact">
+              <strong>Résultat :</strong> centralisation des KPI et réduction du temps de lecture / reporting pour les équipes.
+            </p>
+          </div>
+
+          <div class="tech-stack">
+            <span>Power BI</span>
+            <span>Data Modeling</span>
+            <span>Data Storytelling</span>
+          </div>
+
+          <div class="project-links">
+            <a class="btn-link" href="#" target="_blank" rel="noopener">
+              <i class="fa-solid fa-display"></i> Démo
+            </a>
+            <a class="btn-link" href="#" target="_blank" rel="noopener">
+              <i class="fa-regular fa-file-pdf"></i> Slides
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
 
     <footer id="contact" class="footer">
         <div class="container footer-content">
