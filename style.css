@@ -401,3 +401,65 @@ h2 {
 .btn-text:hover {
     text-decoration: underline;
 }
+
+/* --- FOOTER --- */
+.footer {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 4rem 10% 2rem;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer-cta {
+    margin-bottom: 3rem;
+}
+
+.footer-cta h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.footer-cta p {
+    color: #a0aec0; /* Gris clair pour être lisible sur fond foncé */
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Bouton spécial pour le footer (plus grand) */
+.btn-lg {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    background-color: var(--accent-color); /* Bleu clair dynamique */
+    border: none;
+    color: #fff;
+    display: inline-block;
+}
+
+.btn-lg:hover {
+    background-color: #fff;
+    color: var(--primary-color);
+}
+
+.social-icons {
+    margin-bottom: 1.5rem;
+}
+
+.social-icons a {
+    color: #fff;
+    font-size: 1.8rem;
+    margin: 0 15px;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: var(--accent-color);
+    transform: translateY(-3px);
+}
+
+.copyright {
+    font-size: 0.9rem;
+    color: #718096;
+    border-top: 1px solid rgba(255,255,255,0.1); /* Ligne fine de séparation */
+    padding-top: 2rem;
+}
