@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Interactif CRM | D3.js</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #0A2540;
+            --email-color: #4682b4;
+            --sms-color: #1e90ff;
+            --control-color: #cccccc;
+            --bg-light: #f4f7f6;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--bg-light);
+            color: #333;
+        }
+        .header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { margin: 0; font-family: 'Poppins', sans-serif; font-size: 1.5rem; }
+        .back-btn {
+            color: white; text-decoration: none; border: 1px solid white;
+            padding: 5px 15px; border-radius: 5px; font-size: 0.9rem;
+        }
+        .back-btn:hover { background-color: white; color: var(--primary); }
+        
+        .dashboard-container {
+            max-width: 1200px; margin: 2rem auto; padding: 0 1rem;
+        }
+        
+        /* KPIs Cards */
+        .kpi-row {
+            display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
+        }
+        .kpi-card {
+            flex: 1; min-width: 200px; background: white;
+            padding: 1.5rem; border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center; border-top: 4px solid var(--primary);
+        }
+        .kpi-card h3 { margin: 0; color: #666; font-size: 0.9rem; text-transform: uppercase; }
+        .kpi-card .value { font-size: 2rem; font-weight: bold; color: var(--primary); margin-top: 10px; }
+        
+        /* Charts Grid */
+        .charts-row {
+            display: flex; gap: 2rem; flex-wrap: wrap;
+        }
+        .chart-container {
+            flex: 1; min-width: 300px; background: white;
+            padding: 1.5rem; border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .chart-title {
+            text-align: center; font-family: 'Poppins', sans-serif; color: var(--primary); margin-bottom: 1rem;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute; text-align: center; padding: 8px; font-size: 0.85rem;
+            background: rgba(0, 0, 0, 0.8); color: white; border-radius: 4px;
+            pointer-events: none; opacity: 0; transition: opacity 0.2s;
+        }
+        
+        .instruction {
+            text-align: center; color: #666; font-style: italic; margin-bottom: 1rem;
+        }
+
+        svg { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Analyse Incrémentale CRM</h1>
+        <a href="projet-1.html" class="back-btn">Retour au Projet</a>
+    </div>
+
+    <div class="dashboard-container">
+        <p class="instruction">💡 <strong>Interactivité D3.js :</strong> Survolez les barres du premier graphique pour filtrer automatiquement les KPIs et le graphique en anneau selon le segment sélectionné.</p>
+        
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <h3>CA Généré</h3>
+                <div class="value" id="kpi-ca">0 €</div>
+            </div>
+            <div class="kpi-card">
+                <h3>Acheteurs</h3>
+                <div class="value" id="kpi-buyers">0</div>
+            </div>
+            <div class="kpi-card">
+                <h3>Clients Ciblés</h3>
+                <div class="value" id="kpi-targets">0</div>
+            </div>
+            <div class="kpi-card">
+                <h3>Panier Moyen</h3>
+                <div class="value" id="kpi-aov">0 €</div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-container" style="flex: 1.5;">
+                <h2 class="chart-title">Taux de Conversion par Segment & Canal</h2>
+                <div id="bar-chart" style="height: 350px;"></div>
+            </div>
+            <div class="chart-container" style="flex: 1;">
+                <h2 class="chart-title" id="donut-title">Répartition du CA (Global)</h2>
+                <div id="donut-chart" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+        // ----------------------------------------------------
+        // 1. LES DONNÉES (Générées depuis le script Python)
+        // ----------------------------------------------------
+        const dataset = [
+            { segment: "1_VIP", channel: "Email", targets: 250, buyers: 84, revenue: 43500 },
+            { segment: "1_VIP", channel: "SMS", targets: 245, buyers: 92, revenue: 40000 },
+            { segment: "1_VIP", channel: "Témoin", targets: 61, buyers: 26, revenue: 16000 },
+            
+            { segment: "2_Regulier", channel: "Email", targets: 610, buyers: 77, revenue: 31000 },
+            { segment: "2_Regulier", channel: "SMS", targets: 620, buyers: 75, revenue: 28000 },
+            { segment: "2_Regulier", channel: "Témoin", targets: 134, buyers: 13, revenue: 8000 },
+            
+            { segment: "3_En_Risque", channel: "Email", targets: 209, buyers: 15, revenue: 4500 },
+            { segment: "3_En_Risque", channel: "SMS", targets: 238, buyers: 19, revenue: 5200 },
+            { segment: "3_En_Risque", channel: "Témoin", targets: 67, buyers: 6, revenue: 2000 }
+        ];
+
+        // Calcul du taux de conversion
+        dataset.forEach(d => {
+            d.conversion = (d.buyers / d.targets) * 100;
+        });
+
+        const colors = { "Email": "#4682b4", "SMS": "#1e90ff", "Témoin": "#cccccc" };
+        const segments = ["1_VIP", "2_Regulier", "3_En_Risque"];
+        const channels = ["Email", "SMS", "Témoin"];
+
+        // ----------------------------------------------------
+        // 2. FONCTIONS DE MISE À JOUR (Interactivité)
+        // ----------------------------------------------------
+        
+        // Formateur de monnaie
+        const formatEur = d3.format(",.0f");
+
+        // Met à jour les 4 cartes KPI
+        function updateKPIs(data) {
+            const totalRev = d3.sum(data, d => d.revenue);
+            const totalBuyers = d3.sum(data, d => d.buyers);
+            const totalTargets = d3.sum(data, d => d.targets);
+            const aov = totalBuyers > 0 ? totalRev / totalBuyers : 0;
+
+            // Animation des compteurs
+            d3.select("#kpi-ca").transition().duration(500)
+              .tween("text", function() {
+                  const i = d3.interpolateRound(parseInt(this.textContent.replace(/\D/g, '')) || 0, totalRev);
+                  return function(t) { this.textContent = formatEur(i(t)) + " €"; };
+              });
+              
+            d3.select("#kpi-buyers").text(totalBuyers);
+            d3.select("#kpi-targets").text(totalTargets);
+            d3.select("#kpi-aov").text(formatEur(aov) + " €");
+        }
+
+        // Met à jour le Donut Chart
+        function updateDonut(data, segmentName = "Global") {
+            // Agréger le CA par canal
+            const aggregated = d3.rollup(data, v => d3.sum(v, d => d.revenue), d => d.channel);
+            const pieData = Array.from(aggregated, ([channel, revenue]) => ({channel, revenue}));
+            
+            document.getElementById("donut-title").innerText = `Répartition CA (${segmentName})`;
+
+            const width = document.getElementById("donut-chart").clientWidth;
+            const height = 350;
+            const margin = 20;
+            const radius = Math.min(width, height) / 2 - margin;
+
+            // Nettoyer l'ancien svg
+            d3.select("#donut-chart").selectAll("*").remove();
+
+            const svg = d3.select("#donut-chart")
+              .append("svg")
+                .attr("viewBox", `0 0 ${width} ${height}`)
+              .append("g")
+                .attr("transform", `translate(${width/2},${height/2})`);
+
+            const pie = d3.pie().value(d => d.revenue).sort(null);
+            const data_ready = pie(pieData);
+
+            const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.8);
+            const arcHover = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.9); // Pour l'effet hover
+
+            svg.selectAll('path')
+              .data(data_ready)
+              .join('path')
+              .attr('d', arc)
+              .attr('fill', d => colors[d.data.channel])
+              .attr("stroke", "white")
+              .style("stroke-width", "2px")
+              .style("opacity", 0)
+              .transition().duration(800)
+              .style("opacity", 1)
+              .attrTween("d", function(d) {
+                  const i = d3.interpolate({startAngle: 0, endAngle: 0}, d);
+                  return function(t) { return arc(i(t)); }
+              });
+
+            // Ajout des labels sur le donut
+            svg.selectAll('text')
+              .data(data_ready)
+              .join('text')
+              .text(d => d.data.channel)
+              .attr("transform", d => `translate(${arc.centroid(d)})`)
+              .style("text-anchor", "middle")
+              .style("font-size", 12)
+              .style("fill", "#fff")
+              .style("font-weight", "bold");
+        }
+
+        // ----------------------------------------------------
+        // 3. CONSTRUCTION DU BAR CHART (Maître des filtres)
+        // ----------------------------------------------------
+        function drawBarChart() {
+            const container = document.getElementById("bar-chart");
+            const width = container.clientWidth;
+            const height = 350;
+            const margin = {top: 20, right: 20, bottom: 40, left: 40};
+
+            const svg = d3.select("#bar-chart")
+              .append("svg")
+                .attr("viewBox", `0 0 ${width} ${height}`)
+              .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const innerWidth = width - margin.left - margin.right;
+            const innerHeight = height - margin.top - margin.bottom;
+
+            // Axes
+            const x0 = d3.scaleBand().domain(segments).rangeRound([0, innerWidth]).paddingInner(0.1);
+            const x1 = d3.scaleBand().domain(channels).rangeRound([0, x0.bandwidth()]).padding(0.05);
+            const y = d3.scaleLinear().domain([0, d3.max(dataset, d => d.conversion)]).nice().rangeRound([innerHeight, 0]);
+
+            svg.append("g")
+              .attr("transform", `translate(0,${innerHeight})`)
+              .call(d3.axisBottom(x0))
+              .style("font-size", "12px")
+              .style("font-family", "Open Sans");
+
+            svg.append("g")
+              .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + "%"))
+              .style("font-size", "12px");
+
+            const tooltip = d3.select("#tooltip");
+
+            // Création des barres groupées
+            const segmentGroups = svg.selectAll(".segment-group")
+              .data(segments)
+              .join("g")
+                .attr("class", "segment-group")
+                .attr("transform", d => `translate(${x0(d)},0)`);
+
+            segmentGroups.selectAll("rect")
+              .data(d => dataset.filter(item => item.segment === d))
+              .join("rect")
+                .attr("x", d => x1(d.channel))
+                .attr("y", innerHeight)
+                .attr("width", x1.bandwidth())
+                .attr("height", 0)
+                .attr("fill", d => colors[d.channel])
+                .attr("rx", 3) // Bords arrondis
+                // ANIMATION AU CHARGEMENT
+                .transition().duration(800).delay((d, i) => i * 100)
+                .attr("y", d => y(d.conversion))
+                .attr("height", d => innerHeight - y(d.conversion));
+
+            // INTERACTIONS CROSS-FILTERING (C'est la magie D3)
+            segmentGroups.selectAll("rect")
+              .on("mouseover", function(event, d) {
+                  // Style de la barre survolée
+                  d3.selectAll("rect").style("opacity", 0.3); // Grise les autres
+                  d3.select(this).style("opacity", 1);
+                  
+                  // Tooltip
+                  tooltip.style("opacity", 1)
+                         .html(`<b>${d.channel}</b><br>Conv: ${d.conversion.toFixed(1)}%<br>Acheteurs: ${d.buyers}`)
+                         .style("left", (event.pageX + 10) + "px")
+                         .style("top", (event.pageY - 28) + "px");
+
+                  // MISE À JOUR DU DONUT ET DES KPIS POUR CE SEGMENT !
+                  const filteredData = dataset.filter(item => item.segment === d.segment);
+                  updateKPIs(filteredData);
+                  updateDonut(filteredData, d.segment);
+              })
+              .on("mousemove", function(event) {
+                  tooltip.style("left", (event.pageX + 10) + "px")
+                         .style("top", (event.pageY - 28) + "px");
+              })
+              .on("mouseout", function() {
+                  // Rétablir le style
+                  d3.selectAll("rect").style("opacity", 1);
+                  tooltip.style("opacity", 0);
+                  
+                  // RÉTABLIR LE DONUT ET LES KPIS GLOBAUX
+                  updateKPIs(dataset);
+                  updateDonut(dataset);
+              });
+
+            // Légende
+            const legend = svg.append("g")
+              .attr("font-family", "sans-serif")
+              .attr("font-size", 10)
+              .attr("text-anchor", "end")
+              .selectAll("g")
+              .data(channels)
+              .join("g")
+                .attr("transform", (d, i) => `translate(0,${i * 20})`);
+
+            legend.append("rect")
+                .attr("x", innerWidth - 19)
+                .attr("width", 19)
+                .attr("height", 19)
+                .attr("fill", d => colors[d]);
+
+            legend.append("text")
+                .attr("x", innerWidth - 24)
+                .attr("y", 9.5)
+                .attr("dy", "0.32em")
+                .text(d => d);
+        }
+
+        // ----------------------------------------------------
+        // 4. INITIALISATION DU DASHBOARD
+        // ----------------------------------------------------
+        updateKPIs(dataset);
+        updateDonut(dataset);
+        drawBarChart();
+
+        // Rendre responsive
+        window.addEventListener("resize", () => {
+            d3.select("#bar-chart").selectAll("*").remove();
+            drawBarChart();
+            updateDonut(dataset);
+        });
+    </script>
+</body>
+</html>
