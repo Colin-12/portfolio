@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet 1 | CRM & Performance - Armand K.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .project-page { padding: 80px 10% 40px; background-color: #fff; min-height: 100vh; }
+        .back-link { display: inline-block; margin-bottom: 2rem; color: var(--accent-color); font-weight: 600; }
+        .back-link:hover { text-decoration: underline; }
+        .disclaimer-box { background-color: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin-bottom: 2rem; font-style: italic; color: #555; font-size: 0.9rem; }
+        .project-body-content h3 { color: var(--primary-color); margin: 2rem 0 1rem; }
+        .project-body-content p { margin-bottom: 1rem; color: #444; }
+        .code-block { background-color: #1e1e1e; color: #d4d4d4; padding: 1.5rem; border-radius: 8px; overflow-x: auto; font-family: monospace; margin: 1.5rem 0; font-size: 0.9rem; }
+        .dataset-link { display: inline-flex; align-items: center; gap: 8px; background: #eef2f7; padding: 8px 15px; border-radius: 5px; color: var(--primary-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Armand K.</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Retour au Portfolio</a></li>
+        </ul>
+    </nav>
+
+    <main class="project-page">
+        <a href="index.html#projects" class="back-link">&larr; Retour aux projets</a>
+        
+        <h1 style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;">Pilotage CRM multicanal & performance commerciale</h1>
+        
+        <div class="disclaimer-box">
+            <i class="fa-solid fa-circle-info"></i> <strong>Data source :</strong> This project is based on a publicly available dataset, adapted to a realistic business use case inspired by a real professional context.
+        </div>
+
+        <a href="https://archive.ics.uci.edu/ml/datasets/online+retail" target="_blank" class="dataset-link">
+            <i class="fa-solid fa-database"></i> Dataset utilisé : UCI Online Retail
+        </a>
+
+        <div class="project-body-content">
+            <h3>🎯 1. Objectif Métier (Le Problème)</h3>
+            <p>Dans un contexte de distribution (similaire à mon expérience chez Eureden), l'enjeu est de mesurer l'impact réel des campagnes marketing sur le chiffre d'affaires. Il s'agit de passer d'une simple mesure du taux d'ouverture à une véritable analyse du ROI incrémental en utilisant des groupes de contrôle (A/B Testing).</p>
+
+            <h3>🛠️ 2. Méthodologie & Préparation des Données</h3>
+            <p>J'ai utilisé Python (Pandas) pour nettoyer le dataset, gérer les retours produits (valeurs négatives) et recréer une table transactionnelle propre. Ensuite, j'ai simulé l'affectation des clients à deux groupes : Cible (A) et Témoin (B).</p>
+            
+            <div class="code-block">
+<pre><code>import pandas as pd
+import numpy as np
+
+# Chargement et nettoyage initial
+df = pd.read_excel('Online_Retail.xlsx')
+df = df[df['CustomerID'].notna()] # Suppression des clients anonymes
+df = df[df['Quantity'] > 0] # Filtre sur les achats réels (hors retours)
+
+# Calcul du Chiffre d'Affaires par ligne
+df['TotalAmount'] = df['Quantity'] * df['UnitPrice']
+
+# Agrégation au niveau Client (Vue CRM)
+customer_sales = df.groupby('CustomerID').agg({
+    'InvoiceNo': 'nunique', # Fréquence
+    'TotalAmount': 'sum'    # Montant total
+}).reset_index()
+
+print(customer_sales.head())</code></pre>
+            </div>
+
+            <h3>📊 3. Analyse et Résultats (Le ROI)</h3>
+            <p>En comparant les comportements d'achat des groupes A et B sur la période de la campagne fictive, l'analyse SQL a permis de mettre en évidence un "Uplift" (chiffre d'affaires additionnel) de +12% sur la population ciblée.</p>
+            
+            <p><em>Ici, je prévois d'ajouter prochainement une capture d'écran d'un graphique Matplotlib/Seaborn illustrant cette différence de conversion.</em></p>
+
+            <h3>🔗 4. Accès au projet complet</h3>
+            <p>Vous pouvez consulter l'intégralité du code, l'analyse exploratoire (EDA) et les conclusions métier directement sur mon notebook interactif :</p>
+            <br>
+            <a href="LIEN_VERS_TON_GITHUB_OU_KAGGLE_PLUS_TARD" target="_blank" class="btn btn-primary">
+                <i class="fa-brands fa-kaggle"></i> Voir le Notebook complet
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer" style="padding: 2rem 10%;">
+        <p class="copyright" style="border: none; padding: 0;">&copy; 2024 Armand Komtcheu.</p>
+    </footer>
+
+</body>
+</html>
