@@ -9,14 +9,19 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        .project-page { padding: 80px 10% 40px; background-color: #fff; min-height: 100vh; }
+        .project-page { padding: 100px 5% 40px; background-color: #fff; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
         .back-link { display: inline-block; margin-bottom: 2rem; color: var(--accent-color); font-weight: 600; }
         .back-link:hover { text-decoration: underline; }
         .disclaimer-box { background-color: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin-bottom: 2rem; font-style: italic; color: #555; font-size: 0.9rem; }
-        .project-body-content h3 { color: var(--primary-color); margin: 2rem 0 1rem; }
-        .project-body-content p { margin-bottom: 1rem; color: #444; }
-        .code-block { background-color: #1e1e1e; color: #d4d4d4; padding: 1.5rem; border-radius: 8px; overflow-x: auto; font-family: monospace; margin: 1.5rem 0; font-size: 0.9rem; }
+        .project-body-content h3 { color: var(--primary-color); margin: 2rem 0 1rem; font-size: 1.5rem;}
+        .project-body-content p, .project-body-content li { margin-bottom: 1rem; color: #444; font-size: 1.05rem; line-height: 1.7; }
+        .project-body-content ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
         .dataset-link { display: inline-flex; align-items: center; gap: 8px; background: #eef2f7; padding: 8px 15px; border-radius: 5px; color: var(--primary-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 2rem; }
+        .highlight-box { background-color: #e0f2fe; border: 1px solid #bae6fd; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+        .highlight-box strong { color: #0284c7; }
+        .chart-container { text-align: center; margin: 3rem 0; }
+        .chart-container img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #eaeaea; }
+        .chart-caption { font-size: 0.9rem; color: #666; margin-top: 10px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -31,59 +36,57 @@
     <main class="project-page">
         <a href="index.html#projects" class="back-link">&larr; Retour aux projets</a>
         
-        <h1 style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;">Pilotage CRM multicanal & performance commerciale</h1>
+        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Pilotage CRM multicanal & analyse d'incrémentalité</h1>
         
         <div class="disclaimer-box">
-            <i class="fa-solid fa-circle-info"></i> <strong>Data source :</strong> This project is based on a publicly available dataset, adapted to a realistic business use case inspired by a real professional context.
+            <i class="fa-solid fa-circle-info"></i> <strong>Note :</strong> Ce projet est construit sur un dataset public de transactions réelles. La logique de ciblage et les campagnes ont été simulées afin de reproduire fidèlement mes méthodes d'analyse en entreprise, tout en respectant la stricte confidentialité de mes employeurs (NDA).
         </div>
 
         <a href="https://archive.ics.uci.edu/ml/datasets/online+retail" target="_blank" class="dataset-link">
-            <i class="fa-solid fa-database"></i> Dataset utilisé : UCI Online Retail
+            <i class="fa-solid fa-database"></i> Dataset transactionnel : UCI Online Retail
         </a>
 
         <div class="project-body-content">
-            <h3>🎯 1. Objectif Métier (Le Problème)</h3>
-            <p>Dans un contexte de distribution (similaire à mon expérience chez Eureden), l'enjeu est de mesurer l'impact réel des campagnes marketing sur le chiffre d'affaires. Il s'agit de passer d'une simple mesure du taux d'ouverture à une véritable analyse du ROI incrémental en utilisant des groupes de contrôle (A/B Testing).</p>
+            <h3>🎯 1. Contexte & Objectif</h3>
+            <p>L'objectif de cette étude de cas est de dépasser les KPIs marketing traditionnels (taux d'ouverture, clics) pour mesurer le <strong>véritable impact incrémental</strong> d'une campagne multicanale (Email vs SMS) sur le chiffre d'affaires.</p>
 
-            <h3>🛠️ 2. Méthodologie & Préparation des Données</h3>
-            <p>J'ai utilisé Python (Pandas) pour nettoyer le dataset, gérer les retours produits (valeurs négatives) et recréer une table transactionnelle propre. Ensuite, j'ai simulé l'affectation des clients à deux groupes : Cible (A) et Témoin (B).</p>
-            
-            <div class="code-block">
-<pre><code>import pandas as pd
-import numpy as np
+            <h3>🛠️ 2. Modélisation Data & Méthodologie</h3>
+            <p>Pour mener cette analyse, j'ai transformé les données brutes transactionnelles en un modèle relationnel orienté CRM :</p>
+            <ul>
+                <li><strong>Nettoyage :</strong> Exclusion des retours produits et des clients non identifiés.</li>
+                <li><strong>Segmentation (Data Leakage évité) :</strong> Calcul des scores RFM (Récence, Fréquence, Montant) à l'instant <em>T-1</em> de la campagne pour classer les clients en 3 segments : VIP, Réguliers, et En Risque de Churn.</li>
+                <li><strong>A/B/C Testing :</strong> Création d'une table d'exposition ciblant les clients éligibles avec une répartition métier : 45% Email, 45% SMS, et <strong>10% Groupe Témoin (Control)</strong>.</li>
+            </ul>
 
-# Chargement et nettoyage initial
-df = pd.read_excel('Online_Retail.xlsx')
-df = df[df['CustomerID'].notna()] # Suppression des clients anonymes
-df = df[df['Quantity'] > 0] # Filtre sur les achats réels (hors retours)
+            <h3>📊 3. Analyse des Résultats & Insights</h3>
+            <p>Le croisement de la table d'exposition avec les achats réels sur la période promotionnelle a révélé des comportements très contrastés selon les segments :</p>
 
-# Calcul du Chiffre d'Affaires par ligne
-df['TotalAmount'] = df['Quantity'] * df['UnitPrice']
-
-# Agrégation au niveau Client (Vue CRM)
-customer_sales = df.groupby('CustomerID').agg({
-    'InvoiceNo': 'nunique', # Fréquence
-    'TotalAmount': 'sum'    # Montant total
-}).reset_index()
-
-print(customer_sales.head())</code></pre>
+            <div class="chart-container">
+                <img src="REMPLACE_PAR_LE_NOM_DE_TON_IMAGE.png" alt="Graphique Taux de conversion par segment RFM">
+                <p class="chart-caption">Fig 1 : Taux de conversion croisé (Canal marketing x Segment RFM)</p>
             </div>
 
-            <h3>📊 3. Analyse et Résultats (Le ROI)</h3>
-            <p>En comparant les comportements d'achat des groupes A et B sur la période de la campagne fictive, l'analyse SQL a permis de mettre en évidence un "Uplift" (chiffre d'affaires additionnel) de +12% sur la population ciblée.</p>
-            
-            <p><em>Ici, je prévois d'ajouter prochainement une capture d'écran d'un graphique Matplotlib/Seaborn illustrant cette différence de conversion.</em></p>
+            <div class="highlight-box">
+                <p><strong>💡 Découverte métier majeure : L'effet de Cannibalisation</strong></p>
+                <p>Contrairement aux idées reçues, la campagne a eu un impact négatif sur nos meilleurs clients. Le groupe témoin "VIP" a converti organiquement à 42.4%, soit mieux que ceux ayant reçu un SMS ou un Email. Nous avons dépensé du budget pour solliciter des clients qui allaient acheter de toute façon, générant possiblement une fatigue marketing.</p>
+                <p>À l'inverse, l'Uplift est positif sur le segment "Régulier", où l'Email (+2.7 pts vs Témoin) et le SMS (+2.2 pts vs Témoin) ont stimulé l'achat.</p>
+            </div>
 
-            <h3>🔗 4. Accès au projet complet</h3>
-            <p>Vous pouvez consulter l'intégralité du code, l'analyse exploratoire (EDA) et les conclusions métier directement sur mon notebook interactif :</p>
-            <br>
-            <a href="LIEN_VERS_TON_GITHUB_OU_KAGGLE_PLUS_TARD" target="_blank" class="btn btn-primary">
-                <i class="fa-brands fa-kaggle"></i> Voir le Notebook complet
+            <h3>Recommandation Actionnable</h3>
+            <p>Pour la prochaine itération, le ciblage doit être optimisé : stopper les envois promotionnels massifs sur les clients VIP pour préserver la marge, et concentrer les investissements (notamment l'Email, moins coûteux) sur le segment des clients Réguliers afin de maximiser le ROI incrémental.</p>
+
+            <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
+
+            <h3>Accéder au code source</h3>
+            <p>L'intégralité du code Python (Data Prep, Feature Engineering RFM, et Visualisation) est documentée et accessible :</p>
+            
+            <a href="REMPLACE_PAR_TON_LIEN_GOOGLE_COLAB_PARTAGE" target="_blank" class="btn btn-primary" style="margin-top: 1rem;">
+                <i class="fa-solid fa-code"></i> Voir le Notebook (Google Colab)
             </a>
         </div>
     </main>
 
-    <footer class="footer" style="padding: 2rem 10%;">
+    <footer class="footer" style="padding: 2rem 5%; margin-top: 4rem;">
         <p class="copyright" style="border: none; padding: 0;">&copy; 2024 Armand Komtcheu.</p>
     </footer>
 
