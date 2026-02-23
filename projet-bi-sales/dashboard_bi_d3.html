@@ -424,7 +424,7 @@
 
   async function init() {
     // ⚠️ Chemin relatif : adapte si besoin selon où est placé ton fichier html
-    DATA = await d3.json("data/dashboard_data.json");
+    DATA = await d3.json("data/dashboard.json");
 
     // Populate filters
     setSelectOptions(document.getElementById("filter-year"), DATA.filters.years.map(String), true, "Toutes");
