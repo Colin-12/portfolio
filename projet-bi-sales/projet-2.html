@@ -91,12 +91,27 @@ fact_sales = fact_sales[['order_id', 'order_date', 'customer_id', 'product_id',
             <h3>📊 3. Définition des KPIs & Dashboarding</h3>
             <p>Une fois le modèle consolidé, les indicateurs clés de performance (KPIs) ont été définis avec rigueur pour piloter l'activité :</p>
             <ul>
-                <li><strong>Chiffre d'Affaires Global :</strong> 2,29 M$</li>
-                <li><strong>Panier Moyen (AOV) :</strong> 458 $</li>
-                <li><strong>Volume de Commandes :</strong> 5 009</li>
+                <li><strong>CA TTC (Sales) :</strong> somme des ventes</li>
+                <li><strong>Marge (Profit) :</strong> somme des profits</li>
+                <li><strong>Nb tickets :</strong> nombre de commandes uniques (Order ID)</li>
+                <li><strong>Nb clients :</strong> clients uniques</li>
+                <li><strong>Panier moyen TTC (AOV) :</strong> CA / Nb tickets</li>
+                <li><strong>Taux de marge :</strong> Marge / CA</li>
+                <li><strong>Effort promotionnel (proxy OP) :</strong> Remises / CA avant remise (sur commandes avec Discount &gt; 0)</li>
             </ul>
             <p>Pour la restitution, j'ai développé une interface <strong>D3.js sur-mesure</strong> offrant une vue "Executive". Ce tableau de bord intègre des visualisations interconnectées (répartition régionale, chiffre d'affaires par catégorie et courbe de tendance temporelle).</p>
-
+            <div class="highlight-box">
+              <p><strong>Note “OP” (adaptation dataset public)</strong></p>
+              <p>
+                Le dataset Superstore ne contient pas d’“OP bippée” au sens retail fidélité.
+                Pour reproduire une logique proche d’une étude d’opération commerciale, j’utilise un proxy :
+                <strong>OP = commandes ayant une remise (Discount &gt; 0)</strong>.
+              </p>
+              <p style="margin-bottom:0;">
+                Cela permet de calculer des indicateurs type “montant remisé”, “effort promotionnel” et “taux de remise ticket”
+                sur une base publique, tout en conservant une démarche BI réaliste.
+              </p>
+            </div>
             <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
 
             <h3>🚀 4. Accéder aux Livrables</h3>
