@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BI Dashboard - Superstore Sales | D3.js</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #0A2540;
+            --accent: #007BFF;
+            --bg-light: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0; background-color: var(--bg-light); color: var(--text-main);
+        }
+        .header {
+            background-color: var(--primary); color: white;
+            padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { margin: 0; font-family: 'Poppins', sans-serif; font-size: 1.5rem; }
+        .back-btn {
+            color: white; text-decoration: none; border: 1px solid white;
+            padding: 6px 15px; border-radius: 5px; font-size: 0.9rem; transition: 0.3s;
+        }
+        .back-btn:hover { background-color: white; color: var(--primary); }
+        
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem; margin-bottom: 2rem;
+        }
+        .kpi-card {
+            background: var(--card-bg); padding: 1.5rem; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 4px solid var(--accent);
+        }
+        .kpi-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; }
+        .kpi-value { font-size: 2rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; }
+        
+        /* Charts Layout */
+        .chart-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .chart-card {
+            background: var(--card-bg); padding: 1.5rem; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex: 1; min-width: 300px;
+        }
+        .chart-card.full-width { width: 100%; flex: 100%; }
+        .chart-header { font-family: 'Poppins', sans-serif; font-size: 1.1rem; color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute; text-align: center; padding: 8px 12px; font-size: 0.85rem;
+            background: rgba(10, 37, 64, 0.9); color: white; border-radius: 4px;
+            pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 10;
+        }
+        svg { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📊 Executive Dashboard - Superstore</h1>
+        <a href="projet-2.html" class="back-btn">Retour à l'étude</a>
+    </div>
+
+    <div class="container">
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">Chiffre d'Affaires Global</div>
+                <div class="kpi-value" id="kpi-sales">$0</div>
+            </div>
+            <div class="kpi-card" style="border-left-color: #28a745;">
+                <div class="kpi-title">Profit Total</div>
+                <div class="kpi-value" id="kpi-profit">$0</div>
+            </div>
+            <div class="kpi-card" style="border-left-color: #17a2b8;">
+                <div class="kpi-title">Panier Moyen (AOV)</div>
+                <div class="kpi-value" id="kpi-aov">$0</div>
+            </div>
+            <div class="kpi-card" style="border-left-color: #ffc107;">
+                <div class="kpi-title">Total Commandes</div>
+                <div class="kpi-value" id="kpi-orders">0</div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="chart-card full-width">
+                <div class="chart-header">Évolution du CA par trimestre (Trend)</div>
+                <div id="trend-chart" style="height: 300px;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="chart-card" style="flex: 1.5;">
+                <div class="chart-header">CA par Catégorie de Produits</div>
+                <div id="bar-chart" style="height: 300px;"></div>
+            </div>
+            <div class="chart-card" style="flex: 1;">
+                <div class="chart-header">Répartition par Région</div>
+                <div id="donut-chart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+        // --- DONNÉES AGRÉGÉES (Extraites de Python) ---
+        const totalSales = 2297201;
+        const totalProfit = 286397;
+        const totalOrders = 5009;
+        const aov = totalSales / totalOrders;
+
+        const trendData = [
+            { date: new Date(2014, 0, 1), sales: 74422 }, { date: new Date(2014, 3, 1), sales: 86615 },
+            { date: new Date(2014, 6, 1), sales: 143633 }, { date: new Date(2014, 9, 1), sales: 179551 },
+            { date: new Date(2015, 0, 1), sales: 68851 }, { date: new Date(2015, 3, 1), sales: 89115 },
+            { date: new Date(2015, 6, 1), sales: 130259 }, { date: new Date(2015, 9, 1), sales: 182297 },
+            { date: new Date(2016, 0, 1), sales: 93237 }, { date: new Date(2016, 3, 1), sales: 136082 },
+            { date: new Date(2016, 6, 1), sales: 143719 }, { date: new Date(2016, 9, 1), sales: 236163 },
+            { date: new Date(2017, 0, 1), sales: 122260 }, { date: new Date(2017, 3, 1), sales: 133860 },
+            { date: new Date(2017, 6, 1), sales: 196251 }, { date: new Date(2017, 9, 1), sales: 281069 }
+        ];
+
+        const categoryData = [
+            { category: "Office Supplies", sales: 719047 },
+            { category: "Furniture", sales: 741999 },
+            { category: "Technology", sales: 836154 }
+        ];
+
+        const regionData = [
+            { region: "West", sales: 725457 },
+            { region: "East", sales: 678781 },
+            { region: "Central", sales: 501239 },
+            { region: "South", sales: 391721 }
+        ];
+
+        const colors = ["#007BFF", "#17a2b8", "#28a745", "#ffc107"];
+        const formatMoney = d3.format("$,.0f");
+        const tooltip = d3.select("#tooltip");
+
+        // --- 1. ANIMATION DES KPIs ---
+        d3.select("#kpi-sales").transition().duration(1000).tween("text", function() {
+            const i = d3.interpolate(0, totalSales);
+            return function(t) { this.textContent = formatMoney(i(t)); };
+        });
+        d3.select("#kpi-profit").transition().duration(1000).tween("text", function() {
+            const i = d3.interpolate(0, totalProfit);
+            return function(t) { this.textContent = formatMoney(i(t)); };
+        });
+        d3.select("#kpi-aov").transition().duration(1000).tween("text", function() {
+            const i = d3.interpolate(0, aov);
+            return function(t) { this.textContent = formatMoney(i(t)); };
+        });
+        d3.select("#kpi-orders").transition().duration(1000).tween("text", function() {
+            const i = d3.interpolate(0, totalOrders);
+            return function(t) { this.textContent = d3.format(",.0f")(i(t)); };
+        });
+
+        // --- 2. TREND CHART (Line) ---
+        function drawTrendChart() {
+            const container = document.getElementById("trend-chart");
+            const margin = {top: 20, right: 30, bottom: 30, left: 60};
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = 300 - margin.top - margin.bottom;
+
+            const svg = d3.select("#trend-chart").append("svg")
+                .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const x = d3.scaleTime().domain(d3.extent(trendData, d => d.date)).range([0, width]);
+            const y = d3.scaleLinear().domain([0, d3.max(trendData, d => d.sales)]).nice().range([height, 0]);
+
+            svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(8));
+            svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => "$" + d / 1000 + "k"));
+
+            // Grille
+            svg.append("g").attr("class", "grid").style("stroke-dasharray", "3,3").style("opacity", 0.1)
+                .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+
+            const line = d3.line().x(d => x(d.date)).y(d => y(d.sales)).curve(d3.curveMonotoneX);
+
+            const path = svg.append("path").datum(trendData)
+                .attr("fill", "none").attr("stroke", "#007BFF").attr("stroke-width", 3).attr("d", line);
+
+            // Animation du tracé
+            const totalLength = path.node().getTotalLength();
+            path.attr("stroke-dasharray", totalLength + " " + totalLength)
+                .attr("stroke-dashoffset", totalLength)
+                .transition().duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+
+            // Points interactifs
+            svg.selectAll("circle").data(trendData).enter().append("circle")
+                .attr("cx", d => x(d.date)).attr("cy", d => y(d.sales)).attr("r", 5).attr("fill", "#0A2540")
+                .on("mouseover", (event, d) => {
+                    tooltip.style("opacity", 1).html(`<b>${d3.timeFormat("%b %Y")(d.date)}</b><br>${formatMoney(d.sales)}`)
+                        .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
+                    d3.select(event.currentTarget).attr("r", 8).attr("fill", "#007BFF");
+                })
+                .on("mouseout", (event) => {
+                    tooltip.style("opacity", 0);
+                    d3.select(event.currentTarget).attr("r", 5).attr("fill", "#0A2540");
+                });
+        }
+
+        // --- 3. BAR CHART (Horizontal) ---
+        function drawBarChart() {
+            const container = document.getElementById("bar-chart");
+            const margin = {top: 20, right: 30, bottom: 40, left: 120};
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = 300 - margin.top - margin.bottom;
+
+            const svg = d3.select("#bar-chart").append("svg")
+                .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const x = d3.scaleLinear().domain([0, d3.max(categoryData, d => d.sales)]).range([0, width]);
+            const y = d3.scaleBand().domain(categoryData.map(d => d.category)).range([height, 0]).padding(0.3);
+
+            svg.append("g").attr("transform", `translate(0,${height})`)
+               .call(d3.axisBottom(x).ticks(5).tickFormat(d => "$" + d / 1000 + "k"));
+            svg.append("g").call(d3.axisLeft(y)).style("font-size", "12px").style("font-family", "Open Sans");
+
+            svg.selectAll("rect").data(categoryData).enter().append("rect")
+                .attr("y", d => y(d.category)).attr("x", 0)
+                .attr("height", y.bandwidth()).attr("fill", "#0A2540").attr("rx", 4)
+                .attr("width", 0).transition().duration(1000)
+                .attr("width", d => x(d.sales));
+
+            // Labels sur les barres
+            svg.selectAll(".label").data(categoryData).enter().append("text")
+                .attr("y", d => y(d.category) + y.bandwidth() / 2 + 4).attr("x", 5)
+                .attr("fill", "white").style("font-size", "12px").style("font-weight", "bold")
+                .text(d => formatMoney(d.sales))
+                .style("opacity", 0).transition().delay(800).style("opacity", 1);
+        }
+
+        // --- 4. DONUT CHART (Regions) ---
+        function drawDonutChart() {
+            const container = document.getElementById("donut-chart");
+            const width = container.clientWidth, height = 300, margin = 20;
+            const radius = Math.min(width, height) / 2 - margin;
+
+            const svg = d3.select("#donut-chart").append("svg")
+                .attr("viewBox", `0 0 ${width} ${height}`)
+                .append("g").attr("transform", `translate(${width/2},${height/2})`);
+
+            const pie = d3.pie().value(d => d.sales);
+            const data_ready = pie(regionData);
+
+            const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.8);
+            const arcHover = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.9);
+
+            svg.selectAll('path').data(data_ready).enter().append('path')
+                .attr('d', arc).attr('fill', (d, i) => colors[i % colors.length])
+                .attr("stroke", "white").style("stroke-width", "2px")
+                .on("mouseover", function(event, d) {
+                    d3.select(this).transition().duration(200).attr("d", arcHover);
+                    tooltip.style("opacity", 1).html(`<b>${d.data.region}</b><br>${formatMoney(d.data.sales)}`)
+                        .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select(this).transition().duration(200).attr("d", arc);
+                    tooltip.style("opacity", 0);
+                })
+                .transition().duration(1000)
+                .attrTween("d", function(d) {
+                    const i = d3.interpolate({startAngle: 0, endAngle: 0}, d);
+                    return function(t) { return arc(i(t)); };
+                });
+        }
+
+        // --- INITIALISATION ---
+        setTimeout(() => { drawTrendChart(); drawBarChart(); drawDonutChart(); }, 100);
+
+        // Responsivité
+        window.addEventListener("resize", () => {
+            d3.select("#trend-chart").selectAll("*").remove();
+            d3.select("#bar-chart").selectAll("*").remove();
+            d3.select("#donut-chart").selectAll("*").remove();
+            drawTrendChart(); drawBarChart(); drawDonutChart();
+        });
+    </script>
+</body>
+</html>
