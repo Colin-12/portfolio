@@ -105,6 +105,17 @@
                 <div class="kpi-title">Total Commandes</div>
                 <div class="kpi-value" id="kpi-orders">0</div>
             </div>
+
+            <div class="kpi-card" style="border-left-color: #6f42c1;">
+              <div class="kpi-title">Taux de marge</div>
+              <div class="kpi-value" id="kpi-margin-rate">0%</div>
+            </div>
+            
+            <div class="kpi-card" style="border-left-color: #fd7e14;">
+              <div class="kpi-title">Effort promotionnel</div>
+              <div class="kpi-value" id="kpi-promo-effort">0%</div>
+            </div>
+            
         </div>
 
         <div class="chart-row">
@@ -199,6 +210,8 @@
     animateNumber("#kpi-profit", k.totalProfit, v => formatMoney(v));
     animateNumber("#kpi-aov", k.aov, v => formatMoney(v));
     animateNumber("#kpi-orders", k.totalOrders, v => d3.format(",.0f")(v));
+    animateNumber("#kpi-margin-rate", k.marginRate, v => formatPct(v));
+    animateNumber("#kpi-promo-effort", k.promoEffort, v => formatPct(v));
   }
 
   function clearCharts() {
@@ -411,7 +424,7 @@
 
   async function init() {
     // ⚠️ Chemin relatif : adapte si besoin selon où est placé ton fichier html
-    DATA = await d3.json("data/processed/dashboard_data.json");
+    DATA = await d3.json("data/dashboard_data.json");
 
     // Populate filters
     setSelectOptions(document.getElementById("filter-year"), DATA.filters.years.map(String), true, "Toutes");
