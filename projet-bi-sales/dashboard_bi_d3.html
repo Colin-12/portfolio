@@ -71,6 +71,23 @@
     </div>
 
     <div class="container">
+        <div class="chart-card" style="margin-bottom: 1.5rem;">
+  <div class="chart-header">Filtres</div>
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <label>
+      <div style="font-size:0.85rem; color:#666; margin-bottom:6px;">Année</div>
+      <select id="filter-year" style="padding:8px 10px; border-radius:6px; border:1px solid #ddd;"></select>
+    </label>
+    <label>
+      <div style="font-size:0.85rem; color:#666; margin-bottom:6px;">Région</div>
+      <select id="filter-region" style="padding:8px 10px; border-radius:6px; border:1px solid #ddd;"></select>
+    </label>
+    <label>
+      <div style="font-size:0.85rem; color:#666; margin-bottom:6px;">Catégorie</div>
+      <select id="filter-category" style="padding:8px 10px; border-radius:6px; border:1px solid #ddd;"></select>
+    </label>
+  </div>
+</div>
         <div class="kpi-grid">
             <div class="kpi-card">
                 <div class="kpi-title">Chiffre d'Affaires Global</div>
@@ -112,181 +129,310 @@
     <div id="tooltip" class="tooltip"></div>
 
     <script>
-        // --- DONNÉES AGRÉGÉES (Extraites de Python) ---
-        const totalSales = 2297201;
-        const totalProfit = 286397;
-        const totalOrders = 5009;
-        const aov = totalSales / totalOrders;
+  const tooltip = d3.select("#tooltip");
+  const formatMoney = d3.format("$,.0f");
+  const formatPct = d3.format(".1%");
 
-        const trendData = [
-            { date: new Date(2014, 0, 1), sales: 74422 }, { date: new Date(2014, 3, 1), sales: 86615 },
-            { date: new Date(2014, 6, 1), sales: 143633 }, { date: new Date(2014, 9, 1), sales: 179551 },
-            { date: new Date(2015, 0, 1), sales: 68851 }, { date: new Date(2015, 3, 1), sales: 89115 },
-            { date: new Date(2015, 6, 1), sales: 130259 }, { date: new Date(2015, 9, 1), sales: 182297 },
-            { date: new Date(2016, 0, 1), sales: 93237 }, { date: new Date(2016, 3, 1), sales: 136082 },
-            { date: new Date(2016, 6, 1), sales: 143719 }, { date: new Date(2016, 9, 1), sales: 236163 },
-            { date: new Date(2017, 0, 1), sales: 122260 }, { date: new Date(2017, 3, 1), sales: 133860 },
-            { date: new Date(2017, 6, 1), sales: 196251 }, { date: new Date(2017, 9, 1), sales: 281069 }
-        ];
+  // --- Etat global ---
+  let DATA = null;
 
-        const categoryData = [
-            { category: "Office Supplies", sales: 719047 },
-            { category: "Furniture", sales: 741999 },
-            { category: "Technology", sales: 836154 }
-        ];
+  const defaultColors = d3.schemeTableau10;
 
-        const regionData = [
-            { region: "West", sales: 725457 },
-            { region: "East", sales: 678781 },
-            { region: "Central", sales: 501239 },
-            { region: "South", sales: 391721 }
-        ];
+  function setSelectOptions(selectEl, values, withAll=true, allLabel="Tous") {
+    selectEl.innerHTML = "";
+    if (withAll) {
+      const opt = document.createElement("option");
+      opt.value = "__ALL__";
+      opt.textContent = allLabel;
+      selectEl.appendChild(opt);
+    }
+    values.forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v;
+      selectEl.appendChild(opt);
+    });
+  }
 
-        const colors = ["#007BFF", "#17a2b8", "#28a745", "#ffc107"];
-        const formatMoney = d3.format("$,.0f");
-        const tooltip = d3.select("#tooltip");
+  function getFilters() {
+    const year = document.getElementById("filter-year").value;
+    const region = document.getElementById("filter-region").value;
+    const category = document.getElementById("filter-category").value;
+    return { year, region, category };
+  }
 
-        // --- 1. ANIMATION DES KPIs ---
-        d3.select("#kpi-sales").transition().duration(1000).tween("text", function() {
-            const i = d3.interpolate(0, totalSales);
-            return function(t) { this.textContent = formatMoney(i(t)); };
-        });
-        d3.select("#kpi-profit").transition().duration(1000).tween("text", function() {
-            const i = d3.interpolate(0, totalProfit);
-            return function(t) { this.textContent = formatMoney(i(t)); };
-        });
-        d3.select("#kpi-aov").transition().duration(1000).tween("text", function() {
-            const i = d3.interpolate(0, aov);
-            return function(t) { this.textContent = formatMoney(i(t)); };
-        });
-        d3.select("#kpi-orders").transition().duration(1000).tween("text", function() {
-            const i = d3.interpolate(0, totalOrders);
-            return function(t) { this.textContent = d3.format(",.0f")(i(t)); };
-        });
+  function applyFilters(records, f) {
+    return records.filter(r => {
+      const okYear = (f.year === "__ALL__") || (+r.year === +f.year);
+      const okRegion = (f.region === "__ALL__") || (r.region === f.region);
+      const okCat = (f.category === "__ALL__") || (r.category === f.category);
+      return okYear && okRegion && okCat;
+    });
+  }
 
-        // --- 2. TREND CHART (Line) ---
-        function drawTrendChart() {
-            const container = document.getElementById("trend-chart");
-            const margin = {top: 20, right: 30, bottom: 30, left: 60};
-            const width = container.clientWidth - margin.left - margin.right;
-            const height = 300 - margin.top - margin.bottom;
+  function computeKpisFromAgg(rows) {
+    const totalSales = d3.sum(rows, d => d.sales);
+    const totalProfit = d3.sum(rows, d => d.profit);
+    const totalOrders = d3.sum(rows, d => d.orders);
+    const totalCustomers = d3.sum(rows, d => d.customers);
+    const totalDiscount = d3.sum(rows, d => d.discount_amt);
+    const totalBefore = d3.sum(rows, d => d.sales_before);
 
-            const svg = d3.select("#trend-chart").append("svg")
-                .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-                .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const aov = totalOrders ? (totalSales / totalOrders) : 0;
+    const marginRate = totalSales ? (totalProfit / totalSales) : 0;
+    const promoEffort = totalBefore ? (totalDiscount / totalBefore) : 0;
 
-            const x = d3.scaleTime().domain(d3.extent(trendData, d => d.date)).range([0, width]);
-            const y = d3.scaleLinear().domain([0, d3.max(trendData, d => d.sales)]).nice().range([height, 0]);
+    return { totalSales, totalProfit, totalOrders, totalCustomers, aov, marginRate, promoEffort };
+  }
 
-            svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(8));
-            svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => "$" + d / 1000 + "k"));
+  function animateNumber(selector, value, formatter) {
+    const node = d3.select(selector);
+    node.transition().duration(900).tween("text", function() {
+      const start = 0;
+      const i = d3.interpolate(start, value);
+      return function(t) { this.textContent = formatter(i(t)); };
+    });
+  }
 
-            // Grille
-            svg.append("g").attr("class", "grid").style("stroke-dasharray", "3,3").style("opacity", 0.1)
-                .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+  function renderKpis(k) {
+    animateNumber("#kpi-sales", k.totalSales, v => formatMoney(v));
+    animateNumber("#kpi-profit", k.totalProfit, v => formatMoney(v));
+    animateNumber("#kpi-aov", k.aov, v => formatMoney(v));
+    animateNumber("#kpi-orders", k.totalOrders, v => d3.format(",.0f")(v));
+  }
 
-            const line = d3.line().x(d => x(d.date)).y(d => y(d.sales)).curve(d3.curveMonotoneX);
+  function clearCharts() {
+    d3.select("#trend-chart").selectAll("*").remove();
+    d3.select("#bar-chart").selectAll("*").remove();
+    d3.select("#donut-chart").selectAll("*").remove();
+  }
 
-            const path = svg.append("path").datum(trendData)
-                .attr("fill", "none").attr("stroke", "#007BFF").attr("stroke-width", 3).attr("d", line);
+  function renderTrend(rows) {
+    // Agrège par mois
+    const byMonth = d3.rollups(
+      rows,
+      v => d3.sum(v, d => d.sales),
+      d => d.year_month
+    ).map(([ym, sales]) => ({ ym, sales }));
 
-            // Animation du tracé
-            const totalLength = path.node().getTotalLength();
-            path.attr("stroke-dasharray", totalLength + " " + totalLength)
-                .attr("stroke-dashoffset", totalLength)
-                .transition().duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+    byMonth.sort((a,b) => d3.ascending(a.ym, b.ym));
 
-            // Points interactifs
-            svg.selectAll("circle").data(trendData).enter().append("circle")
-                .attr("cx", d => x(d.date)).attr("cy", d => y(d.sales)).attr("r", 5).attr("fill", "#0A2540")
-                .on("mouseover", (event, d) => {
-                    tooltip.style("opacity", 1).html(`<b>${d3.timeFormat("%b %Y")(d.date)}</b><br>${formatMoney(d.sales)}`)
-                        .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
-                    d3.select(event.currentTarget).attr("r", 8).attr("fill", "#007BFF");
-                })
-                .on("mouseout", (event) => {
-                    tooltip.style("opacity", 0);
-                    d3.select(event.currentTarget).attr("r", 5).attr("fill", "#0A2540");
-                });
-        }
+    const container = document.getElementById("trend-chart");
+    const margin = {top: 20, right: 30, bottom: 30, left: 60};
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = 300 - margin.top - margin.bottom;
 
-        // --- 3. BAR CHART (Horizontal) ---
-        function drawBarChart() {
-            const container = document.getElementById("bar-chart");
-            const margin = {top: 20, right: 30, bottom: 40, left: 120};
-            const width = container.clientWidth - margin.left - margin.right;
-            const height = 300 - margin.top - margin.bottom;
+    const parseYM = d3.timeParse("%Y-%m");
+    byMonth.forEach(d => d.date = parseYM(d.ym));
 
-            const svg = d3.select("#bar-chart").append("svg")
-                .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-                .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const svg = d3.select("#trend-chart").append("svg")
+      .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-            const x = d3.scaleLinear().domain([0, d3.max(categoryData, d => d.sales)]).range([0, width]);
-            const y = d3.scaleBand().domain(categoryData.map(d => d.category)).range([height, 0]).padding(0.3);
+    const x = d3.scaleTime().domain(d3.extent(byMonth, d => d.date)).range([0, width]);
+    const y = d3.scaleLinear().domain([0, d3.max(byMonth, d => d.sales)]).nice().range([height, 0]);
 
-            svg.append("g").attr("transform", `translate(0,${height})`)
-               .call(d3.axisBottom(x).ticks(5).tickFormat(d => "$" + d / 1000 + "k"));
-            svg.append("g").call(d3.axisLeft(y)).style("font-size", "12px").style("font-family", "Open Sans");
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(8));
+    svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => "$" + (d/1000).toFixed(0) + "k"));
 
-            svg.selectAll("rect").data(categoryData).enter().append("rect")
-                .attr("y", d => y(d.category)).attr("x", 0)
-                .attr("height", y.bandwidth()).attr("fill", "#0A2540").attr("rx", 4)
-                .attr("width", 0).transition().duration(1000)
-                .attr("width", d => x(d.sales));
+    svg.append("g").style("stroke-dasharray", "3,3").style("opacity", 0.1)
+      .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
 
-            // Labels sur les barres
-            svg.selectAll(".label").data(categoryData).enter().append("text")
-                .attr("y", d => y(d.category) + y.bandwidth() / 2 + 4).attr("x", 5)
-                .attr("fill", "white").style("font-size", "12px").style("font-weight", "bold")
-                .text(d => formatMoney(d.sales))
-                .style("opacity", 0).transition().delay(800).style("opacity", 1);
-        }
+    const line = d3.line()
+      .x(d => x(d.date))
+      .y(d => y(d.sales))
+      .curve(d3.curveMonotoneX);
 
-        // --- 4. DONUT CHART (Regions) ---
-        function drawDonutChart() {
-            const container = document.getElementById("donut-chart");
-            const width = container.clientWidth, height = 300, margin = 20;
-            const radius = Math.min(width, height) / 2 - margin;
+    const path = svg.append("path").datum(byMonth)
+      .attr("fill", "none")
+      .attr("stroke", "#007BFF")
+      .attr("stroke-width", 3)
+      .attr("d", line);
 
-            const svg = d3.select("#donut-chart").append("svg")
-                .attr("viewBox", `0 0 ${width} ${height}`)
-                .append("g").attr("transform", `translate(${width/2},${height/2})`);
+    const totalLength = path.node().getTotalLength();
+    path.attr("stroke-dasharray", totalLength + " " + totalLength)
+      .attr("stroke-dashoffset", totalLength)
+      .transition().duration(1200).ease(d3.easeLinear)
+      .attr("stroke-dashoffset", 0);
 
-            const pie = d3.pie().value(d => d.sales);
-            const data_ready = pie(regionData);
+    svg.selectAll("circle").data(byMonth).enter().append("circle")
+      .attr("cx", d => x(d.date))
+      .attr("cy", d => y(d.sales))
+      .attr("r", 4)
+      .attr("fill", "#0A2540")
+      .on("mouseover", (event, d) => {
+        tooltip.style("opacity", 1)
+          .html(`<b>${d.ym}</b><br>${formatMoney(d.sales)}`)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
+        d3.select(event.currentTarget).attr("r", 7).attr("fill", "#007BFF");
+      })
+      .on("mouseout", (event) => {
+        tooltip.style("opacity", 0);
+        d3.select(event.currentTarget).attr("r", 4).attr("fill", "#0A2540");
+      });
+  }
 
-            const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.8);
-            const arcHover = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.9);
+  function renderBar(rows) {
+    const byCat = d3.rollups(
+      rows,
+      v => d3.sum(v, d => d.sales),
+      d => d.category
+    ).map(([category, sales]) => ({ category, sales }));
 
-            svg.selectAll('path').data(data_ready).enter().append('path')
-                .attr('d', arc).attr('fill', (d, i) => colors[i % colors.length])
-                .attr("stroke", "white").style("stroke-width", "2px")
-                .on("mouseover", function(event, d) {
-                    d3.select(this).transition().duration(200).attr("d", arcHover);
-                    tooltip.style("opacity", 1).html(`<b>${d.data.region}</b><br>${formatMoney(d.data.sales)}`)
-                        .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
-                })
-                .on("mouseout", function() {
-                    d3.select(this).transition().duration(200).attr("d", arc);
-                    tooltip.style("opacity", 0);
-                })
-                .transition().duration(1000)
-                .attrTween("d", function(d) {
-                    const i = d3.interpolate({startAngle: 0, endAngle: 0}, d);
-                    return function(t) { return arc(i(t)); };
-                });
-        }
+    byCat.sort((a,b) => d3.ascending(a.sales, b.sales));
 
-        // --- INITIALISATION ---
-        setTimeout(() => { drawTrendChart(); drawBarChart(); drawDonutChart(); }, 100);
+    const container = document.getElementById("bar-chart");
+    const margin = {top: 20, right: 30, bottom: 40, left: 140};
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = 300 - margin.top - margin.bottom;
 
-        // Responsivité
-        window.addEventListener("resize", () => {
-            d3.select("#trend-chart").selectAll("*").remove();
-            d3.select("#bar-chart").selectAll("*").remove();
-            d3.select("#donut-chart").selectAll("*").remove();
-            drawTrendChart(); drawBarChart(); drawDonutChart();
-        });
-    </script>
+    const svg = d3.select("#bar-chart").append("svg")
+      .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleLinear().domain([0, d3.max(byCat, d => d.sales)]).range([0, width]);
+    const y = d3.scaleBand().domain(byCat.map(d => d.category)).range([height, 0]).padding(0.3);
+
+    svg.append("g").attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d => "$" + (d/1000).toFixed(0) + "k"));
+    svg.append("g").call(d3.axisLeft(y));
+
+    svg.selectAll("rect").data(byCat).enter().append("rect")
+      .attr("y", d => y(d.category))
+      .attr("x", 0)
+      .attr("height", y.bandwidth())
+      .attr("rx", 4)
+      .attr("fill", "#0A2540")
+      .attr("width", 0)
+      .on("mousemove", (event, d) => {
+        tooltip.style("opacity", 1)
+          .html(`<b>${d.category}</b><br>${formatMoney(d.sales)}`)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", () => tooltip.style("opacity", 0))
+      .transition().duration(900)
+      .attr("width", d => x(d.sales));
+
+    svg.selectAll(".label").data(byCat).enter().append("text")
+      .attr("y", d => y(d.category) + y.bandwidth() / 2 + 4)
+      .attr("x", 6)
+      .attr("fill", "white")
+      .style("font-size", "12px")
+      .style("font-weight", "bold")
+      .text(d => formatMoney(d.sales))
+      .style("opacity", 0)
+      .transition().delay(700).style("opacity", 1);
+  }
+
+  function renderDonut(rows) {
+    const byRegion = d3.rollups(
+      rows,
+      v => d3.sum(v, d => d.sales),
+      d => d.region
+    ).map(([region, sales]) => ({ region, sales }));
+
+    byRegion.sort((a,b) => d3.descending(a.sales, b.sales));
+
+    const container = document.getElementById("donut-chart");
+    const width = container.clientWidth;
+    const height = 300;
+    const margin = 20;
+    const radius = Math.min(width, height) / 2 - margin;
+
+    const svg = d3.select("#donut-chart").append("svg")
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .append("g")
+      .attr("transform", `translate(${width/2},${height/2})`);
+
+    const color = d3.scaleOrdinal()
+      .domain(byRegion.map(d => d.region))
+      .range(defaultColors);
+
+    const pie = d3.pie().value(d => d.sales);
+    const data_ready = pie(byRegion);
+
+    const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.8);
+    const arcHover = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.9);
+
+    svg.selectAll("path").data(data_ready).enter().append("path")
+      .attr("d", arc)
+      .attr("fill", d => color(d.data.region))
+      .attr("stroke", "white").style("stroke-width", "2px")
+      .on("mouseover", function(event, d) {
+        d3.select(this).transition().duration(150).attr("d", arcHover);
+        tooltip.style("opacity", 1)
+          .html(`<b>${d.data.region}</b><br>${formatMoney(d.data.sales)}`)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function() {
+        d3.select(this).transition().duration(150).attr("d", arc);
+        tooltip.style("opacity", 0);
+      })
+      .transition().duration(700)
+      .attrTween("d", function(d) {
+        const i = d3.interpolate({startAngle: 0, endAngle: 0}, d);
+        return function(t) { return arc(i(t)); };
+      });
+
+    // --- Legend
+    const legend = d3.select("#donut-chart").append("div")
+      .style("display", "flex")
+      .style("gap", "10px")
+      .style("flex-wrap", "wrap")
+      .style("margin-top", "8px")
+      .style("font-size", "0.9rem")
+      .style("color", "#444");
+
+    byRegion.forEach(d => {
+      const item = legend.append("div").style("display","flex").style("align-items","center").style("gap","6px");
+      item.append("span")
+        .style("width","12px").style("height","12px")
+        .style("background", color(d.region))
+        .style("display","inline-block").style("border-radius","3px");
+      item.append("span").text(`${d.region}`);
+    });
+  }
+
+  function renderAll() {
+    const f = getFilters();
+    const rows = applyFilters(DATA.agg, f);
+
+    const k = computeKpisFromAgg(rows);
+    renderKpis(k);
+
+    clearCharts();
+    renderTrend(rows);
+    renderBar(rows);
+    renderDonut(rows);
+  }
+
+  async function init() {
+    // ⚠️ Chemin relatif : adapte si besoin selon où est placé ton fichier html
+    DATA = await d3.json("data/processed/dashboard_data.json");
+
+    // Populate filters
+    setSelectOptions(document.getElementById("filter-year"), DATA.filters.years.map(String), true, "Toutes");
+    setSelectOptions(document.getElementById("filter-region"), DATA.filters.regions, true, "Toutes");
+    setSelectOptions(document.getElementById("filter-category"), DATA.filters.categories, true, "Toutes");
+
+    // Events
+    ["filter-year","filter-region","filter-category"].forEach(id => {
+      document.getElementById(id).addEventListener("change", renderAll);
+    });
+
+    renderAll();
+  }
+
+  init();
+
+  // Responsivité
+  window.addEventListener("resize", () => {
+    if (!DATA) return;
+    renderAll();
+  });
+</script>
 </body>
 </html>
