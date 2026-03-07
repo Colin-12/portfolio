@@ -203,43 +203,42 @@
 
         <div class="card-content">
           <div class="project-head">
-            <span class="project-tag">Marketing Data Science</span>
-            <h3>Segmentation clients & churn analytics (Marketing)</h3>
+            <span class="project-tag">Machine Learning & XAI</span>
+            <h3>Explainable AI : Segmentation comportementale E-commerce (Olist)</h3>
           </div>
 
           <p class="project-context">
-            <strong>Contexte :</strong> en CRM, l’enjeu est d’identifier des segments à forte valeur et d’anticiper les risques de churn
-            afin d’adapter les actions marketing et commerciales.
+            <strong>Contexte :</strong> Les segmentations non supervisées (Clustering) produisent souvent des "boîtes noires". 
+            L'objectif est de segmenter une base de 90 000+ clients E-commerce, puis de traduire l'algorithme en règles d'activation CRM lisibles par le Marketing.
           </p>
 
           <div class="project-body">
             <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
             <ul class="project-bullets">
-              <li>Analyse exploratoire des données clients et comportementales.</li>
-              <li>Construction de segmentations (logique RFM / comportements d’achat) pour mieux cibler.</li>
-              <li>Préparation de datasets analytiques pour des usages de classification / churn (approche orientée métier).</li>
-              <li>Contribution à des projets de segmentation et recommandation (stage Tagus Drone – logique data appliquée).</li>
+              <li><strong>Feature Engineering expert :</strong> Dépassement du modèle RFM classique par l'intégration de variables comportementales (sensibilité logistique, usage du crédit, jours d'achat).</li>
+              <li><strong>Modélisation non supervisée :</strong> Standardisation et clustering K-Means avec justification mathématique du nombre de clusters (K=8 via Silhouette Score).</li>
+              <li><strong>Intelligence Artificielle Explicable (XAI) :</strong> Entraînement de Surrogate Models (Random Forest) pour extraire l'importance des variables via <strong>SHAP Values</strong>.</li>
+              <li><strong>Data Storytelling :</strong> Traduction du modèle en un Arbre de Décision lisible pour définir 8 Personas et leurs plans d'action CRM respectifs.</li>
             </ul>
 
             <p class="project-impact">
-              <strong>Résultat :</strong> compréhension améliorée des profils clients et base de travail pour des actions plus ciblées.
+              <strong>Résultat :</strong> Identification d'insights inattendus (le jour d'achat et le crédit priment sur le montant) et création d'une matrice de ciblage métier 100% actionnable.
             </p>
           </div>
 
           <div class="tech-stack">
             <span>Python</span>
-            <span>SQL</span>
-            <span>Pandas</span>
             <span>Scikit-learn</span>
-            <span>Segmentation</span>
-            <span>RFM</span>
+            <span>SHAP / XAI</span>
+            <span>K-Means</span>
+            <span>Feature Engineering</span>
           </div>
 
           <div class="project-links">
-           <a class="btn-link" href="projet-segmentation-ml/projet-3.html">
+            <a class="btn-link" href="projet-segmentation-ml/projet-3.html">
               <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
             </a>
-            <a class="btn-link" href="https://colab.research.google.com/drive/1fgJ6UZf62ooyKs0TqMx2M9OmQ1Q5uM2P?usp=sharing" target="_blank" rel="noopener">
+            <a class="btn-link" href="#" target="_blank" rel="noopener">
               <i class="fa-brands fa-python"></i> Notebook ML
             </a>
           </div>
