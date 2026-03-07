@@ -3,120 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Interactif CRM | D3.js</title>
+    <title>Dashboard Incrémental CRM | D3.js</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     
     <style>
         :root {
             --primary: #0A2540;
-            --email-color: #4682b4;
-            --sms-color: #1e90ff;
-            --control-color: #cccccc;
+            --email-color: #007BFF;
+            --sms-color: #F5A623;
+            --positive: #28a745;
+            --negative: #dc3545;
             --bg-light: #f4f7f6;
         }
-        body {
-            font-family: 'Open Sans', sans-serif;
-            margin: 0; padding: 0;
-            background-color: var(--bg-light);
-            color: #333;
-        }
-        .header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        body { font-family: 'Open Sans', sans-serif; margin: 0; background-color: var(--bg-light); color: #333; }
+        
+        .header { background-color: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { margin: 0; font-family: 'Poppins', sans-serif; font-size: 1.5rem; }
-        .back-btn {
-            color: white; text-decoration: none; border: 1px solid white;
-            padding: 5px 15px; border-radius: 5px; font-size: 0.9rem;
-        }
+        .back-btn { color: white; text-decoration: none; border: 1px solid white; padding: 5px 15px; border-radius: 5px; font-size: 0.9rem; transition: 0.3s; }
         .back-btn:hover { background-color: white; color: var(--primary); }
         
-        .dashboard-container {
-            max-width: 1200px; margin: 2rem auto; padding: 0 1rem;
-        }
-        
+        .dashboard-container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .instruction { text-align: center; color: #666; font-style: italic; margin-bottom: 2rem; }
+
         /* KPIs Cards */
-        .kpi-row {
-            display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
-        }
-        .kpi-card {
-            flex: 1; min-width: 200px; background: white;
-            padding: 1.5rem; border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            text-align: center; border-top: 4px solid var(--primary);
-        }
-        .kpi-card h3 { margin: 0; color: #666; font-size: 0.9rem; text-transform: uppercase; }
-        .kpi-card .value { font-size: 2rem; font-weight: bold; color: var(--primary); margin-top: 10px; }
-        
+        .kpi-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .kpi-card { flex: 1; min-width: 200px; background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--primary); }
+        .kpi-card h3 { margin: 0; color: #666; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;}
+        .kpi-card .value { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-top: 10px; font-family: 'Poppins', sans-serif;}
+        .kpi-card .sub-value { font-size: 0.85rem; color: #888; margin-top: 5px; }
+
         /* Charts Grid */
-        .charts-row {
-            display: flex; gap: 2rem; flex-wrap: wrap;
-        }
-        .chart-container {
-            flex: 1; min-width: 300px; background: white;
-            padding: 1.5rem; border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .chart-title {
-            text-align: center; font-family: 'Poppins', sans-serif; color: var(--primary); margin-bottom: 1rem;
-        }
+        .charts-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem; }
+        .chart-container { flex: 1; min-width: 400px; background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .chart-title { text-align: center; font-family: 'Poppins', sans-serif; font-size: 1.1rem; color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 10px;}
         
         /* Tooltip */
-        .tooltip {
-            position: absolute; text-align: center; padding: 8px; font-size: 0.85rem;
-            background: rgba(0, 0, 0, 0.8); color: white; border-radius: 4px;
-            pointer-events: none; opacity: 0; transition: opacity 0.2s;
-        }
+        .tooltip { position: absolute; text-align: left; padding: 12px; font-size: 0.85rem; background: rgba(10, 37, 64, 0.95); color: white; border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10; line-height: 1.4;}
+        .tooltip strong { color: #4dc0b5; }
         
-        .instruction {
-            text-align: center; color: #666; font-style: italic; margin-bottom: 1rem;
-        }
-
         svg { width: 100%; height: 100%; }
+        .axis-label { font-size: 12px; font-family: 'Open Sans', sans-serif; fill: #666; }
+        .grid line { stroke: #eaeaea; }
+        .grid path { stroke-width: 0; }
+        .zero-line { stroke: #333; stroke-width: 1.5px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Analyse Incrémentale CRM</h1>
-        <a href="projet-1.html" class="back-btn">Retour au Projet</a>
+        <h1>📊 Dashboard Incrémental (A/B Test)</h1>
+        <a href="projet-1.html" class="back-btn">Retour à l'étude</a>
     </div>
 
     <div class="dashboard-container">
-        <p class="instruction">💡 <strong>Interactivité D3.js :</strong> Survolez les barres du premier graphique pour filtrer automatiquement les KPIs et le graphique en anneau selon le segment sélectionné.</p>
+        <p class="instruction">💡 Analyse de l'impact réel des campagnes Email et SMS par rapport à un Groupe Témoin (Control Group).</p>
         
         <div class="kpi-row">
-            <div class="kpi-card">
-                <h3>CA Généré</h3>
-                <div class="value" id="kpi-ca">0 €</div>
+            <div class="kpi-card" style="border-top-color: #28a745;">
+                <h3>CA Incrémental (Net)</h3>
+                <div class="value" id="kpi-ca-inc">0 €</div>
+                <div class="sub-value">CA généré *uniquement* grâce à la campagne</div>
             </div>
-            <div class="kpi-card">
-                <h3>Acheteurs</h3>
-                <div class="value" id="kpi-buyers">0</div>
+            <div class="kpi-card" style="border-top-color: #007BFF;">
+                <h3>Coût d'envoi total</h3>
+                <div class="value" id="kpi-cost">0 €</div>
+                <div class="sub-value">Budget investi (Email + SMS)</div>
             </div>
-            <div class="kpi-card">
-                <h3>Clients Ciblés</h3>
-                <div class="value" id="kpi-targets">0</div>
-            </div>
-            <div class="kpi-card">
-                <h3>Panier Moyen</h3>
-                <div class="value" id="kpi-aov">0 €</div>
+            <div class="kpi-card" style="border-top-color: #6f42c1;">
+                <h3>ROI Net Global</h3>
+                <div class="value" id="kpi-roi">0%</div>
+                <div class="sub-value">Rentabilité de l'opération</div>
             </div>
         </div>
 
         <div class="charts-row">
-            <div class="chart-container" style="flex: 1.5;">
-                <h2 class="chart-title">Taux de Conversion par Segment & Canal</h2>
-                <div id="bar-chart" style="height: 350px;"></div>
+            <div class="chart-container">
+                <h2 class="chart-title">1. Uplift de Conversion par Segment (en pts)</h2>
+                <div id="uplift-chart" style="height: 350px;"></div>
             </div>
-            <div class="chart-container" style="flex: 1;">
-                <h2 class="chart-title" id="donut-title">Répartition du CA (Global)</h2>
-                <div id="donut-chart" style="height: 350px;"></div>
+            <div class="chart-container">
+                <h2 class="chart-title">2. ROI Net par Canal et par Segment (%)</h2>
+                <div id="roi-chart" style="height: 350px;"></div>
             </div>
         </div>
     </div>
@@ -125,235 +93,172 @@
 
     <script>
         // ----------------------------------------------------
-        // 1. LES DONNÉES (Générées depuis le script Python)
+        // 1. GESTION DES DONNÉES (Fetch ou Fallback Local)
         // ----------------------------------------------------
-        const dataset = [
-            { segment: "1_VIP", channel: "Email", targets: 250, buyers: 84, revenue: 43500 },
-            { segment: "1_VIP", channel: "SMS", targets: 245, buyers: 92, revenue: 40000 },
-            { segment: "1_VIP", channel: "Témoin", targets: 61, buyers: 26, revenue: 16000 },
-            
-            { segment: "2_Regulier", channel: "Email", targets: 610, buyers: 77, revenue: 31000 },
-            { segment: "2_Regulier", channel: "SMS", targets: 620, buyers: 75, revenue: 28000 },
-            { segment: "2_Regulier", channel: "Témoin", targets: 134, buyers: 13, revenue: 8000 },
-            
-            { segment: "3_En_Risque", channel: "Email", targets: 209, buyers: 15, revenue: 4500 },
-            { segment: "3_En_Risque", channel: "SMS", targets: 238, buyers: 19, revenue: 5200 },
-            { segment: "3_En_Risque", channel: "Témoin", targets: 67, buyers: 6, revenue: 2000 }
+        const fallbackData = [
+            {"Segment": "1_VIP", "Canal": "Email", "Cibles": 1928, "Uplift_pts": -0.2, "Significatif": false, "Cout_Campagne": 3.8, "CA_Incremental": -150, "ROI_Net_Pct": -3900},
+            {"Segment": "1_VIP", "Canal": "SMS", "Cibles": 1950, "Uplift_pts": -0.5, "Significatif": false, "Cout_Campagne": 78, "CA_Incremental": -500, "ROI_Net_Pct": -641},
+            {"Segment": "2_Regulier", "Canal": "Email", "Cibles": 4500, "Uplift_pts": 2.7, "Significatif": true, "Cout_Campagne": 9, "CA_Incremental": 2530, "ROI_Net_Pct": 28000},
+            {"Segment": "2_Regulier", "Canal": "SMS", "Cibles": 4480, "Uplift_pts": 2.2, "Significatif": true, "Cout_Campagne": 179.2, "CA_Incremental": 2100, "ROI_Net_Pct": 1071},
+            {"Segment": "3_En_Risque", "Canal": "Email", "Cibles": 800, "Uplift_pts": 1.5, "Significatif": true, "Cout_Campagne": 1.6, "CA_Incremental": 480, "ROI_Net_Pct": 29900},
+            {"Segment": "3_En_Risque", "Canal": "SMS", "Cibles": 820, "Uplift_pts": 1.8, "Significatif": true, "Cout_Campagne": 32.8, "CA_Incremental": 590, "ROI_Net_Pct": 1698}
         ];
 
-        // Calcul du taux de conversion
-        dataset.forEach(d => {
-            d.conversion = (d.buyers / d.targets) * 100;
-        });
+        async function loadData() {
+            try {
+                // Tente de charger le fichier json exporté depuis Colab
+                const response = await fetch("data_crm_incremental.json");
+                if (!response.ok) throw new Error("Fichier local non trouvé, utilisation du fallback.");
+                return await response.json();
+            } catch (error) {
+                console.log(error.message);
+                return fallbackData; // Si CORS error (local) ou fichier manquant
+            }
+        }
 
-        const colors = { "Email": "#4682b4", "SMS": "#1e90ff", "Témoin": "#cccccc" };
-        const segments = ["1_VIP", "2_Regulier", "3_En_Risque"];
-        const channels = ["Email", "SMS", "Témoin"];
+        const colors = { "Email": "#007BFF", "SMS": "#F5A623" };
+        const formatMoney = d3.format(",.0f");
+        const formatPct = d3.format(",.0f");
+        const tooltip = d3.select("#tooltip");
 
         // ----------------------------------------------------
-        // 2. FONCTIONS DE MISE À JOUR (Interactivité)
+        // 2. MISE À JOUR DES KPIs
         // ----------------------------------------------------
-        
-        // Formateur de monnaie
-        const formatEur = d3.format(",.0f");
-
-        // Met à jour les 4 cartes KPI
         function updateKPIs(data) {
-            const totalRev = d3.sum(data, d => d.revenue);
-            const totalBuyers = d3.sum(data, d => d.buyers);
-            const totalTargets = d3.sum(data, d => d.targets);
-            const aov = totalBuyers > 0 ? totalRev / totalBuyers : 0;
+            const totalCost = d3.sum(data, d => Math.max(0, d.Cout_Campagne));
+            const totalIncRev = d3.sum(data, d => d.CA_Incremental);
+            const globalROI = totalCost > 0 ? ((totalIncRev - totalCost) / totalCost) * 100 : 0;
 
-            // Animation des compteurs
-            d3.select("#kpi-ca").transition().duration(500)
-              .tween("text", function() {
-                  const i = d3.interpolateRound(parseInt(this.textContent.replace(/\D/g, '')) || 0, totalRev);
-                  return function(t) { this.textContent = formatEur(i(t)) + " €"; };
-              });
-              
-            d3.select("#kpi-buyers").text(totalBuyers);
-            d3.select("#kpi-targets").text(totalTargets);
-            d3.select("#kpi-aov").text(formatEur(aov) + " €");
-        }
-
-        // Met à jour le Donut Chart
-        function updateDonut(data, segmentName = "Global") {
-            // Agréger le CA par canal
-            const aggregated = d3.rollup(data, v => d3.sum(v, d => d.revenue), d => d.channel);
-            const pieData = Array.from(aggregated, ([channel, revenue]) => ({channel, revenue}));
-            
-            document.getElementById("donut-title").innerText = `Répartition CA (${segmentName})`;
-
-            const width = document.getElementById("donut-chart").clientWidth;
-            const height = 350;
-            const margin = 20;
-            const radius = Math.min(width, height) / 2 - margin;
-
-            // Nettoyer l'ancien svg
-            d3.select("#donut-chart").selectAll("*").remove();
-
-            const svg = d3.select("#donut-chart")
-              .append("svg")
-                .attr("viewBox", `0 0 ${width} ${height}`)
-              .append("g")
-                .attr("transform", `translate(${width/2},${height/2})`);
-
-            const pie = d3.pie().value(d => d.revenue).sort(null);
-            const data_ready = pie(pieData);
-
-            const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.8);
-            const arcHover = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.9); // Pour l'effet hover
-
-            svg.selectAll('path')
-              .data(data_ready)
-              .join('path')
-              .attr('d', arc)
-              .attr('fill', d => colors[d.data.channel])
-              .attr("stroke", "white")
-              .style("stroke-width", "2px")
-              .style("opacity", 0)
-              .transition().duration(800)
-              .style("opacity", 1)
-              .attrTween("d", function(d) {
-                  const i = d3.interpolate({startAngle: 0, endAngle: 0}, d);
-                  return function(t) { return arc(i(t)); }
-              });
-
-            // Ajout des labels sur le donut
-            svg.selectAll('text')
-              .data(data_ready)
-              .join('text')
-              .text(d => d.data.channel)
-              .attr("transform", d => `translate(${arc.centroid(d)})`)
-              .style("text-anchor", "middle")
-              .style("font-size", 12)
-              .style("fill", "#fff")
-              .style("font-weight", "bold");
+            d3.select("#kpi-ca-inc").transition().duration(1000).tween("text", function() {
+                const i = d3.interpolateRound(0, totalIncRev);
+                return function(t) { this.textContent = (i(t) > 0 ? "+" : "") + formatMoney(i(t)) + " €"; };
+            });
+            d3.select("#kpi-cost").text(formatMoney(totalCost) + " €");
+            d3.select("#kpi-roi").text(formatPct(globalROI) + " %");
         }
 
         // ----------------------------------------------------
-        // 3. CONSTRUCTION DU BAR CHART (Maître des filtres)
+        // 3. FONCTION DE DESSIN DES GRAPHIQUES À BARRES
         // ----------------------------------------------------
-        function drawBarChart() {
-            const container = document.getElementById("bar-chart");
+        function drawGroupedBarChart(containerId, data, metricKey, yLabel, isPct = false) {
+            const container = document.getElementById(containerId);
             const width = container.clientWidth;
             const height = 350;
-            const margin = {top: 20, right: 20, bottom: 40, left: 40};
+            const margin = {top: 20, right: 20, bottom: 40, left: 50};
+            
+            d3.select(`#${containerId}`).selectAll("*").remove();
 
-            const svg = d3.select("#bar-chart")
-              .append("svg")
+            const svg = d3.select(`#${containerId}`)
+                .append("svg")
                 .attr("viewBox", `0 0 ${width} ${height}`)
-              .append("g")
+                .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
             const innerWidth = width - margin.left - margin.right;
             const innerHeight = height - margin.top - margin.bottom;
 
-            // Axes
-            const x0 = d3.scaleBand().domain(segments).rangeRound([0, innerWidth]).paddingInner(0.1);
+            const segments = Array.from(new Set(data.map(d => d.Segment)));
+            const channels = ["Email", "SMS"];
+
+            // Échelles
+            const x0 = d3.scaleBand().domain(segments).rangeRound([0, innerWidth]).paddingInner(0.15);
             const x1 = d3.scaleBand().domain(channels).rangeRound([0, x0.bandwidth()]).padding(0.05);
-            const y = d3.scaleLinear().domain([0, d3.max(dataset, d => d.conversion)]).nice().rangeRound([innerHeight, 0]);
+            
+            // Gérer les valeurs négatives pour l'axe Y
+            const yMin = d3.min(data, d => d[metricKey]) < 0 ? d3.min(data, d => d[metricKey]) * 1.2 : 0;
+            const yMax = d3.max(data, d => d[metricKey]) * 1.2;
+            const y = d3.scaleLinear().domain([yMin, yMax]).nice().rangeRound([innerHeight, 0]);
+
+            // Grille horizontale
+            svg.append("g")
+                .attr("class", "grid")
+                .call(d3.axisLeft(y).tickSize(-innerWidth).tickFormat(""))
+                .style("stroke-dasharray", "3,3")
+                .style("opacity", 0.3);
+
+            // Axes
+            svg.append("g")
+                .attr("transform", `translate(0,${y(0)})`) // L'axe X se place au niveau du zéro
+                .call(d3.axisBottom(x0).tickSizeOuter(0))
+                .selectAll("text")
+                .attr("class", "axis-label")
+                .attr("y", d => y(0) === innerHeight ? 10 : innerHeight - y(0) + 10); // Ajuste le texte si y(0) bouge
+
+            // Ligne du zéro renforcée
+            svg.append("line")
+                .attr("class", "zero-line")
+                .attr("x1", 0).attr("x2", innerWidth)
+                .attr("y1", y(0)).attr("y2", y(0));
 
             svg.append("g")
-              .attr("transform", `translate(0,${innerHeight})`)
-              .call(d3.axisBottom(x0))
-              .style("font-size", "12px")
-              .style("font-family", "Open Sans");
+                .call(d3.axisLeft(y).ticks(6).tickFormat(d => isPct ? d + "%" : d))
+                .attr("class", "axis-label");
 
-            svg.append("g")
-              .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + "%"))
-              .style("font-size", "12px");
-
-            const tooltip = d3.select("#tooltip");
-
-            // Création des barres groupées
+            // Groupes de barres
             const segmentGroups = svg.selectAll(".segment-group")
-              .data(segments)
-              .join("g")
+                .data(segments)
+                .join("g")
                 .attr("class", "segment-group")
                 .attr("transform", d => `translate(${x0(d)},0)`);
 
+            // Barres
             segmentGroups.selectAll("rect")
-              .data(d => dataset.filter(item => item.segment === d))
-              .join("rect")
-                .attr("x", d => x1(d.channel))
-                .attr("y", innerHeight)
+                .data(d => data.filter(item => item.Segment === d))
+                .join("rect")
+                .attr("x", d => x1(d.Canal))
+                .attr("y", y(0))
                 .attr("width", x1.bandwidth())
                 .attr("height", 0)
-                .attr("fill", d => colors[d.channel])
-                .attr("rx", 3) // Bords arrondis
-                // ANIMATION AU CHARGEMENT
-                .transition().duration(800).delay((d, i) => i * 100)
-                .attr("y", d => y(d.conversion))
-                .attr("height", d => innerHeight - y(d.conversion));
-
-            // INTERACTIONS CROSS-FILTERING (C'est la magie D3)
-            segmentGroups.selectAll("rect")
-              .on("mouseover", function(event, d) {
-                  // Style de la barre survolée
-                  d3.selectAll("rect").style("opacity", 0.3); // Grise les autres
-                  d3.select(this).style("opacity", 1);
-                  
-                  // Tooltip
-                  tooltip.style("opacity", 1)
-                         .html(`<b>${d.channel}</b><br>Conv: ${d.conversion.toFixed(1)}%<br>Acheteurs: ${d.buyers}`)
-                         .style("left", (event.pageX + 10) + "px")
-                         .style("top", (event.pageY - 28) + "px");
-
-                  // MISE À JOUR DU DONUT ET DES KPIS POUR CE SEGMENT !
-                  const filteredData = dataset.filter(item => item.segment === d.segment);
-                  updateKPIs(filteredData);
-                  updateDonut(filteredData, d.segment);
-              })
-              .on("mousemove", function(event) {
-                  tooltip.style("left", (event.pageX + 10) + "px")
-                         .style("top", (event.pageY - 28) + "px");
-              })
-              .on("mouseout", function() {
-                  // Rétablir le style
-                  d3.selectAll("rect").style("opacity", 1);
-                  tooltip.style("opacity", 0);
-                  
-                  // RÉTABLIR LE DONUT ET LES KPIS GLOBAUX
-                  updateKPIs(dataset);
-                  updateDonut(dataset);
-              });
+                .attr("fill", d => colors[d.Canal])
+                .attr("rx", 3)
+                .on("mouseover", function(event, d) {
+                    d3.selectAll("rect").style("opacity", 0.4);
+                    d3.select(this).style("opacity", 1).attr("stroke", "#333").attr("stroke-width", 1);
+                    
+                    const val = isPct ? d[metricKey].toFixed(1) + "%" : d[metricKey].toFixed(2);
+                    const sig = d.Significatif ? "<span style='color:#28a745'>Oui</span>" : "<span style='color:#dc3545'>Non</span>";
+                    
+                    tooltip.style("opacity", 1)
+                        .html(`<strong>Segment:</strong> ${d.Segment}<br>
+                               <strong>Canal:</strong> ${d.Canal}<br>
+                               <strong>Valeur:</strong> ${val}<br>
+                               <strong>Stat. Significatif:</strong> ${sig}`)
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 40) + "px");
+                })
+                .on("mousemove", event => tooltip.style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 40) + "px"))
+                .on("mouseout", function() {
+                    d3.selectAll("rect").style("opacity", 1).attr("stroke", "none");
+                    tooltip.style("opacity", 0);
+                })
+                // Animation correcte (Gère barres positives et négatives)
+                .transition().duration(1000).delay((d, i) => i * 150)
+                .attr("y", d => d[metricKey] >= 0 ? y(d[metricKey]) : y(0))
+                .attr("height", d => Math.abs(y(d[metricKey]) - y(0)));
 
             // Légende
             const legend = svg.append("g")
-              .attr("font-family", "sans-serif")
-              .attr("font-size", 10)
-              .attr("text-anchor", "end")
-              .selectAll("g")
-              .data(channels)
-              .join("g")
-                .attr("transform", (d, i) => `translate(0,${i * 20})`);
-
-            legend.append("rect")
-                .attr("x", innerWidth - 19)
-                .attr("width", 19)
-                .attr("height", 19)
-                .attr("fill", d => colors[d]);
-
-            legend.append("text")
-                .attr("x", innerWidth - 24)
-                .attr("y", 9.5)
-                .attr("dy", "0.32em")
-                .text(d => d);
+                .attr("transform", `translate(${innerWidth - 100}, 0)`);
+            
+            channels.forEach((channel, i) => {
+                const row = legend.append("g").attr("transform", `translate(0, ${i * 20})`);
+                row.append("rect").attr("width", 12).attr("height", 12).attr("fill", colors[channel]);
+                row.append("text").attr("x", 18).attr("y", 10).text(channel).style("font-size", "12px");
+            });
         }
 
         // ----------------------------------------------------
-        // 4. INITIALISATION DU DASHBOARD
+        // 4. INITIALISATION
         // ----------------------------------------------------
-        updateKPIs(dataset);
-        updateDonut(dataset);
-        drawBarChart();
+        loadData().then(data => {
+            updateKPIs(data);
+            drawGroupedBarChart("uplift-chart", data, "Uplift_pts", "Uplift", false);
+            drawGroupedBarChart("roi-chart", data, "ROI_Net_Pct", "ROI", true);
 
-        // Rendre responsive
-        window.addEventListener("resize", () => {
-            d3.select("#bar-chart").selectAll("*").remove();
-            drawBarChart();
-            updateDonut(dataset);
+            window.addEventListener("resize", () => {
+                drawGroupedBarChart("uplift-chart", data, "Uplift_pts", "Uplift", false);
+                drawGroupedBarChart("roi-chart", data, "ROI_Net_Pct", "ROI", true);
+            });
         });
     </script>
 </body>
