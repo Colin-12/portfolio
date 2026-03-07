@@ -56,14 +56,14 @@
 
         <div class="project-body-content">
             <h3> 1. L'enjeu : Dépasser le RFM et la "Boîte Noire"</h3>
-            <p>Le modèle RFM classique (Récence, Fréquence, Montant) montre ses limites sur un dataset où la majorité des clients n'ont effectué qu'un seul achat. Mon objectif est double :</p>
+            <p>Bien que la segmentation RFM (Récence, Fréquence, Montant) soit le "couteau suisse" du marketing traditionnel, elle reste une méthode descriptive et statique. Dès que l'on cherche à faire de la prédiction fine ou à comprendre la psychologie du client, elle s'essouffle. Mon objectif est double :</p>
             <ul>
                 <li>Créer des segments basés sur de <strong>véritables comportements d'achat</strong> (sensibilité aux frais de port, paiement fractionné, jour d'achat).</li>
-                <li>Utiliser des <strong>Modèles de Substitution (Surrogate Models)</strong> et les valeurs <strong>SHAP</strong> pour traduire ces algorithmes complexes en règles métiers simples pour l'équipe Marketing.</li>
+                <li>Utiliser des <strong>Modèles de Substitution (Surrogate Models)</strong> et les valeurs <strong>SHAP</strong> pour traduire la complexité de ces algorithmes en règles métiers simples pour l'équipe Marketing.</li>
             </ul>
 
             <h3> 2. Feature Engineering & Clustering</h3>
-            <p>J'ai consolidé les données de plus de 90 000 clients uniques. J'ai enrichi le profil client avec des variables comportementales clés :</p>
+            <p>J'ai consolidé les données de plus de 90 000 clients uniques. J'ai enrichi le profil client avec des variables comportementales :</p>
             <ul>
                 <li><strong>Weekend_Shopper :</strong> Le client a-t-il acheté le week-end ou en semaine ?</li>
                 <li><strong>Avg_Installments :</strong> Le nombre de mensualités choisies (Indicateur de pouvoir d'achat contraint).</li>
@@ -71,24 +71,30 @@
             </ul>
             <p>L'algorithme K-Means a identifié <strong>8 clusters optimaux</strong> (validés par un pic net du score de Silhouette).</p>
 
+            <div class="image-container">
+                <img src="silhouette.png" alt="Score de silhouette et méthode du coude">
+                <p class="image-caption">Fig 1 : La méthode du coude ne montre pas vraiment de choix interessant. Par contre le score silhouette indique que 8 clusters seront assez sont denses et bien séparés.</p>
+            </div>
+            
             <h3> 3. IA Explicable (XAI) : La surprise comportementale</h3>
             
             <p>L'extraction de l'importance des variables via l'approche <strong>SHAP (SHapley Additive exPlanations)</strong> sur un Random Forest a révélé un insight métier majeur :</p>
             
             <div class="image-container">
                 <img src="shap-plot.png" alt="SHAP Summary Plot de la segmentation">
-                <p class="image-caption">Fig 1 : L'analyse SHAP prouve que les habitudes de vie (Weekend_Shopper) et les contraintes financières (Avg_Installments) dominent totalement la segmentation, reléguant le Montant dépensé au 4ème plan.</p>
+                <p class="image-caption">Fig 2 : L'analyse SHAP prouve que les habitudes de vie (Weekend_Shopper) et les contraintes financières (Avg_Installments) dominent totalement la segmentation, reléguant le Montant dépensé au 4ème plan.</p>
             </div>
 
             <p>Pour fournir des règles actionnables au CRM, j'ai généré un <strong>Arbre de Décision (Decision Tree)</strong> limité à une profondeur de 3 nœuds (soit 8 feuilles, une pour chaque cluster).</p>
 
             <div class="image-container">
                 <img src="decision-tree.png" alt="Arbre de décision explicatif des clusters">
-                <p class="image-caption">Fig 2 : Extraction de règles "If-Then-Else". La première séparation de la base se fait logiquement sur la nature de l'acheteur (Semaine vs Week-end).</p>
+                <p class="image-caption">Fig 3 : Extraction de règles "If-Then-Else". La première séparation de la base se fait logiquement sur la nature de l'acheteur (Semaine vs Week-end).</p>
             </div>
 
             <h3> 4. Activation CRM & Recommandations</h3>
-            <p>L'explicabilité du modèle permet de définir des stratégies de ciblage radicalement différentes selon les personas :</p>
+            <h4> Option 1</h4>
+            <p>L'explicabilité du modèle permet de définir des stratégies de ciblage radicalement différentes selon les personas, dans cette option, j'ai proposé 3 grands groupes définis comme suit :</p>
 
             <table class="action-table">
                 <thead>
@@ -117,7 +123,8 @@
                 </tbody>
             </table>
 
-            <h3>🚀 4. Activation CRM & Recommandations (Les 8 Personas)</h3>
+            <h3>4. Activation CRM & Recommandations </h3>
+            <h4> Option 2 - (Les 8 Personas)</h4>
             <p>L'extraction des règles de l'Arbre de Décision nous permet de dresser un profil exact des 8 clusters identifiés. La base se scinde d'abord culturellement (Semaine vs Week-end), puis financièrement (Paiement fractionné et Frais de port).</p>
 
             <table class="action-table">
@@ -186,7 +193,7 @@
             <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
 
             <h3>Accéder au code source</h3>
-            <p>Découvrez la pipeline complète de Machine Learning, de l'ETL complexe (5 tables jointes) à l'analyse XAI :</p>
+            <p>Découvrez la pipeline complète de Machine Learning, de l'ETL (5 tables jointes) à l'analyse XAI :</p>
             
             <div class="action-buttons">
                 <a href="https://colab.research.google.com/drive/1fgJ6UZf62ooyKs0TqMx2M9OmQ1Q5uM2P?usp=sharing" target="_blank" class="btn btn-secondary">
