@@ -1,1 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet 3 | Segmentation XAI - Armand K.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../style.css">
+    
+    <style>
+        .project-page { padding: 100px 5% 40px; background-color: #fff; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 2rem; color: var(--accent-color); font-weight: 600; }
+        .back-link:hover { text-decoration: underline; }
+        .disclaimer-box { background-color: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin-bottom: 2rem; font-style: italic; color: #555; font-size: 0.9rem; }
+        .project-body-content h3 { color: var(--primary-color); margin: 2rem 0 1rem; font-size: 1.5rem;}
+        .project-body-content p, .project-body-content li { margin-bottom: 1rem; color: #444; font-size: 1.05rem; line-height: 1.7; }
+        .project-body-content ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
+        .dataset-link { display: inline-flex; align-items: center; gap: 8px; background: #eef2f7; padding: 8px 15px; border-radius: 5px; color: var(--primary-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 2rem; }
+        .highlight-box { background-color: #f0f4f8; border: 1px solid #dbe3ee; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+        
+        .image-container { text-align: center; margin: 2rem 0; border: 1px solid #eee; padding: 1rem; border-radius: 8px; background: #fafafa; }
+        .image-container img { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .image-caption { font-size: 0.9rem; color: #666; margin-top: 10px; font-style: italic; }
+        
+        .action-table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.95rem; }
+        .action-table th, .action-table td { padding: 12px 15px; border: 1px solid #ddd; text-align: left; }
+        .action-table th { background-color: var(--primary-color); color: white; font-weight: 600; }
+        .action-table tr:nth-child(even) { background-color: #f9f9f9; }
+        
+        .action-buttons { display: flex; gap: 15px; margin-top: 2rem; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
 
+    <nav class="navbar">
+        <div class="logo">Armand K.</div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Retour au Portfolio</a></li>
+        </ul>
+    </nav>
+
+    <main class="project-page">
+        <a href="../index.html#projects" class="back-link">&larr; Retour aux projets</a>
+        
+        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Explainable Customer Segmentation (XAI)</h1>
+        
+        <div class="disclaimer-box">
+            <i class="fa-solid fa-circle-info"></i> <strong>Note :</strong> Ce projet utilise le dataset public e-commerce brésilien d'Olist (Kaggle). L'objectif est de démontrer une approche avancée alliant Machine Learning non supervisé et IA explicable (XAI) pour créer des campagnes CRM hyper-ciblées.
+        </div>
+
+        <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" target="_blank" class="dataset-link">
+            <i class="fa-solid fa-database"></i> Dataset : Brazilian E-Commerce Public Dataset by Olist
+        </a>
+
+        <div class="project-body-content">
+            <h3> 1. L'enjeu : Dépasser le RFM et la "Boîte Noire"</h3>
+            <p>Le modèle RFM classique (Récence, Fréquence, Montant) montre ses limites sur un dataset où la majorité des clients n'ont effectué qu'un seul achat. Mon objectif est double :</p>
+            <ul>
+                <li>Créer des segments basés sur de <strong>véritables comportements d'achat</strong> (sensibilité aux frais de port, paiement fractionné, jour d'achat).</li>
+                <li>Utiliser des <strong>Modèles de Substitution (Surrogate Models)</strong> et les valeurs <strong>SHAP</strong> pour traduire ces algorithmes complexes en règles métiers simples pour l'équipe Marketing.</li>
+            </ul>
+
+            <h3> 2. Feature Engineering & Clustering</h3>
+            <p>J'ai consolidé les données de plus de 90 000 clients uniques. J'ai enrichi le profil client avec des variables comportementales clés :</p>
+            <ul>
+                <li><strong>Weekend_Shopper :</strong> Le client a-t-il acheté le week-end ou en semaine ?</li>
+                <li><strong>Avg_Installments :</strong> Le nombre de mensualités choisies (Indicateur de pouvoir d'achat contraint).</li>
+                <li><strong>Avg_Freight_Ratio :</strong> Tolérance au poids des frais de port dans la facture totale.</li>
+            </ul>
+            <p>L'algorithme K-Means a identifié <strong>8 clusters optimaux</strong> (validés par un pic net du score de Silhouette).</p>
+
+            <h3> 3. IA Explicable (XAI) : La surprise comportementale</h3>
+            
+            <p>L'extraction de l'importance des variables via l'approche <strong>SHAP (SHapley Additive exPlanations)</strong> sur un Random Forest a révélé un insight métier majeur :</p>
+            
+            <div class="image-container">
+                <img src="shap-plot.png" alt="SHAP Summary Plot de la segmentation">
+                <p class="image-caption">Fig 1 : L'analyse SHAP prouve que les habitudes de vie (Weekend_Shopper) et les contraintes financières (Avg_Installments) dominent totalement la segmentation, reléguant le Montant dépensé au 4ème plan.</p>
+            </div>
+
+            <p>Pour fournir des règles actionnables au CRM, j'ai généré un <strong>Arbre de Décision (Decision Tree)</strong> limité à une profondeur de 3 nœuds (soit 8 feuilles, une pour chaque cluster).</p>
+
+            <div class="image-container">
+                <img src="decision-tree.png" alt="Arbre de décision explicatif des clusters">
+                <p class="image-caption">Fig 2 : Extraction de règles "If-Then-Else". La première séparation de la base se fait logiquement sur la nature de l'acheteur (Semaine vs Week-end).</p>
+            </div>
+
+            <h3> 4. Activation CRM & Recommandations</h3>
+            <p>L'explicabilité du modèle permet de définir des stratégies de ciblage radicalement différentes selon les personas :</p>
+
+            <table class="action-table">
+                <thead>
+                    <tr>
+                        <th>Cluster (Persona)</th>
+                        <th>Caractéristique Clé (Règles XAI)</th>
+                        <th>Action CRM Recommandée</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Acheteurs Week-end (Budget Contraint)</strong></td>
+                        <td>Achète le week-end ET utilise beaucoup de mensualités (> 7 fois).</td>
+                        <td><strong>Campagne ciblée :</strong> Envoi de SMS le vendredi soir mettant en avant des offres "Buy Now, Pay Later" (Paiement en 10x sans frais).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Acheteurs Semaine (Sensibles Logistique)</strong></td>
+                        <td>Achète en semaine ET refuse les frais de port élevés (Ratio < 26%).</td>
+                        <td><strong>Incentive :</strong> Ne pas offrir de réduction sur le produit, mais envoyer un email le mardi proposant "Frais de port offerts sur votre prochaine commande".</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mécontents Financés</strong></td>
+                        <td>Achète en semaine, peu de mensualités, mais score d'avis très faible (< 1.8).</td>
+                        <td><strong>Service Client :</strong> Scénario anti-churn immédiat. Appel sortant pour comprendre l'insatisfaction avant toute tentative de re-ciblage promotionnel.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
+
+            <h3>Accéder au code source</h3>
+            <p>Découvrez la pipeline complète de Machine Learning, de l'ETL complexe (5 tables jointes) à l'analyse XAI :</p>
+            
+            <div class="action-buttons">
+                <a href="https://colab.research.google.com/drive/1fgJ6UZf62ooyKs0TqMx2M9OmQ1Q5uM2P?usp=sharing" target="_blank" class="btn btn-secondary">
+                    <i class="fa-brands fa-python"></i> Voir le Notebook (Google Colab)
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer" style="padding: 2rem 5%; margin-top: 4rem;">
+        <p class="copyright" style="border: none; padding: 0;">&copy; 2024 Armand Komtcheu.</p>
+    </footer>
+
+</body>
+</html>
