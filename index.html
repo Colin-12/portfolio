@@ -99,54 +99,55 @@
     <div class="projects-grid">
 
       <!-- PROJECT 1 : HERO -->
-      <article class="project-card project-card--detailed">
+<article class="project-card project-card--detailed">
         <div class="card-image project-1-bg"></div>
 
         <div class="card-content">
           <div class="project-head">
             <span class="project-tag">CRM / Marketing Analytics</span>
-            <h3>Pilotage CRM multicanal & performance commerciale (Eureden)</h3>
+            <h3>Mesure d'Incrémentalité & ROI de campagnes CRM (A/B Test)</h3>
           </div>
 
           <p class="project-context">
-            <strong>Contexte :</strong> alternance chez Eureden Distribution (réseau de magasins de proximité). Objectif : optimiser les campagnes CRM
-            (Email, SMS, Courrier) tout en respectant la pression commerciale et en mesurant l’impact réel via populations témoins.
+            <strong>Contexte :</strong> Dépasser les "Vanity Metrics" (taux d'ouverture, clics) pour calculer le véritable CA généré par une campagne. 
+            Objectif : prouver l'incrémentalité via un groupe témoin et tester la rentabilité (Email vs SMS) selon le profil client.
           </p>
 
           <div class="project-body">
             <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
             <ul class="project-bullets">
-              <li>Réalisation de ciblages CRM multicanaux en intégrant contraintes de pression marketing et règles de témoins.</li>
-              <li>Suivi et analyse des KPIs : ROI, taux de transformation, panier moyen, performance par campagne.</li>
-              <li>Production de bilans mensuels pour les équipes Marketing & Commerce + vulgarisation des résultats.</li>
-              <li>Recommandations actionnables pour orienter les décisions métiers (ciblage, arbitrage canal, intensité).</li>
+              <li><strong>Segmentation RFM :</strong> Construction d'une base à l'instant T-1 pour éviter le Data Leakage.</li>
+              <li><strong>Plan de Test (A/B/C) :</strong> Constitution rigoureuse de groupes de ciblages avec un Groupe Témoin à 10%.</li>
+              <li><strong>Tests Statistiques :</strong> Calcul de l'Uplift et validation de la significativité avec un Z-Test de proportions (SciPy / Statsmodels).</li>
+              <li><strong>Dashboarding :</strong> Développement en D3.js d'un tableau de bord de pilotage orienté ROI Net et CA Incrémental.</li>
             </ul>
 
             <p class="project-impact">
-              <strong>Résultat :</strong> mesure plus lisible de la performance par segment/canal et support direct à la décision métier.
+              <strong>Résultat :</strong> Mise en évidence d'une cannibalisation sur les clients VIP et réallocation des budgets vers l'Email pour les clients Réguliers (ROI > 20k%).
             </p>
           </div>
 
           <div class="tech-stack">
-            <span>SQL</span>
-            <span>CRM Analytics</span>
-            <span>KPI</span>
+            <span>Python</span>
+            <span>SciPy / Z-Test</span>
             <span>A/B Testing</span>
-            <span>Excel</span>
-            <span>Reporting</span>
+            <span>Incrémentalité</span>
+            <span>D3.js</span>
           </div>
 
           <div class="project-links">
-            <a class="btn-link" href="projet-crm-retail/projet-1.html" target="_blank" rel="noopener">
+            <a class="btn-link" href="projet-crm-retail/projet-1.html">
               <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
             </a>
             <a class="btn-link" href="projet-crm-retail/dashboard_d3.html" target="_blank" rel="noopener">
               <i class="fa-solid fa-chart-line"></i> Dashboard
             </a>
+            <a class="btn-link" href="https://colab.research.google.com/drive/1BSxf13vRJmmYmLcJXGXhP7gjtNcKuxRy?usp=sharing">
+              <i class="fa-regular fa-file-pdf"></i> Voir le notebook Google Colab
+            </a>
           </div>
         </div>
       </article>
-
 
       <!-- PROJECT 2 -->
       <article class="project-card project-card--detailed">
