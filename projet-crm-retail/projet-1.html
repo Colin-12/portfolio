@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+
     
     <style>
         .project-page { padding: 100px 5% 40px; background-color: #fff; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
@@ -32,6 +33,13 @@
         .step-arrow { color: var(--accent-color); font-size: 1.2rem; margin-left: 80px; }
 
         .action-buttons { display: flex; gap: 15px; margin-top: 2rem; flex-wrap: wrap; }
+
+        .results-table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; }
+        .results-table th, .results-table td { padding: 10px 12px; border: 1px solid #ddd; text-align: center; }
+        .results-table th { background-color: var(--primary-color); color: white; font-weight: 600; }
+        .results-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .sig-yes { color: #16a34a; font-weight: bold; }
+        .sig-no { color: #dc2626; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -85,30 +93,95 @@
                 </div>
             </div>
 
-            <h3>3. Insights Actionnables (Impact Business)</h3>
-            <p>Le croisement des conversions avec le groupe témoin a mis en évidence des comportements très hétérogènes. La validation statistique a permis de formuler des recommandations chiffrées :</p>
+<h3>📊 3. Résultats Statistiques & Financiers</h3>
+            <p>Le croisement des conversions entre les groupes cibles et le groupe témoin a été soumis à un <strong>test statistique de proportions (Z-test)</strong>. Un seuil de confiance de 95% (p-value < 0.05) a été utilisé pour valider la significativité de l'Uplift.</p>
 
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Segment</th>
+                        <th>Canal</th>
+                        <th>Uplift (Absolu)</th>
+                        <th>P-Value (Z-Test)</th>
+                        <th>Significatif ?</th>
+                        <th>CA Incrémental</th>
+                        <th>ROI Net</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="2" style="vertical-align: middle; font-weight: bold;">VIP</td>
+                        <td>Email</td>
+                        <td>-0.20 pts</td>
+                        <td>0.891</td>
+                        <td class="sig-no">Non</td>
+                        <td>-150 €</td>
+                        <td class="sig-no">-3900 %</td>
+                    </tr>
+                    <tr>
+                        <td>SMS</td>
+                        <td>-0.50 pts</td>
+                        <td>0.745</td>
+                        <td class="sig-no">Non</td>
+                        <td>-500 €</td>
+                        <td class="sig-no">-641 %</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" style="vertical-align: middle; font-weight: bold;">Réguliers</td>
+                        <td>Email</td>
+                        <td>+2.70 pts</td>
+                        <td>0.012</td>
+                        <td class="sig-yes">Oui</td>
+                        <td>+2 530 €</td>
+                        <td class="sig-yes">+28 000 %</td>
+                    </tr>
+                    <tr>
+                        <td>SMS</td>
+                        <td>+2.20 pts</td>
+                        <td>0.034</td>
+                        <td class="sig-yes">Oui</td>
+                        <td>+2 100 €</td>
+                        <td class="sig-yes">+1 071 %</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" style="vertical-align: middle; font-weight: bold;">En Risque</td>
+                        <td>Email</td>
+                        <td>+1.50 pts</td>
+                        <td>0.041</td>
+                        <td class="sig-yes">Oui</td>
+                        <td>+480 €</td>
+                        <td class="sig-yes">+29 900 %</td>
+                    </tr>
+                    <tr>
+                        <td>SMS</td>
+                        <td>+1.80 pts</td>
+                        <td>0.028</td>
+                        <td class="sig-yes">Oui</td>
+                        <td>+590 €</td>
+                        <td class="sig-yes">+1 698 %</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4. Insights Actionnables (Impact Business)</h3>
             <div class="highlight-box">
-                <p><strong>1. La cannibalisation des clients VIP</strong></p>
-                <p>Le groupe témoin "VIP" a converti organiquement. L'Uplift mesuré sur les VIP sollicités par Email ou SMS est négatif ou statistiquement non significatif. <strong>Recommandation :</strong> Exclure les VIP des envois promotionnels massifs permet d'économiser du budget de routage sans perdre de CA, tout en évitant la fatigue marketing.</p>
+                <p><strong>🚨 1. La cannibalisation des clients VIP</strong></p>
+                <p>Le tableau statistique montre que l'Uplift sur les VIP est négatif et <strong>non significatif (p-value > 0.05)</strong>. Le groupe témoin a converti organiquement tout aussi bien. Nous avons donc dépensé du budget de routage en pure perte sur des clients qui allaient acheter de toute façon. <strong>Recommandation :</strong> Exclure les VIP des envois promotionnels massifs pour préserver la marge et éviter la fatigue marketing.</p>
             </div>
             
             <div class="highlight-box">
-                <p><strong>2. La victoire du ROI Email sur les "Réguliers"</strong></p>
-                <p>Sur le segment Régulier, l'Email génère un Uplift de <strong>+2.7 pts</strong> (significatif, p-value < 0.05). Bien que le SMS génère aussi un uplift positif, son coût d'envoi unitaire (0.040€) écrase la marge. Le ROI Net de l'Email est largement supérieur. <strong>Recommandation :</strong> Basculer 100% de l'investissement de réactivation des "Réguliers" vers le canal Email.</p>
+                <p><strong>🏆 2. La rentabilité écrasante de l'Email</strong></p>
+                <p>Sur les segments "Réguliers" et "En Risque", l'Uplift est statistiquement validé. Cependant, l'analyse financière révèle une asymétrie majeure : bien que le SMS génère des volumes d'achats similaires, son coût d'envoi unitaire (0.040€ vs 0.002€ pour l'Email) détruit le ROI. <strong>Recommandation :</strong> L'Email doit devenir le canal exclusif de réactivation "Always-On", le SMS devant être réservé aux alertes à très forte urgence (ex: Vente Flash 4h).</p>
             </div>
 
-            <h3>4. Limites de l'exercice</h3>
+            <h3>5. Limites de l'exercice</h3>
             <div class="limits-box">
                 <p><strong>Pour aller plus loin en conditions réelles :</strong></p>
                 <ul>
-                    <li>L'assignation des campagnes a été simulée via `numpy.random`. Une vraie campagne devrait intégrer l'opt-in/opt-out (consentement RGPD).</li>
-                    <li>L'analyse repose sur une attribution "Last Click" simple. Une approche par chaîne de Markov ou valeurs de Shapley (Multi-touch attribution) affinerait le ROI en contexte omnicanal.</li>
-                    <li>La pression marketing historique (nombre de sollicitations les mois précédents) n'est pas prise en compte.</li>
+                    <li>L'assignation des campagnes a été simulée aléatoirement. Une vraie campagne devrait intégrer le consentement (opt-in/opt-out).</li>
+                    <li>L'analyse repose sur une attribution "Last Click" simple sur une fenêtre de 15 jours.</li>
                 </ul>
             </div>
-
-            <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
 
             <h3>Accéder aux Livrables</h3>
             <p>Visualisez les KPI incrémentaux via le Dashboard D3.js interactif, ou plongez dans le code statistique Python :</p>
