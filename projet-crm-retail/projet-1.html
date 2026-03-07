@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet 1 | CRM & Performance - Armand K.</title>
+    <title>Projet 1 | CRM & Incrémentalité - Armand K.</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     
     <style>
         .project-page { padding: 100px 5% 40px; background-color: #fff; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
@@ -17,11 +17,21 @@
         .project-body-content p, .project-body-content li { margin-bottom: 1rem; color: #444; font-size: 1.05rem; line-height: 1.7; }
         .project-body-content ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
         .dataset-link { display: inline-flex; align-items: center; gap: 8px; background: #eef2f7; padding: 8px 15px; border-radius: 5px; color: var(--primary-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 2rem; }
+        
         .highlight-box { background-color: #e0f2fe; border: 1px solid #bae6fd; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
         .highlight-box strong { color: #0284c7; }
-        .chart-container { text-align: center; margin: 3rem 0; }
-        .chart-container img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #eaeaea; }
-        .chart-caption { font-size: 0.9rem; color: #666; margin-top: 10px; font-style: italic; }
+        
+        .limits-box { background-color: #fff5f5; border: 1px solid #ffe3e3; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+        .limits-box strong { color: #e53e3e; }
+
+        /* Pipeline CSS pur */
+        .pipeline-container { display: flex; flex-direction: column; gap: 10px; margin: 2rem 0; padding: 1.5rem; background: #f9fafb; border-radius: 8px; border: 1px dashed #e5e7eb; }
+        .pipeline-step { display: flex; align-items: center; gap: 15px; }
+        .step-box { background: var(--primary-color); color: white; padding: 10px 15px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; min-width: 180px; text-align: center; }
+        .step-desc { font-size: 0.9rem; color: #555; }
+        .step-arrow { color: var(--accent-color); font-size: 1.2rem; margin-left: 80px; }
+
+        .action-buttons { display: flex; gap: 15px; margin-top: 2rem; flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -36,10 +46,10 @@
     <main class="project-page">
         <a href="../index.html#projects" class="back-link">&larr; Retour aux projets</a>
         
-        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Pilotage CRM multicanal & analyse d'incrémentalité</h1>
+        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Mesure de l'Incrémentalité & ROI de campagnes CRM (A/B Test)</h1>
         
         <div class="disclaimer-box">
-            <i class="fa-solid fa-circle-info"></i> <strong>Note :</strong> Ce projet est construit sur un dataset public de transactions réelles. La logique de ciblage et les campagnes ont été simulées afin de reproduire fidèlement mes méthodes d'analyse en entreprise, tout en respectant la stricte confidentialité de mes employeurs (NDA).
+            <i class="fa-solid fa-circle-info"></i> <strong>Note de transparence :</strong> Les données transactionnelles et la segmentation RFM sont <strong>réelles</strong> (basées sur le dataset public UCI). Afin de démontrer ma méthodologie métier (A/B testing, mesure d'uplift), l'assignation des clients aux canaux marketing (Email, SMS, Témoin) a été <strong>simulée aléatoirement</strong>.
         </div>
 
         <a href="https://archive.ics.uci.edu/ml/datasets/online+retail" target="_blank" class="dataset-link">
@@ -47,42 +57,72 @@
         </a>
 
         <div class="project-body-content">
-            <h3>🎯 1. Contexte & Objectif</h3>
-            <p>L'objectif de cette étude de cas est de dépasser les KPIs marketing traditionnels (taux d'ouverture, clics) pour mesurer le <strong>véritable impact incrémental</strong> d'une campagne multicanale (Email vs SMS) sur le chiffre d'affaires.</p>
+            <h3>1. Contexte & Objectif</h3>
+            <p>Dans de nombreuses entreprises, le reporting marketing s'approprie 100% du chiffre d'affaires des clients contactés. L'objectif de ce projet est de dépasser cette vision "vanity metrics" pour isoler la <strong>valeur purement incrémentale</strong> (Uplift) générée par les campagnes Email et SMS, et d'en déduire un ROI Net basé sur les coûts de routage.</p>
 
-            <h3>🛠️ 2. Modélisation Data & Méthodologie</h3>
-            <p>Pour mener cette analyse, j'ai transformé les données brutes transactionnelles en un modèle relationnel orienté CRM :</p>
-            <ul>
-                <li><strong>Nettoyage :</strong> Exclusion des retours produits et des clients non identifiés.</li>
-                <li><strong>Segmentation (Data Leakage évité) :</strong> Calcul des scores RFM (Récence, Fréquence, Montant) à l'instant <em>T-1</em> de la campagne pour classer les clients en 3 segments : VIP, Réguliers, et En Risque de Churn.</li>
-                <li><strong>A/B/C Testing :</strong> Création d'une table d'exposition ciblant les clients éligibles avec une répartition métier : 45% Email, 45% SMS, et <strong>10% Groupe Témoin (Control)</strong>.</li>
-            </ul>
-
-            <h3>📊 3. Analyse des Résultats & Insights</h3>
-            <p>Le croisement de la table d'exposition avec les achats réels sur la période promotionnelle a révélé des comportements très contrastés selon les segments :</p>
-
-            <div class="chart-container">
-                <img src="chart-crm.png" alt="Graphique Taux de conversion par segment RFM">
-                <p class="chart-caption">Fig 1 : Taux de conversion croisé (Canal marketing x Segment RFM)</p>
+            <h3>2. Pipeline de Données & Méthodologie</h3>
+            <p>Pour éviter tout "Data Leakage", j'ai reconstruit l'historique client strict à l'instant T-1 de la campagne :</p>
+            
+            <div class="pipeline-container">
+                <div class="pipeline-step">
+                    <div class="step-box"><i class="fa-solid fa-filter"></i> Nettoyage SQL/Pandas</div>
+                    <div class="step-desc">Filtrage des retours, valeurs nulles, et anomalies.</div>
+                </div>
+                <div class="step-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                <div class="pipeline-step">
+                    <div class="step-box"><i class="fa-solid fa-layer-group"></i> Segmentation RFM</div>
+                    <div class="step-desc">Score Récence, Fréquence, Montant (à T-1) -> VIP, Réguliers, En Risque.</div>
+                </div>
+                <div class="step-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                <div class="pipeline-step">
+                    <div class="step-box"><i class="fa-solid fa-shuffle"></i> Split A/B/C Test</div>
+                    <div class="step-desc">Assignation aléatoire : 10% Groupe Témoin (Control) / 45% Email / 45% SMS.</div>
+                </div>
+                <div class="step-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                <div class="pipeline-step">
+                    <div class="step-box"><i class="fa-solid fa-chart-line"></i> Z-Test & ROI</div>
+                    <div class="step-desc">Uplift absolu, CA Incrémental et test de significativité statistique (Z-test).</div>
+                </div>
             </div>
+
+            <h3>3. Insights Actionnables (Impact Business)</h3>
+            <p>Le croisement des conversions avec le groupe témoin a mis en évidence des comportements très hétérogènes. La validation statistique a permis de formuler des recommandations chiffrées :</p>
 
             <div class="highlight-box">
-                <p><strong>💡 Découverte métier majeure : L'effet de Cannibalisation</strong></p>
-                <p>Contrairement aux idées reçues, la campagne a eu un impact négatif sur nos meilleurs clients. Le groupe témoin "VIP" a converti organiquement à 42.4%, soit mieux que ceux ayant reçu un SMS ou un Email. Nous avons dépensé du budget pour solliciter des clients qui allaient acheter de toute façon, générant possiblement une fatigue marketing.</p>
-                <p>À l'inverse, l'Uplift est positif sur le segment "Régulier", où l'Email (+2.7 pts vs Témoin) et le SMS (+2.2 pts vs Témoin) ont stimulé l'achat.</p>
+                <p><strong>💡 1. La cannibalisation des clients VIP</strong></p>
+                <p>Le groupe témoin "VIP" a converti organiquement. L'Uplift mesuré sur les VIP sollicités par Email ou SMS est négatif ou statistiquement non significatif. <strong>Recommandation :</strong> Exclure les VIP des envois promotionnels massifs permet d'économiser du budget de routage sans perdre de CA, tout en évitant la fatigue marketing.</p>
+            </div>
+            
+            <div class="highlight-box">
+                <p><strong>💡 2. La victoire du ROI Email sur les "Réguliers"</strong></p>
+                <p>Sur le segment Régulier, l'Email génère un Uplift de <strong>+2.7 pts</strong> (significatif, p-value < 0.05). Bien que le SMS génère aussi un uplift positif, son coût d'envoi unitaire (0.040€) écrase la marge. Le ROI Net de l'Email est largement supérieur. <strong>Recommandation :</strong> Basculer 100% de l'investissement de réactivation des "Réguliers" vers le canal Email.</p>
             </div>
 
-            <h3>Recommandation Actionnable</h3>
-            <p>Pour la prochaine itération, le ciblage doit être optimisé : stopper les envois promotionnels massifs sur les clients VIP pour préserver la marge, et concentrer les investissements (notamment l'Email, moins coûteux) sur le segment des clients Réguliers afin de maximiser le ROI incrémental.</p>
+            <h3>4. Limites de l'exercice</h3>
+            <div class="limits-box">
+                <p><strong>Pour aller plus loin en conditions réelles :</strong></p>
+                <ul>
+                    <li>L'assignation des campagnes a été simulée via `numpy.random`. Une vraie campagne devrait intégrer l'opt-in/opt-out (consentement RGPD).</li>
+                    <li>L'analyse repose sur une attribution "Last Click" simple. Une approche par chaîne de Markov ou valeurs de Shapley (Multi-touch attribution) affinerait le ROI en contexte omnicanal.</li>
+                    <li>La pression marketing historique (nombre de sollicitations les mois précédents) n'est pas prise en compte.</li>
+                </ul>
+            </div>
 
             <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
 
-            <h3>Accéder au code source</h3>
-            <p>L'intégralité du code Python (Data Prep, Feature Engineering RFM, et Visualisation) est documentée et accessible :</p>
+            <h3>Accéder aux Livrables</h3>
+            <p>Visualisez les KPI incrémentaux via le Dashboard D3.js interactif, ou plongez dans le code statistique Python :</p>
             
-            <a href="https://colab.research.google.com/drive/1BSxf13vRJmmYmLcJXGXhP7gjtNcKuxRy?usp=sharing" target="_blank" class="btn btn-primary" style="margin-top: 1rem;">
-                <i class="fa-solid fa-code"></i> Voir le Notebook (Google Colab)
-            </a>
+            <div class="action-buttons">
+                <a href="dashboard_d3.html" target="_blank" class="btn btn-primary">
+                    <i class="fa-solid fa-chart-line"></i> Ouvrir le Dashboard Incrémental
+                </a>
+                
+                <a href="https://colab.research.google.com/drive/1BSxf13vRJmmYmLcJXGXhP7gjtNcKuxRy?usp=sharing" target="_blank" class="btn btn-secondary">
+                    <i class="fa-brands fa-python"></i> Code Python (Z-Test & RFM)
+                </a>
+            </div>
+
         </div>
     </main>
 
