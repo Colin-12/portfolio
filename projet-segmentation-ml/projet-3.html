@@ -117,6 +117,72 @@
                 </tbody>
             </table>
 
+            <h3>🚀 4. Activation CRM & Recommandations (Les 8 Personas)</h3>
+            <p>L'extraction des règles de l'Arbre de Décision nous permet de dresser un profil exact des 8 clusters identifiés. La base se scinde d'abord culturellement (Semaine vs Week-end), puis financièrement (Paiement fractionné et Frais de port).</p>
+
+            <table class="action-table">
+                <thead>
+                    <tr>
+                        <th>Cluster (Persona)</th>
+                        <th>Règles d'affectation XAI</th>
+                        <th>Action CRM & Stratégie Recommandée</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3" style="background-color: #eef2f7; color: #0A2540; font-weight: 700; text-align: center; font-size: 0.9rem;">
+                            👇 BRANCHE SEMAINE (Weekend_Shopper = Non)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cluster 1 : Le Cœur de Cible</strong></td>
+                        <td>Semaine + Frais de port faibles (<26%) + Peu de crédit (<5x).</td>
+                        <td><strong>Animation classique :</strong> Newsletters régulières les mardis/jeudis. Ciblage standard pour les nouveautés.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cluster 6 : Les Contraints</strong></td>
+                        <td>Semaine + Frais de port faibles + Fort crédit (>5x).</td>
+                        <td><strong>Conversion :</strong> Mettre en avant les facilités de paiement (BNPL) plutôt que le produit lui-même dans les emails.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cluster 5 : Les Pénalisés de la Logistique</strong></td>
+                        <td>Semaine + Forts frais de port (>26%) + Petits paniers (<60R$).</td>
+                        <td><strong>Incentive :</strong> Offrir la livraison (Free Shipping) déclenchera immédiatement le réachat chez ce profil frustré.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cluster 2 : Les Premium / Pressés</strong></td>
+                        <td>Semaine + Forts frais de port + Gros paniers (>60R$).</td>
+                        <td><strong>Upsell Services :</strong> Insensibles au coût logistique. Pousser des abonnements type "Livraison Express illimitée" ou "VIP".</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3" style="background-color: #eef2f7; color: #0A2540; font-weight: 700; text-align: center; font-size: 0.9rem;">
+                            👇 BRANCHE WEEK-END (Weekend_Shopper = Oui)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cluster 4 : Les Relax Satisfaits</strong></td>
+                        <td>Week-end + Crédit standard (<7x) + Bonne notation (>1.8).</td>
+                        <td><strong>Engagement :</strong> Pousser des offres "Coups de cœur" le samedi matin (Lifestyle, plaisir).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cluster 7 : Les Détracteurs</strong></td>
+                        <td>Week-end + Crédit standard + Note catastrophique (<1.8).</td>
+                        <td><strong>Care (Anti-Churn) :</strong> Exclure des campagnes promos. Déclencher un appel du service client ou un email d'excuses avec dédommagement.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cluster 3 : Les Petits Budgets</strong></td>
+                        <td>Week-end + Fort crédit (>7x) + Petit panier (<2.5 articles).</td>
+                        <td><strong>Accessibilité :</strong> Pousser des offres agressives (Ventes Flash, Destockage) ciblées sur le samedi soir.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cluster 0 : Les Gros Projets</strong></td>
+                        <td>Week-end + Fort crédit (>7x) + Gros paniers (>2.5 articles).</td>
+                        <td><strong>Cross-Selling :</strong> Clients en phase d'équipement (déménagement, cadeaux). Pousser des produits complémentaires avec financement.</td>
+                    </tr>
+                </tbody>
+            </table>
+
             <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
 
             <h3>Accéder au code source</h3>
