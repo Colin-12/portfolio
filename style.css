@@ -279,6 +279,7 @@ h2 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    align-items: start;
 }
 
 .project-card {
@@ -289,6 +290,7 @@ h2 {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
+    height: fit-content;
 }
 
 .project-card:hover {
