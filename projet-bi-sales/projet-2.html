@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet 2 | BI & Dashboards - Armand K.</title>
+    <title>Projet 2 | BI & Gouvernance - Armand K.</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     
     <style>
         .project-page { padding: 100px 5% 40px; background-color: #fff; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
@@ -17,8 +17,11 @@
         .project-body-content p, .project-body-content li { margin-bottom: 1rem; color: #444; font-size: 1.05rem; line-height: 1.7; }
         .project-body-content ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
         .dataset-link { display: inline-flex; align-items: center; gap: 8px; background: #eef2f7; padding: 8px 15px; border-radius: 5px; color: var(--primary-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 2rem; }
+        
         .highlight-box { background-color: #f0f4f8; border: 1px solid #dbe3ee; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
-        .code-block { background-color: #1e1e1e; color: #d4d4d4; padding: 1.5rem; border-radius: 8px; overflow-x: auto; font-family: monospace; margin: 1.5rem 0; font-size: 0.9rem; border-left: 4px solid var(--accent-color); }
+        .dq-box { background-color: #ecfdf5; border: 1px solid #a7f3d0; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+        .dq-box strong { color: #059669; }
+        .limits-box { background-color: #fff5f5; border: 1px solid #ffe3e3; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
         
         .action-buttons { display: flex; gap: 15px; margin-top: 2rem; flex-wrap: wrap; }
     </style>
@@ -35,95 +38,65 @@
     <main class="project-page">
         <a href="../index.html#projects" class="back-link">&larr; Retour aux projets</a>
         
-        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Business Intelligence : Modélisation des données & Dashboarding</h1>
+        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Business Intelligence : Modélisation en Étoile & Gouvernance</h1>
         
         <div class="disclaimer-box">
-            <i class="fa-solid fa-circle-info"></i> <strong>Note :</strong> Afin de respecter la confidentialité de mes précédents employeurs, cette étude de cas s'appuie sur le dataset public "Superstore Sales". L'architecture des données et la restitution visuelle reflètent mes standards professionnels en entreprise.
+            <i class="fa-solid fa-circle-info"></i> <strong>Note :</strong> Ce projet utilise le dataset public "Superstore Sales". L'objectif est de démontrer une démarche BI complète : de la structuration d'un modèle de données gouverné jusqu'à la restitution via un Dashboard interactif garantissant la justesse des métriques.
         </div>
 
-        <a href="https://www.kaggle.com/datasets/aditisaxena20/superstore-sales-dataset" target="_blank" class="dataset-link">
-            <i class="fa-solid fa-database"></i> Dataset transactionnel : Superstore Sales (Kaggle)
+        <a href="https://raw.githubusercontent.com/leonism/sample-superstore/master/data/superstore.csv" target="_blank" class="dataset-link">
+            <i class="fa-solid fa-database"></i> Source : Superstore Sales Dataset (Raw CSV)
         </a>
 
         <div class="project-body-content">
-            <h3>🎯 1. Contexte & Objectif Métier</h3>
-            <p>Dans de nombreuses entreprises retail, le reporting repose souvent sur des fichiers Excel fragmentés, entraînant des lenteurs, des erreurs manuelles et un manque de "Single Source of Truth" (une vérité unique sur les chiffres).</p>
-            <p><strong>L'objectif de ce projet</strong> est de démontrer ma capacité à :</p>
+            <h3> 1. Contexte & Enjeux</h3>
+            <p>Dans de nombreuses entreprises retail, le reporting repose sur des fichiers d'extraction plats. Cela entraîne des lenteurs, des erreurs de calcul (surcomptages), et l'absence d'une <em>"Single Source of Truth"</em> (Vérité Unique). Ce projet illustre la transition d'un fichier plat vers un pipeline analytique robuste et audité.</p>
+
+            <h3> 2. Modélisation (Star Schema) & Grain</h3>
+            <p>La première étape a consisté à normaliser la donnée brute vers un <strong>Modèle en Étoile</strong>.</p>
             <ul>
-                <li>Extraire et nettoyer une source de données brute (ETL).</li>
-                <li>Concevoir un modèle de données optimisé pour l'analyse (Data Modeling).</li>
-                <li>Définir et automatiser le calcul de KPIs fiables pour la direction.</li>
-                <li>Restituer ces données via un tableau de bord interactif (Data Visualization).</li>
+                <li><strong>Définition du Grain :</strong> La table de faits (<code>fact_sales</code>) est définie à la granularité la plus fine : <em>1 ligne = 1 produit au sein d'une commande spécifique, à une date donnée</em>.</li>
+                <li><strong>Dimensions créées :</strong> <code>dim_customer</code>, <code>dim_product</code>, <code>dim_location</code> (avec création d'une Surrogate Key), et l'indispensable <strong><code>dim_date</code></strong> pour sécuriser les analyses temporelles.</li>
             </ul>
 
-            <h3>🛠️ 2. Ingénierie des Données : Le Modèle en Étoile (Star Schema)</h3>
-            <p>Pour garantir des performances optimales lors de la restitution sur le dashboard, je n'ai pas conservé le fichier plat d'origine (10 800 lignes / 21 colonnes redondantes). J'ai restructuré la donnée en un <strong>Modèle en Étoile</strong>.</p>
-            
-            <div class="highlight-box">
-                <p><strong>Architecture cible :</strong></p>
+            <div class="dq-box">
+                <p><strong>3. Data Quality (DQ) & Audit post-ETL</strong></p>
+                <p>La confiance dans la donnée est le socle de la BI. Le pipeline Python intègre des assertions strictes (tests unitaires) validant la jointure :</p>
                 <ul>
-                    <li><strong>1 Table de Faits (<code>fact_sales</code>) :</strong> Contient uniquement les métriques quantitatives (Ventes, Quantité, Profit) et les clés étrangères.</li>
-                    <li><strong>3 Tables de Dimensions :</strong> <code>dim_customer</code> (794 clients uniques), <code>dim_product</code> (1863 produits), et <code>dim_location</code> (633 zones).</li>
+                    <li><strong>Test de non-déperdition :</strong> Somme(CA Brut) == Somme(CA Table de Faits). Écart mesuré : 0.00$.</li>
+                    <li><strong>Intégrité Référentielle :</strong> 0 clé étrangère orpheline ou manquante détectée.</li>
+                    <li><strong>Validation Métier :</strong> 100% des remises (discounts) sont comprises dans l'intervalle [0, 1].</li>
                 </ul>
-                <p><em>Note technique : Le dataset brut ne possédant pas de clé géographique, j'ai généré une clé primaire artificielle (<code>location_id</code>) pour normaliser la dimension "Location".</em></p>
             </div>
 
-            <p>Voici un extrait du processus ETL réalisé en Python (Pandas) illustrant la création des dimensions :</p>
-            
-            <div class="code-block">
-<pre><code># Création de la dimension Client (Dim Customer)
-# Conservation de la dernière occurrence pour garantir des données à jour
-dim_customer = df[['customer_id', 'customer_name', 'segment']]\
-               .drop_duplicates(subset=['customer_id'], keep='last')
+            <h3>4. Gouvernance des Métriques & Dashboarding D3.js</h3>
+            <p>Le piège classique en BI est d'agréger les données en amont (ex: par mois), puis de sommer des "Count Distinct" (comme le nombre de clients ou de commandes) dans le dashboard, créant un surcomptage massif. </p>
+            <p><strong>Ma solution :</strong> L'export JSON contient la table jointe à sa granularité fine. C'est l'interface D3.js qui recompose à la volée les métriques <strong>additives</strong> (Ventes, Profit) par simple somme, et les métriques <strong>semi-additives/non-additives</strong> (Nb Commandes) via l'utilisation stricte de <code>Set()</code> pour garantir des dédoublonnages parfaits selon les filtres choisis par l'utilisateur.</p>
 
-# Création d'une clé primaire artificielle pour la dimension Géographique
-location_cols = ['country', 'region', 'state', 'city', 'postal_code']
-dim_location = df[location_cols].drop_duplicates().reset_index(drop=True)
-dim_location['location_id'] = dim_location.index + 1
-
-# Création de la table de faits (Fact Sales) avec jointure
-fact_sales = df.merge(dim_location, on=location_cols, how='left')
-fact_sales = fact_sales[['order_id', 'order_date', 'customer_id', 'product_id', 
-                         'location_id', 'sales', 'quantity', 'profit']]
-</code></pre>
-            </div>
-
-            <h3>📊 3. Définition des KPIs & Dashboarding</h3>
-            <p>Une fois le modèle consolidé, les indicateurs clés de performance (KPIs) ont été définis avec rigueur pour piloter l'activité :</p>
+            <h3>5. Insights Actionnables extraits du Dashboard</h3>
+            <p>Une fois la donnée fiabilisée, l'outil révèle de vraies dynamiques métier :</p>
             <ul>
-                <li><strong>CA TTC (Sales) :</strong> somme des ventes</li>
-                <li><strong>Marge (Profit) :</strong> somme des profits</li>
-                <li><strong>Nb tickets :</strong> nombre de commandes uniques (Order ID)</li>
-                <li><strong>Nb clients :</strong> clients uniques</li>
-                <li><strong>Panier moyen TTC (AOV) :</strong> CA / Nb tickets</li>
-                <li><strong>Taux de marge :</strong> Marge / CA</li>
-                <li><strong>Effort promotionnel (proxy OP) :</strong> Remises / CA avant remise (sur commandes avec Discount &gt; 0)</li>
+                <li><strong>Volume vs Rentabilité :</strong> La catégorie "Furniture" génère un fort Chiffre d'Affaires mais détruit la rentabilité globale (taux de marge très faible par rapport aux fournitures de bureau).</li>
+                <li><strong>Forte saisonnalité Q4 :</strong> Le mois de Novembre concentre systématiquement le pic d'activité, nécessitant une anticipation logistique majeure.</li>
             </ul>
-            <p>Pour la restitution, j'ai développé une interface <strong>D3.js sur-mesure</strong> offrant une vue "Executive". Ce tableau de bord intègre des visualisations interconnectées (répartition régionale, chiffre d'affaires par catégorie et courbe de tendance temporelle).</p>
-            <div class="highlight-box">
-              <p><strong>Note “OP” (adaptation dataset public)</strong></p>
-              <p>
-                Le dataset Superstore ne contient pas d’“OP bippée” au sens retail fidélité.
-                Pour reproduire une logique proche d’une étude d’opération commerciale, j’utilise un proxy :
-                <strong>OP = commandes ayant une remise (Discount &gt; 0)</strong>.
-              </p>
-              <p style="margin-bottom:0;">
-                Cela permet de calculer des indicateurs type “montant remisé”, “effort promotionnel” et “taux de remise ticket”
-                sur une base publique, tout en conservant une démarche BI réaliste.
-              </p>
+
+            <h3>6. Limites & Hypothèses assumées</h3>
+            <div class="limits-box">
+                <ul>
+                    <li><strong>Proxy Promotionnel :</strong> Le dataset public ne contenant pas de mécanique fidélité explicite, la règle <em>"Toute ligne avec Discount > 0 est une Opération Promotionnelle"</em> a été assumée comme proxy analytique.</li>
+                    <li><strong>SCD Type 1 :</strong> Pour les dimensions Clients et Produits, le pipeline conserve uniquement la dernière occurrence connue (Slowly Changing Dimension Type 1) pour simplifier le modèle sur ce volume restreint.</li>
+                </ul>
             </div>
+
             <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
 
-            <h3>🚀 4. Accéder aux Livrables</h3>
-            <p>Découvrez le résultat final à travers l'interface interactive, ou plongez dans le code source de la préparation des données :</p>
-            
+            <h3>🚀 Accéder aux Livrables</h3>
             <div class="action-buttons">
                 <a href="dashboard_bi_d3.html" target="_blank" class="btn btn-primary">
                     <i class="fa-solid fa-display"></i> Lancer le Dashboard interactif
                 </a>
-                
                 <a href="https://colab.research.google.com/drive/1ovRmZisSNGX3Yo7HESmOg9YcGCThWnBc?usp=sharing" target="_blank" class="btn btn-secondary">
-                    <i class="fa-brands fa-python"></i> Voir le code ETL (Notebook)
+                    <i class="fa-brands fa-python"></i> Voir le code ETL & Data Quality
                 </a>
             </div>
 
