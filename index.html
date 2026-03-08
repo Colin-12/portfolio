@@ -23,7 +23,7 @@
             <li><a href="#home">Accueil</a></li>
             <li><a href="#about">À propos</a></li>
             <li><a href="#projects">Projets</a></li>
-            <li><a "#contact" class="btn-contact">Me contacter</a></li>
+            <li><a href="#contact" class="btn-contact">Me contacter</a></li>
         </ul>
     </nav>
 
@@ -46,7 +46,6 @@
                 <div class="img-placeholder">
                     <img src="photo_site_web.JPG" alt="Armand Komtcheu">
                 </div>
-            </div>
             </div>
         </div>
     </section>
@@ -107,231 +106,246 @@
     <h2 class="section-title">Projets</h2>
 
     <p class="projects-intro">
-      Une sélection de projets orientés <strong>valeur métier</strong> : CRM multicanal, BI & dashboards, marketing analytics et data science appliquée.
-      Chaque projet est décrit avec le contexte, la méthode, et des livrables (code / PDF / démo).
+          Une sélection de projets orientés <strong>valeur métier</strong> : CRM multicanal, BI & dashboards, marketing analytics et data science appliquée.
+          Chaque projet est décrit avec le contexte, la méthode, et des livrables (code / PDF / démo).
     </p>
 
     <div class="projects-grid">
 
-      <!-- PROJECT 1 : HERO -->
-<article class="project-card project-card--detailed">
-        <div class="card-image project-1-bg"></div>
+          <article class="project-card project-card--detailed">
+            <div class="card-image project-1-bg"></div>
+            <div class="card-content">
+              <div class="project-head">
+                <span class="project-tag">CRM / Marketing Analytics</span>
+                <h3>Mesure d'Incrémentalité & ROI de campagnes CRM (A/B Test)</h3>
+              </div>
+              <p class="project-context">
+                <strong>Contexte :</strong> Dépasser les "Vanity Metrics" (taux d'ouverture, clics) pour calculer le véritable CA généré par une campagne. 
+                Objectif : prouver l'incrémentalité via un groupe témoin et tester la rentabilité (Email vs SMS) selon le profil client.
+              </p>
 
-        <div class="card-content">
-          <div class="project-head">
-            <span class="project-tag">CRM / Marketing Analytics</span>
-            <h3>Mesure d'Incrémentalité & ROI de campagnes CRM (A/B Test)</h3>
-          </div>
+              <button class="btn-toggle-more" onclick="toggleProject(this)">Voir plus <i class="fa-solid fa-chevron-down"></i></button>
 
-          <p class="project-context">
-            <strong>Contexte :</strong> Dépasser les "Vanity Metrics" (taux d'ouverture, clics) pour calculer le véritable CA généré par une campagne. 
-            Objectif : prouver l'incrémentalité via un groupe témoin et tester la rentabilité (Email vs SMS) selon le profil client.
-          </p>
+              <div class="project-details">
+                <div class="project-body">
+                  <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
+                  <ul class="project-bullets">
+                    <li><strong>Segmentation RFM :</strong> Construction d'une base à l'instant T-1 pour éviter le Data Leakage.</li>
+                    <li><strong>Plan de Test (A/B/C) :</strong> Constitution rigoureuse de groupes de ciblages avec un Groupe Témoin à 10%.</li>
+                    <li><strong>Tests Statistiques :</strong> Calcul de l'Uplift et validation de la significativité avec un Z-Test de proportions (SciPy / Statsmodels).</li>
+                    <li><strong>Dashboarding :</strong> Développement en D3.js d'un tableau de bord de pilotage orienté ROI Net et CA Incrémental.</li>
+                  </ul>
+                  <p class="project-impact">
+                    <strong>Résultat :</strong> Mise en évidence d'une cannibalisation sur les clients VIP et réallocation des budgets vers l'Email pour les clients Réguliers (ROI > 20k%).
+                  </p>
+                </div>
+                <div class="tech-stack">
+                  <span>Python</span>
+                  <span>SciPy / Z-Test</span>
+                  <span>A/B Testing</span>
+                  <span>Incrémentalité</span>
+                  <span>D3.js</span>
+                </div>
+              </div>
 
-          <div class="project-body">
-            <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
-            <ul class="project-bullets">
-              <li><strong>Segmentation RFM :</strong> Construction d'une base à l'instant T-1 pour éviter le Data Leakage.</li>
-              <li><strong>Plan de Test (A/B/C) :</strong> Constitution rigoureuse de groupes de ciblages avec un Groupe Témoin à 10%.</li>
-              <li><strong>Tests Statistiques :</strong> Calcul de l'Uplift et validation de la significativité avec un Z-Test de proportions (SciPy / Statsmodels).</li>
-              <li><strong>Dashboarding :</strong> Développement en D3.js d'un tableau de bord de pilotage orienté ROI Net et CA Incrémental.</li>
-            </ul>
+              <div class="project-links">
+                <a class="btn-link" href="projet-crm-retail/projet-1.html">
+                  <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
+                </a>
+                <a class="btn-link" href="projet-crm-retail/dashboard_d3.html" target="_blank" rel="noopener">
+                  <i class="fa-solid fa-chart-line"></i> Dashboard
+                </a>
+                <a class="btn-link" href="https://colab.research.google.com/drive/1BSxf13vRJmmYmLcJXGXhP7gjtNcKuxRy?usp=sharing" target="_blank" rel="noopener">
+                  <i class="fa-brands fa-python"></i> Colab
+                </a>
+              </div>
+            </div>
+          </article>
 
-            <p class="project-impact">
-              <strong>Résultat :</strong> Mise en évidence d'une cannibalisation sur les clients VIP et réallocation des budgets vers l'Email pour les clients Réguliers (ROI > 20k%).
-            </p>
-          </div>
+          <article class="project-card project-card--detailed">
+            <div class="card-image project-2-bg"></div>
+            <div class="card-content">
+              <div class="project-head">
+                <span class="project-tag">Data Engineering & BI</span>
+                <h3>Modélisation en Étoile, Gouvernance & Dashboarding</h3>
+              </div>
+              <p class="project-context">
+                <strong>Contexte :</strong> Les reportings basés sur des fichiers plats génèrent souvent des erreurs de calcul et de la lenteur. L'enjeu ici est de transformer une donnée transactionnelle brute en un pipeline audité, alimentant un dashboard "Single Source of Truth".
+              </p>
 
-          <div class="tech-stack">
-            <span>Python</span>
-            <span>SciPy / Z-Test</span>
-            <span>A/B Testing</span>
-            <span>Incrémentalité</span>
-            <span>D3.js</span>
-          </div>
+              <button class="btn-toggle-more" onclick="toggleProject(this)">Voir plus <i class="fa-solid fa-chevron-down"></i></button>
 
-          <div class="project-links">
-            <a class="btn-link" href="projet-crm-retail/projet-1.html">
-              <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
-            </a>
-            <a class="btn-link" href="projet-crm-retail/dashboard_d3.html" target="_blank" rel="noopener">
-              <i class="fa-solid fa-chart-line"></i> Dashboard
-            </a>
-            <a class="btn-link" href="https://colab.research.google.com/drive/1BSxf13vRJmmYmLcJXGXhP7gjtNcKuxRy?usp=sharing">
-              <i class="fa-regular fa-file-pdf"></i> Voir le notebook Google Colab
-            </a>
-          </div>
-        </div>
-      </article>
+              <div class="project-details">
+                <div class="project-body">
+                  <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
+                  <ul class="project-bullets">
+                    <li><strong>Modélisation Analytique :</strong> Construction d'un <em>Star Schema</em> avec définition stricte du grain (1 ligne = 1 produit dans 1 commande).</li>
+                    <li><strong>Data Quality :</strong> Implémentation de tests unitaires post-ETL (Assertions sur le CA total et l'intégrité référentielle) pour garantir l'absence de perte de données.</li>
+                    <li><strong>Gouvernance des KPIs :</strong> Export granulaire vers D3.js pour le calcul dynamique des métriques non-additives (Count Distinct) afin d'éviter les pièges du surcomptage.</li>
+                    <li><strong>Dashboarding :</strong> Interface sur-mesure pour visualiser la performance (CA, Marge, AOV) avec une forte interactivité (filtres croisés).</li>
+                  </ul>
+                  <p class="project-impact">
+                    <strong>Résultat :</strong> Un modèle robuste et documenté, éliminant les incohérences de calcul, et permettant d'isoler rapidement les catégories destructrices de marge.
+                  </p>
+                </div>
+                <div class="tech-stack">
+                  <span>Python / ETL</span>
+                  <span>Data Modeling</span>
+                  <span>Data Quality</span>
+                  <span>D3.js</span>
+                  <span>KPIs</span>
+                </div>
+              </div>
 
-      <!-- PROJECT 2 -->
-<article class="project-card project-card--detailed">
-        <div class="card-image project-2-bg"></div>
+              <div class="project-links">
+                <a class="btn-link" href="projet-bi-sales/dashboard_bi_d3.html" target="_blank" rel="noopener">
+                  <i class="fa-solid fa-display"></i> Dashboard D3
+                </a>
+                <a class="btn-link" href="projet-bi-sales/projet-2.html">
+                  <i class="fa-regular fa-file-pdf"></i> Étude de Cas
+                </a>
+              </div>
+            </div>
+          </article>
 
-        <div class="card-content">
-          <div class="project-head">
-            <span class="project-tag">Data Engineering & BI</span>
-            <h3>Modélisation en Étoile, Gouvernance & Dashboarding</h3>
-          </div>
+          <article class="project-card project-card--detailed">
+            <div class="card-image project-3-bg"></div>
+            <div class="card-content">
+              <div class="project-head">
+                <span class="project-tag">Machine Learning & XAI</span>
+                <h3>Explainable AI : Segmentation comportementale E-commerce</h3>
+              </div>
+              <p class="project-context">
+                <strong>Contexte :</strong> Les segmentations non supervisées (Clustering) produisent souvent des "boîtes noires". 
+                L'objectif est de segmenter une base de 90 000+ clients E-commerce, puis de traduire l'algorithme en règles d'activation CRM lisibles par le Marketing.
+              </p>
 
-          <p class="project-context">
-            <strong>Contexte :</strong> Les reportings basés sur des fichiers plats génèrent souvent des erreurs de calcul et de la lenteur. L'enjeu ici est de transformer une donnée transactionnelle brute en un pipeline audité, alimentant un dashboard.
-          </p>
+              <button class="btn-toggle-more" onclick="toggleProject(this)">Voir plus <i class="fa-solid fa-chevron-down"></i></button>
 
-          <div class="project-body">
-            <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
-            <ul class="project-bullets">
-              <li><strong>Modélisation Analytique :</strong> Construction d'un <em>Star Schema</em> avec définition stricte du grain (1 ligne = 1 produit dans 1 commande).</li>
-              <li><strong>Data Quality :</strong> Implémentation de tests unitaires post-ETL (Assertions sur le CA total et l'intégrité référentielle) pour garantir l'absence de perte de données.</li>
-              <li><strong>Gouvernance des KPIs :</strong> Export granulaire vers D3.js pour le calcul dynamique des métriques non-additives (Count Distinct) afin d'éviter les pièges du surcomptage.</li>
-              <li><strong>Dashboarding :</strong> Interface sur-mesure pour visualiser la performance (CA, Marge, AOV) avec une forte interactivité (filtres croisés).</li>
-            </ul>
+              <div class="project-details">
+                <div class="project-body">
+                  <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
+                  <ul class="project-bullets">
+                    <li><strong>Feature Engineering expert :</strong> Dépassement du modèle RFM classique par l'intégration de variables comportementales (sensibilité logistique, usage du crédit, jours d'achat).</li>
+                    <li><strong>Modélisation non supervisée :</strong> Standardisation et clustering K-Means avec justification mathématique du nombre de clusters (K=8 via Silhouette Score).</li>
+                    <li><strong>Intelligence Artificielle Explicable (XAI) :</strong> Entraînement de Surrogate Models (Random Forest) pour extraire l'importance des variables via <strong>SHAP Values</strong>.</li>
+                    <li><strong>Data Storytelling :</strong> Traduction du modèle en un Arbre de Décision lisible pour définir 8 Personas et leurs plans d'action CRM respectifs.</li>
+                  </ul>
+                  <p class="project-impact">
+                    <strong>Résultat :</strong> Identification d'insights inattendus (le jour d'achat et le crédit priment sur le montant) et création d'une matrice de ciblage métier 100% actionnable.
+                  </p>
+                </div>
+                <div class="tech-stack">
+                  <span>Python</span>
+                  <span>Scikit-learn</span>
+                  <span>SHAP / XAI</span>
+                  <span>K-Means</span>
+                  <span>Feature Engineering</span>
+                </div>
+              </div>
 
-            <p class="project-impact">
-              <strong>Résultat :</strong> Un modèle robuste et documenté, éliminant les incohérences de calcul, et permettant d'isoler rapidement les catégories destructrices de marge.
-            </p>
-          </div>
+              <div class="project-links">
+                <a class="btn-link" href="projet-segmentation-ml/projet-3.html">
+                  <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
+                </a>
+                <a class="btn-link" href="https://colab.research.google.com/drive/1fgJ6UZf62ooyKs0TqMx2M9OmQ1Q5uM2P?usp=sharing" target="_blank" rel="noopener">
+                  <i class="fa-brands fa-python"></i> Colab
+                </a>
+              </div>
+            </div>
+          </article>
 
-          <div class="tech-stack">
-            <span>Python / ETL</span>
-            <span>Data Modeling</span>
-            <span>Data Quality</span>
-            <span>D3.js</span>
-            <span>KPIs</span>
-          </div>
+          <article class="project-card project-card--detailed">
+            <div class="card-image project-2-bg"></div> 
+            <div class="card-content">
+              <div class="project-head">
+                <span class="project-tag">Data Science appliquée</span>
+                <h3>Prédiction de consommation énergétique – Data Center (CAMTEL)</h3>
+              </div>
+              <p class="project-context">
+                <strong>Contexte :</strong> Analyse de la consommation énergétique d’un data center avec l’objectif d’anticiper les pics
+                et de contribuer à une démarche de réduction de l’impact environnemental.
+              </p>
 
-          <div class="project-links">
-            <a class="btn-link" href="projet-bi-sales/dashboard_bi_d3.html" target="_blank" rel="noopener">
-              <i class="fa-solid fa-display"></i> Dashboard D3
-            </a>
-            <a class="btn-link" href="projet-bi-sales/projet-2.html">
-              <i class="fa-regular fa-file-pdf"></i> Étude de Cas
-            </a>
-          </div>
-        </div>
-      </article>
+              <button class="btn-toggle-more" onclick="toggleProject(this)">Voir plus <i class="fa-solid fa-chevron-down"></i></button>
 
+              <div class="project-details">
+                <div class="project-body">
+                  <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
+                  <ul class="project-bullets">
+                    <li>Analyse et préparation des données de consommation.</li>
+                    <li>Développement de modèles de régression pour la prédiction de consommation.</li>
+                    <li>Création de visualisations pour soutenir les décisions de la direction.</li>
+                    <li>Restitution des résultats dans une logique performance & durabilité.</li>
+                  </ul>
+                  <p class="project-impact">
+                    <strong>Résultat :</strong> Modèle exploitable pour anticiper la charge et appuyer une démarche d’optimisation énergétique.
+                  </p>
+                </div>
+                <div class="tech-stack">
+                  <span>Python</span>
+                  <span>Scikit-learn</span>
+                  <span>Régression</span>
+                  <span>Visualisation</span>
+                  <span>Analyse</span>
+                </div>
+              </div>
 
-      <!-- PROJECT 3 -->
-      <article class="project-card project-card--detailed">
-        <div class="card-image project-3-bg"></div>
-
-        <div class="card-content">
-          <div class="project-head">
-            <span class="project-tag">Machine Learning & XAI</span>
-            <h3>Explainable AI : Segmentation comportementale E-commerce (Olist)</h3>
-          </div>
-
-          <p class="project-context">
-            <strong>Contexte :</strong> Les segmentations non supervisées (Clustering) produisent souvent des "boîtes noires". 
-            L'objectif est de segmenter une base de 90 000+ clients E-commerce, puis de traduire l'algorithme en règles d'activation CRM lisibles par le Marketing.
-          </p>
-
-          <div class="project-body">
-            <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
-            <ul class="project-bullets">
-              <li><strong>Feature Engineering expert :</strong> Dépassement du modèle RFM classique par l'intégration de variables comportementales (sensibilité logistique, usage du crédit, jours d'achat).</li>
-              <li><strong>Modélisation non supervisée :</strong> Standardisation et clustering K-Means avec justification mathématique du nombre de clusters (K=8 via Silhouette Score).</li>
-              <li><strong>Intelligence Artificielle Explicable (XAI) :</strong> Entraînement de Surrogate Models (Random Forest) pour extraire l'importance des variables via <strong>SHAP Values</strong>.</li>
-              <li><strong>Data Storytelling :</strong> Traduction du modèle en un Arbre de Décision lisible pour définir 8 Personas et leurs plans d'action CRM respectifs.</li>
-            </ul>
-
-            <p class="project-impact">
-              <strong>Résultat :</strong> Identification d'insights inattendus (le jour d'achat et le crédit priment sur le montant) et création d'une matrice de ciblage métier 100% actionnable.
-            </p>
-          </div>
-
-          <div class="tech-stack">
-            <span>Python</span>
-            <span>Scikit-learn</span>
-            <span>SHAP / XAI</span>
-            <span>K-Means</span>
-            <span>Feature Engineering</span>
-          </div>
-
-          <div class="project-links">
-            <a class="btn-link" href="projet-segmentation-ml/projet-3.html">
-              <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
-            </a>
-            <a class="btn-link" href="https://colab.research.google.com/drive/1fgJ6UZf62ooyKs0TqMx2M9OmQ1Q5uM2P?usp=sharing" target="_blank" rel="noopener">
-              <i class="fa-brands fa-python"></i> Voir le notebook Google Colab
-            </a>
-          </div>
-        </div>
-      </article>
-
-
-      <!-- PROJECT 4 (SECONDARY) -->
-      <article class="project-card project-card--detailed">
-        <div class="card-image project-2-bg"></div>
-
-        <div class="card-content">
-          <div class="project-head">
-            <span class="project-tag">Data Science appliquée</span>
-            <h3>Prédiction de consommation énergétique – Data Center (CAMTEL)</h3>
-          </div>
-
-          <p class="project-context">
-            <strong>Contexte :</strong> analyse de la consommation énergétique d’un data center avec l’objectif d’anticiper les pics
-            et de contribuer à une démarche de réduction de l’impact environnemental.
-          </p>
-
-          <div class="project-body">
-            <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
-            <ul class="project-bullets">
-              <li>Analyse et préparation des données de consommation.</li>
-              <li>Développement de modèles de régression pour la prédiction de consommation.</li>
-              <li>Création de visualisations pour soutenir les décisions de la direction.</li>
-              <li>Restitution des résultats dans une logique performance & durabilité.</li>
-            </ul>
-
-            <p class="project-impact">
-              <strong>Résultat :</strong> modèle exploitable pour anticiper la charge et appuyer une démarche d’optimisation énergétique.
-            </p>
-          </div>
-
-          <div class="tech-stack">
-            <span>Python</span>
-            <span>Scikit-learn</span>
-            <span>Régression</span>
-            <span>Visualisation</span>
-            <span>Analyse</span>
-          </div>
-
-          <div class="project-links">
-            <a class="btn-link" href="#" target="_blank" rel="noopener">
-              <i class="fa-brands fa-github"></i> Code
-            </a>
-            <a class="btn-link" href="#" target="_blank" rel="noopener">
-              <i class="fa-regular fa-file-pdf"></i> Rapport
-            </a>
-          </div>
-        </div>
-      </article>
+              <div class="project-links">
+                <a class="btn-link" href="#" target="_blank" rel="noopener">
+                  <i class="fa-brands fa-github"></i> Code
+                </a>
+                <a class="btn-link" href="#" target="_blank" rel="noopener">
+                  <i class="fa-regular fa-file-pdf"></i> Rapport
+                </a>
+              </div>
+            </div>
+          </article>
 
     </div>
   </div>
 </section>
 
-
-
-    <footer id="contact" class="footer">
-        <div class="container footer-content">
-            <div class="footer-cta">
-                <h2>Prêt à collaborer ?</h2>
-                <p>Je suis actuellement à l'écoute d'opportunités en tant que Data Analyst.</p>
-                <a href="mailto:colinarmand60@gmail.com" class="btn btn-primary btn-lg">Me contacter par Email</a>
-            </div>
+<footer id="contact" class="footer">
+    <div class="container footer-content">
+        <div class="footer-cta">
+            <h2>Prêt à collaborer ?</h2>
+            <p>Je suis actuellement à l'écoute d'opportunités.</p>
             
-            <div class="footer-links">
-                <div class="social-icons">
-                    <a href="https://www.linkedin.com/in/armand-colin-komtcheu-0014471b3/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/Colin-12" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                </div>
-                <p class="copyright">&copy; 2024 Armand Komtcheu. Tous droits réservés.</p>
-            </div>
+            <a href="mailto:colinarmand60@gmail.com" class="btn btn-primary btn-lg">Me contacter par Email</a>
+            
+            <a href="tel:+33745342668" class="btn btn-primary btn-lg">Me contacter par Tel</a>
         </div>
-    </footer>
+        
+        <div class="footer-links">
+            <div class="social-icons">
+                <a href="https://www.linkedin.com/in/armand-colin-komtcheu-0014471b3/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://github.com/Colin-12" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+            <p class="copyright">&copy; 2024 Armand Komtcheu. Tous droits réservés.</p>
+        </div>
+    </div>
+</footer>
 
+    <script>
+        function toggleProject(button) {
+            // Cible la div .project-details qui est juste après le bouton
+            const details = button.nextElementSibling;
+            
+            if (details.classList.contains('expanded')) {
+                // Replier
+                details.classList.remove('expanded');
+                button.innerHTML = 'Voir plus <i class="fa-solid fa-chevron-down"></i>';
+            } else {
+                // Déplier
+                details.classList.add('expanded');
+                button.innerHTML = 'Voir moins <i class="fa-solid fa-chevron-up"></i>';
+            }
+        }
+    </script>
 </body>
 </html>
