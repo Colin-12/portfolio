@@ -6,6 +6,7 @@
     <title>BI Dashboard - Superstore Sales | D3.js</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         :root {
@@ -25,29 +26,40 @@
         
         .container { max-width: 1250px; margin: 2rem auto; padding: 0 1.5rem; }
         
-        /* Filtres */
-        .filters-container { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 2rem; align-items: center; border-left: 4px solid var(--primary); }
-        .filter-group { display: flex; flex-direction: column; gap: 6px; }
-        .filter-group label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .filter-group select { padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; color: var(--text-main); outline: none; min-width: 150px; cursor: pointer; }
-        .filter-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,123,255,0.1); }
+        /* Filtres Multi-Select Personnalisés */
+        .filters-container { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 2rem; align-items: center; border-left: 4px solid var(--primary); flex-wrap: wrap;}
+        .filter-group { display: flex; flex-direction: column; gap: 6px; position: relative; }
+        .filter-group label.title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .multi-select { position: relative; min-width: 180px; }
+        .select-btn { background: #fff; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--text-main); transition: 0.2s; user-select: none;}
+        .select-btn:hover { border-color: var(--accent); }
+        .select-content { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 5px; z-index: 100; max-height: 250px; overflow-y: auto; display: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .select-content.show { display: flex; flex-direction: column; }
+        .select-content label { padding: 8px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f1f5f9;}
+        .select-content label:hover { background: #f8fafc; }
+        .select-content label:last-child { border-bottom: none; }
+        .select-content input[type="checkbox"] { cursor: pointer; width: 14px; height: 14px; accent-color: var(--accent);}
         
         /* KPI Cards */
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .kpi-card { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-top: 4px solid var(--accent); position: relative; overflow: hidden; }
+        .kpi-card { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-top: 4px solid var(--accent); }
         .kpi-title { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; }
-        .kpi-value { font-size: 2.2rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; }
+        .kpi-value { font-size: 2rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; }
         
         /* Charts Layout */
         .chart-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
-        .chart-card { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1; min-width: 320px; }
+        .chart-card { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1; min-width: 320px; display: flex; flex-direction: column;}
         .chart-card.full-width { width: 100%; flex: 100%; }
-        .chart-header { font-family: 'Poppins', sans-serif; font-size: 1.1rem; color: var(--primary); margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; }
+        .chart-header { font-family: 'Poppins', sans-serif; font-size: 1.1rem; color: var(--primary); margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; text-align: center;}
         
-        /* Tooltip */
+        /* Légendes & Tooltip */
+        .chart-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-muted); }
+        .legend-color { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
         .tooltip { position: absolute; padding: 10px 14px; font-size: 0.85rem; background: rgba(15, 23, 42, 0.95); color: white; border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 50; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); line-height: 1.4; }
         
-        svg { width: 100%; height: 100%; }
+        svg { width: 100%; height: 100%; min-height: 250px;}
         .axis-text { font-size: 11px; fill: var(--text-muted); font-family: 'Open Sans', sans-serif; }
         .grid-line { stroke: #f1f5f9; stroke-dasharray: 4; }
     </style>
@@ -62,18 +74,30 @@
     <div class="container">
         
         <div class="filters-container">
-            <div style="font-weight: 600; color: var(--primary); margin-right: 1rem;"><i class="fa-solid fa-filter"></i> Filtres d'Analyse :</div>
+            <div style="font-weight: 600; color: var(--primary); font-size: 1.1rem;"><i class="fa-solid fa-filter"></i> Filtres d'Analyse :</div>
+            
             <div class="filter-group">
-                <label>Année</label>
-                <select id="filter-year"></select>
+                <label class="title">Année</label>
+                <div class="multi-select">
+                    <div class="select-btn" onclick="toggleDropdown('year')"><span id="text-year">Toutes</span> <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="select-content" id="drop-year"></div>
+                </div>
             </div>
+            
             <div class="filter-group">
-                <label>Région</label>
-                <select id="filter-region"></select>
+                <label class="title">Région</label>
+                <div class="multi-select">
+                    <div class="select-btn" onclick="toggleDropdown('region')"><span id="text-region">Toutes</span> <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="select-content" id="drop-region"></div>
+                </div>
             </div>
+            
             <div class="filter-group">
-                <label>Catégorie</label>
-                <select id="filter-category"></select>
+                <label class="title">Catégorie</label>
+                <div class="multi-select">
+                    <div class="select-btn" onclick="toggleDropdown('category')"><span id="text-category">Toutes</span> <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="select-content" id="drop-category"></div>
+                </div>
             </div>
         </div>
 
@@ -103,19 +127,19 @@
         <div class="chart-row">
             <div class="chart-card full-width">
                 <div class="chart-header">Évolution du CA par mois (Trend)</div>
-                <div id="trend-chart" style="height: 320px;"></div>
+                <div id="trend-chart" style="flex: 1;"></div>
             </div>
         </div>
 
         <div class="chart-row">
             <div class="chart-card" style="flex: 1.5;">
                 <div class="chart-header">CA par Catégorie de Produits</div>
-                <div id="bar-chart" style="height: 300px;"></div>
-            </div>
+                <div id="bar-chart" style="flex: 1;"></div>
+                <div id="bar-legend" class="chart-legend"></div> </div>
             <div class="chart-card" style="flex: 1;">
                 <div class="chart-header">Répartition du CA par Région</div>
-                <div id="donut-chart" style="height: 300px;"></div>
-            </div>
+                <div id="donut-chart" style="flex: 1;"></div>
+                <div id="donut-legend" class="chart-legend"></div> </div>
         </div>
     </div>
 
@@ -125,58 +149,91 @@
         const tooltip = d3.select("#tooltip");
         const formatMoney = d3.format("$,.0f");
         const formatPct = d3.format(".1%");
-        const defaultColors = d3.schemeTableau10;
+        
+        // Palettes de couleurs distinctes
+        const regionColors = d3.scaleOrdinal().range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]);
+        const categoryColors = d3.scaleOrdinal().range(["#0A2540", "#17a2b8", "#007BFF", "#28a745"]);
 
         let PAYLOAD = null;
         let DATA = [];
 
         // ----------------------------------------------------
-        // 1. GESTION DES FILTRES
+        // 1. LOGIQUE DES FILTRES MULTI-SÉLECTION
         // ----------------------------------------------------
-        function initFilters(options) {
-            const createOptions = (selectId, values, allLabel = "Tous") => {
-                const select = document.getElementById(selectId);
-                select.innerHTML = `<option value="__ALL__">${allLabel}</option>`;
-                values.forEach(v => {
-                    select.innerHTML += `<option value="${v}">${v}</option>`;
-                });
-                select.addEventListener("change", renderDashboard);
-            };
+        function toggleDropdown(type) {
+            document.querySelectorAll('.select-content').forEach(el => {
+                if(el.id !== `drop-${type}`) el.classList.remove('show');
+            });
+            document.getElementById(`drop-${type}`).classList.toggle('show');
+        }
 
-            createOptions("filter-year", options.years, "Toutes les années");
-            createOptions("filter-region", options.regions, "Toutes les régions");
-            createOptions("filter-category", options.categories, "Toutes les catégories");
+        // Fermer les dropdowns si on clique ailleurs
+        document.addEventListener('click', e => {
+            if(!e.target.closest('.multi-select')) {
+                document.querySelectorAll('.select-content').forEach(el => el.classList.remove('show'));
+            }
+        });
+
+        function buildMultiSelect(type, values) {
+            const drop = document.getElementById(`drop-${type}`);
+            let html = `<label><input type="checkbox" value="ALL" checked onchange="handleSelectAll('${type}')"> <strong style="color:var(--primary);">Tout sélectionner</strong></label>`;
+            values.forEach(v => {
+                html += `<label><input type="checkbox" value="${v}" class="cb-${type}" checked onchange="handleItemChange('${type}')"> ${v}</label>`;
+            });
+            drop.innerHTML = html;
+            updateBtnText(type);
+        }
+
+        function handleSelectAll(type) {
+            const allCb = document.querySelector(`#drop-${type} input[value="ALL"]`);
+            const cbs = document.querySelectorAll(`.cb-${type}`);
+            cbs.forEach(cb => cb.checked = allCb.checked);
+            updateBtnText(type);
+            renderDashboard();
+        }
+
+        function handleItemChange(type) {
+            const allCb = document.querySelector(`#drop-${type} input[value="ALL"]`);
+            const cbs = Array.from(document.querySelectorAll(`.cb-${type}`));
+            allCb.checked = cbs.every(cb => cb.checked); // Check "All" si tous sont cochés
+            updateBtnText(type);
+            renderDashboard();
+        }
+
+        function updateBtnText(type) {
+            const cbs = Array.from(document.querySelectorAll(`.cb-${type}`));
+            const checked = cbs.filter(cb => cb.checked).length;
+            const textEl = document.getElementById(`text-${type}`);
+            if(checked === cbs.length) textEl.textContent = "Toutes";
+            else if(checked === 0) textEl.textContent = "Aucune sélection";
+            else textEl.textContent = `${checked} sélectionné(s)`;
+        }
+
+        function getSelected(type) {
+            return Array.from(document.querySelectorAll(`.cb-${type}:checked`)).map(cb => cb.value);
         }
 
         function getFilteredData() {
-            const y = document.getElementById("filter-year").value;
-            const r = document.getElementById("filter-region").value;
-            const c = document.getElementById("filter-category").value;
+            const y = getSelected('year');
+            const r = getSelected('region');
+            const c = getSelected('category');
 
             return DATA.filter(d => {
-                return (y === "__ALL__" || d.year.toString() === y) &&
-                       (r === "__ALL__" || d.region === r) &&
-                       (c === "__ALL__" || d.category === c);
+                return y.includes(d.year.toString()) && r.includes(d.region) && c.includes(d.category);
             });
         }
 
         // ----------------------------------------------------
-        // 2. CALCUL EXACT DES KPIS (La correction Senior)
+        // 2. CALCUL DES KPIS
         // ----------------------------------------------------
         function updateKPIs(filtered) {
-            // Métriques Additives
             const totalSales = d3.sum(filtered, d => d.sales);
             const totalProfit = d3.sum(filtered, d => d.profit);
-            
-            // Métriques Non-Additives (Utilisation de Set pour un Distinct Count Parfait)
-            // C'est ce qui corrige le bug de surcomptage identifié par ton contact !
             const uniqueOrders = new Set(filtered.map(d => d.order_id)).size;
             
-            // Métriques Calculées
             const aov = uniqueOrders > 0 ? totalSales / uniqueOrders : 0;
             const marginRate = totalSales > 0 ? totalProfit / totalSales : 0;
 
-            // Animation des compteurs
             const animate = (id, val, formatter) => {
                 d3.select(id).transition().duration(800).tween("text", function() {
                     const i = d3.interpolate(0, val);
@@ -192,8 +249,23 @@
         }
 
         // ----------------------------------------------------
-        // 3. GRAPHIQUE : TENDANCE MENSUELLE
+        // 3. FONCTIONS GRAPHIQUES
         // ----------------------------------------------------
+        
+        // Fonction utilitaire pour générer les légendes HTML
+        function drawLegend(containerId, data, colorScale, labelKey) {
+            const legendContainer = document.getElementById(containerId);
+            legendContainer.innerHTML = "";
+            data.forEach(d => {
+                legendContainer.innerHTML += `
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: ${colorScale(d[labelKey])};"></span>
+                        <span>${d[labelKey]}</span>
+                    </div>
+                `;
+            });
+        }
+
         function drawTrend(filtered) {
             const container = document.getElementById("trend-chart");
             d3.select(container).selectAll("*").remove();
@@ -215,31 +287,23 @@
             const x = d3.scaleTime().domain(d3.extent(byMonth, d => d.date)).range([0, width]);
             const y = d3.scaleLinear().domain([0, d3.max(byMonth, d => d.sales)]).nice().range([height, 0]);
 
-            // Grille
             svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).tickSize(-width).tickFormat("")).select(".domain").remove();
-
             svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(8)).attr("class", "axis-text");
             svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => "$" + (d/1000).toFixed(0) + "k")).attr("class", "axis-text");
 
             const line = d3.line().x(d => x(d.date)).y(d => y(d.sales)).curve(d3.curveMonotoneX);
 
-            const path = svg.append("path").datum(byMonth)
-                            .attr("fill", "none").attr("stroke", "var(--accent)").attr("stroke-width", 3).attr("d", line);
+            const path = svg.append("path").datum(byMonth).attr("fill", "none").attr("stroke", "var(--accent)").attr("stroke-width", 3).attr("d", line);
 
-            // Animation tracé
             const totalLength = path.node().getTotalLength();
-            path.attr("stroke-dasharray", totalLength + " " + totalLength)
-                .attr("stroke-dashoffset", totalLength)
-                .transition().duration(1000).ease(d3.easeLinear)
-                .attr("stroke-dashoffset", 0);
+            path.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength)
+                .transition().duration(1000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
 
-            // Points au survol
             svg.selectAll("circle").data(byMonth).enter().append("circle")
                .attr("cx", d => x(d.date)).attr("cy", d => y(d.sales)).attr("r", 5).attr("fill", "var(--primary)")
                .on("mouseover", (event, d) => {
                    d3.select(event.currentTarget).attr("r", 8).attr("fill", "var(--accent)");
-                   tooltip.style("opacity", 1)
-                          .html(`<strong>${d.ym}</strong><br>CA: ${formatMoney(d.sales)}`)
+                   tooltip.style("opacity", 1).html(`<strong>${d.ym}</strong><br>CA: ${formatMoney(d.sales)}`)
                           .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
                })
                .on("mouseout", event => {
@@ -248,9 +312,6 @@
                });
         }
 
-        // ----------------------------------------------------
-        // 4. GRAPHIQUE : BARRES CATÉGORIES
-        // ----------------------------------------------------
         function drawBar(filtered) {
             const container = document.getElementById("bar-chart");
             d3.select(container).selectAll("*").remove();
@@ -259,7 +320,14 @@
                             .map(([category, sales]) => ({ category, sales }))
                             .sort((a, b) => d3.ascending(a.sales, b.sales));
 
-            if(byCat.length === 0) return;
+            if(byCat.length === 0) {
+                document.getElementById("bar-legend").innerHTML = "";
+                return;
+            }
+
+            // Génération de la légende HTML
+            categoryColors.domain(byCat.map(d => d.category));
+            drawLegend("bar-legend", byCat.slice().reverse(), categoryColors, "category");
 
             const margin = {top: 10, right: 30, bottom: 20, left: 120};
             const width = container.clientWidth - margin.left - margin.right;
@@ -277,22 +345,21 @@
 
             svg.selectAll("rect").data(byCat).enter().append("rect")
                .attr("y", d => y(d.category)).attr("x", 0)
-               .attr("height", y.bandwidth()).attr("fill", "var(--primary)").attr("rx", 4)
+               .attr("height", y.bandwidth())
+               .attr("fill", d => categoryColors(d.category)) // Couleur dynamique
+               .attr("rx", 4)
                .on("mouseover", (event, d) => {
-                   d3.select(event.currentTarget).attr("fill", "var(--accent)");
+                   d3.select(event.currentTarget).style("filter", "brightness(1.2)");
                    tooltip.style("opacity", 1).html(`<strong>${d.category}</strong><br>${formatMoney(d.sales)}`)
                           .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
                })
                .on("mouseout", event => {
-                   d3.select(event.currentTarget).attr("fill", "var(--primary)");
+                   d3.select(event.currentTarget).style("filter", "none");
                    tooltip.style("opacity", 0);
                })
                .attr("width", 0).transition().duration(800).attr("width", d => x(d.sales));
         }
 
-        // ----------------------------------------------------
-        // 5. GRAPHIQUE : DONUT RÉGIONS
-        // ----------------------------------------------------
         function drawDonut(filtered) {
             const container = document.getElementById("donut-chart");
             d3.select(container).selectAll("*").remove();
@@ -301,24 +368,30 @@
                                .map(([region, sales]) => ({ region, sales }))
                                .sort((a, b) => d3.descending(a.sales, b.sales));
 
-            if(byRegion.length === 0) return;
+            if(byRegion.length === 0) {
+                document.getElementById("donut-legend").innerHTML = "";
+                return;
+            }
+
+            // Génération de la légende HTML
+            regionColors.domain(byRegion.map(d => d.region));
+            drawLegend("donut-legend", byRegion, regionColors, "region");
 
             const width = container.clientWidth;
             const height = container.clientHeight;
-            const margin = 20;
+            const margin = 10;
             const radius = Math.min(width, height) / 2 - margin;
 
             const svg = d3.select(container).append("svg")
                           .attr("viewBox", `0 0 ${width} ${height}`)
                           .append("g").attr("transform", `translate(${width/2},${height/2})`);
 
-            const color = d3.scaleOrdinal().domain(byRegion.map(d => d.region)).range(defaultColors);
             const pie = d3.pie().value(d => d.sales);
             const arc = d3.arc().innerRadius(radius * 0.55).outerRadius(radius * 0.85);
             const arcHover = d3.arc().innerRadius(radius * 0.55).outerRadius(radius * 0.95);
 
             svg.selectAll("path").data(pie(byRegion)).enter().append("path")
-               .attr("fill", d => color(d.data.region)).attr("stroke", "white").style("stroke-width", "2px")
+               .attr("fill", d => regionColors(d.data.region)).attr("stroke", "white").style("stroke-width", "2px")
                .on("mouseover", function(event, d) {
                    d3.select(this).transition().duration(200).attr("d", arcHover);
                    const pct = (d.data.sales / d3.sum(byRegion, r => r.sales));
@@ -337,7 +410,7 @@
         }
 
         // ----------------------------------------------------
-        // ORCHESTRATEUR GLOBAL
+        // 4. ORCHESTRATEUR GLOBAL
         // ----------------------------------------------------
         function renderDashboard() {
             const filtered = getFilteredData();
@@ -349,14 +422,18 @@
 
         async function loadData() {
             try {
-                // Chemin vers le fichier exporté (assure-toi qu'il soit bien uploadé sur GitHub)
                 PAYLOAD = await d3.json("data/dashboard_data (1).json");
                 DATA = PAYLOAD.data;
-                initFilters(PAYLOAD.filters_options);
+                
+                // Initialisation des filtres Custom Checkboxes
+                buildMultiSelect("year", PAYLOAD.filters_options.years.map(String));
+                buildMultiSelect("region", PAYLOAD.filters_options.regions);
+                buildMultiSelect("category", PAYLOAD.filters_options.categories);
+                
                 renderDashboard();
             } catch (error) {
-                console.error("Erreur de chargement du JSON :", error);
-                document.querySelector(".container").innerHTML = `<div style="text-align:center; padding: 3rem; color:red;">Erreur de chargement des données. Assurez-vous que le fichier dashboard_data.json est bien dans le même dossier que cette page.</div>`;
+                console.error("Erreur :", error);
+                document.querySelector(".container").innerHTML = `<div style="text-align:center; padding: 3rem; color:red; font-weight:bold;">Erreur de chargement des données. Le fichier dashboard_data.json est introuvable.</div>`;
             }
         }
 
