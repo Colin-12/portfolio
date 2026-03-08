@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet 4 | Forecasting & Détection de Pics - Armand K.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    
+    <style>
+        .project-page { padding: 100px 5% 40px; background-color: #fff; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 2rem; color: var(--accent-color); font-weight: 600; }
+        .back-link:hover { text-decoration: underline; }
+        .disclaimer-box { background-color: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin-bottom: 2rem; font-style: italic; color: #555; font-size: 0.9rem; }
+        .project-body-content h3 { color: var(--primary-color); margin: 2rem 0 1rem; font-size: 1.5rem;}
+        .project-body-content p, .project-body-content li { margin-bottom: 1rem; color: #444; font-size: 1.05rem; line-height: 1.7; }
+        .project-body-content ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
+        
+        .highlight-box { background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+        .highlight-box strong { color: #166534; }
+        
+        .chart-container { text-align: center; margin: 3rem 0; }
+        .chart-container img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eaeaea; }
+        .chart-caption { font-size: 0.9rem; color: #666; margin-top: 10px; font-style: italic; }
+
+        .action-buttons { display: flex; gap: 15px; margin-top: 2rem; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Armand K.</div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Retour au Portfolio</a></li>
+        </ul>
+    </nav>
+
+    <main class="project-page">
+        <a href="../index.html#projects" class="back-link">&larr; Retour aux projets</a>
+        
+        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Forecasting & Détection de Pics Énergétiques (Green IT)</h1>
+        
+        <div class="disclaimer-box">
+            <i class="fa-solid fa-circle-info"></i> <strong>Méthodologie "Proof of Concept" :</strong> Afin de garantir la robustesse du pipeline avant un déploiement sur des serveurs de production (type base ASHRAE), ce projet a été validé sur un modèle de données reproduisant la physique d'une infrastructure critique (saisonnalité, inertie thermique, charge IT, incidents de refroidissement).
+        </div>
+
+        <div class="project-body-content">
+            <h3>🎯 1. Contexte Métier & Enjeux</h3>
+            <p>Les infrastructures IT critiques (Data Centers) consomment énormément d'électricité. L'enjeu opérationnel n'est pas seulement de lisser la consommation, mais surtout d'<strong>anticiper les pics de charge horaire</strong>. Un pic non anticipé entraîne une mise en danger du matériel (surchauffe) et des pénalités financières sur le marché de l'énergie.</p>
+
+            <h3>🛠️ 2. Feature Engineering & Prévention du "Data Leakage"</h3>
+            <p>Dans un problème de séries temporelles (Time Series), donner une simple date à un algorithme ne suffit pas. J'ai construit un pipeline de <em>Feature Engineering</em> capturant l'inertie du bâtiment :</p>
+            <ul>
+                <li><strong>Variables d'inertie (Lags) :</strong> Consommation à J-1 (même heure) et H-1.</li>
+                <li><strong>Variables météo :</strong> Intégration de la température extérieure et de son propre <em>lag</em> pour modéliser l'inertie thermique.</li>
+                <li><strong>Tendance (Rolling Windows) :</strong> Moyennes et pics glissants sur les 6 et 24 dernières heures.</li>
+            </ul>
+            <p>Le split Train/Validation/Test a été réalisé de manière <strong>strictement chronologique</strong> pour éviter que le modèle n'apprenne du futur (Data Leakage).</p>
+
+            <h3>📈 3. Approche Hybride : Régression & Classification</h3>
+            <p>J'ai opté pour une double modélisation via <strong>Random Forest</strong> afin de répondre à deux besoins métiers distincts :</p>
+            
+            <div class="highlight-box">
+                <p><strong>1. Le Forecasting continu (Régression)</strong></p>
+                <p>Objectif : Prédire la consommation exacte. Le modèle Random Forest a largement surperformé la Baseline Naïve et la Régression Linéaire, avec une Erreur Absolue Moyenne (MAE) réduite à <strong>5.27 kWh</strong>.</p>
+            </div>
+
+            <div class="chart-container">
+                <img src="regression.png" alt="Graphique de prédiction temporelle Random Forest">
+                <p class="chart-caption">Fig 1 : Le modèle Random Forest (en vert) anticipe la saisonnalité et les variations de charge avec une grande précision.</p>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong>2. Le Système d'Alerte (Classification des Pics)</strong></p>
+                <p>Objectif : Détecter les franchissements de seuil critique (défini au 85e percentile). Un classifieur Random Forest a été entraîné avec un focus sur le <strong>Recall (Rappel)</strong>. Résultat : <strong>87.5% des pics réels ont été correctement identifiés</strong> en amont sur le jeu de Test.</p>
+            </div>
+
+            <div class="chart-container">
+                <img src="classification.png" alt="Détection des pics de consommation">
+                <p class="chart-caption">Fig 2 : Les prédictions du classifieur (points verts) épousent parfaitement les véritables pics de tension (points bleus).</p>
+            </div>
+
+            <h3>💡 4. Insights Opérationnels (Feature Importance)</h3>
+            
+            <div class="chart-container" style="max-width: 800px; margin: 0 auto;">
+                <img src="features.png" alt="Importance des variables">
+                <p class="chart-caption">Fig 3 : L'inertie immédiate (Lag_1) et le cycle de la journée (Lag_24 et Hour) dominent l'arbre de décision.</p>
+            </div>
+
+            <p>L'explicabilité du modèle permet de tirer des actions claires pour l'équipe d'exploitation :</p>
+            <ul>
+                <li><strong>Dépendance temporelle forte :</strong> Le niveau de consommation actuel (Lag_1) et le profil d'activité de la veille (Lag_24) sont les meilleurs prédicteurs. Les variables météorologiques sont secondaires face à l'activité IT pure.</li>
+                <li><strong>Délestage préventif :</strong> Fort d'un Recall de 87.5%, l'algorithme peut être couplé à un moniteur. Lorsqu'un pic est annoncé, l'équipe peut décaler les traitements batchs non-critiques (entraînements ML, backups) vers les heures creuses pour lisser le PUE (Power Usage Effectiveness).</li>
+            </ul>
+
+            <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
+
+            <h3>🚀 Accéder au code source</h3>
+            <div class="action-buttons">
+                <a href="#" target="_blank" class="btn btn-primary">
+                    <i class="fa-brands fa-python"></i> Voir le Notebook complet (Random Forest)
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer" style="padding: 2rem 5%; margin-top: 4rem;">
+        <p class="copyright" style="border: none; padding: 0;">&copy; 2024 Armand Komtcheu.</p>
+    </footer>
+
+</body>
+</html>
