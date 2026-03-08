@@ -164,48 +164,47 @@
       </article>
 
       <!-- PROJECT 2 -->
-      <article class="project-card project-card--detailed">
+<article class="project-card project-card--detailed">
         <div class="card-image project-2-bg"></div>
 
         <div class="card-content">
           <div class="project-head">
-            <span class="project-tag">Business Intelligence</span>
-            <h3>Dashboards décisionnels & automatisation du reporting (Eureden / OIF)</h3>
+            <span class="project-tag">Data Engineering & BI</span>
+            <h3>Modélisation en Étoile, Gouvernance & Dashboarding</h3>
           </div>
 
           <p class="project-context">
-            <strong>Contexte :</strong> besoin de tableaux de bord fiables et lisibles pour piloter l’activité et la performance,
-            tout en réduisant le temps passé sur des reportings manuels.
+            <strong>Contexte :</strong> Les reportings basés sur des fichiers plats génèrent souvent des erreurs de calcul et de la lenteur. L'enjeu ici est de transformer une donnée transactionnelle brute en un pipeline audité, alimentant un dashboard.
           </p>
 
           <div class="project-body">
             <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
             <ul class="project-bullets">
-              <li>Structuration et organisation des données pour un usage analytique (contrôles de cohérence, préparation KPI).</li>
-              <li>Développement de dashboards de suivi d’activité et de performance (lecture métier, filtres, tendances).</li>
-              <li>Automatisation et optimisation de tableaux de bord pour réduire les tâches manuelles et fiabiliser les indicateurs.</li>
-              <li>Data storytelling : restitution claire + présentations à des interlocuteurs non techniques.</li>
+              <li><strong>Modélisation Analytique :</strong> Construction d'un <em>Star Schema</em> avec définition stricte du grain (1 ligne = 1 produit dans 1 commande).</li>
+              <li><strong>Data Quality :</strong> Implémentation de tests unitaires post-ETL (Assertions sur le CA total et l'intégrité référentielle) pour garantir l'absence de perte de données.</li>
+              <li><strong>Gouvernance des KPIs :</strong> Export granulaire vers D3.js pour le calcul dynamique des métriques non-additives (Count Distinct) afin d'éviter les pièges du surcomptage.</li>
+              <li><strong>Dashboarding :</strong> Interface sur-mesure pour visualiser la performance (CA, Marge, AOV) avec une forte interactivité (filtres croisés).</li>
             </ul>
 
             <p class="project-impact">
-              <strong>Résultat :</strong> centralisation des KPIs + gain de temps et meilleure confiance dans les indicateurs.
+              <strong>Résultat :</strong> Un modèle robuste et documenté, éliminant les incohérences de calcul, et permettant d'isoler rapidement les catégories destructrices de marge.
             </p>
           </div>
 
           <div class="tech-stack">
-            <span>Power BI</span>
-            <span>Tableau</span>
-            <span>SQL</span>
+            <span>Python / ETL</span>
             <span>Data Modeling</span>
-            <span>Data Storytelling</span>
+            <span>Data Quality</span>
+            <span>D3.js</span>
+            <span>KPIs</span>
           </div>
 
           <div class="project-links">
             <a class="btn-link" href="projet-bi-sales/dashboard_bi_d3.html" target="_blank" rel="noopener">
-              <i class="fa-solid fa-display"></i> Démo
+              <i class="fa-solid fa-display"></i> Dashboard D3
             </a>
-            <a class="btn-link" href="projet-bi-sales/projet-2.html" target="_blank" rel="noopener">
-              <i class="fa-regular fa-file-pdf"></i> Slides / PDF
+            <a class="btn-link" href="projet-bi-sales/projet-2.html">
+              <i class="fa-regular fa-file-pdf"></i> Étude de Cas
             </a>
           </div>
         </div>
