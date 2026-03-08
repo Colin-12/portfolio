@@ -7,22 +7,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
-    
+
     <style>
         .project-page { padding: 100px 5% 40px; background-color: #fff; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
         .back-link { display: inline-block; margin-bottom: 2rem; color: var(--accent-color); font-weight: 600; }
         .back-link:hover { text-decoration: underline; }
-        .disclaimer-box { background-color: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin-bottom: 2rem; font-style: italic; color: #555; font-size: 0.9rem; }
-        .project-body-content h3 { color: var(--primary-color); margin: 2rem 0 1rem; font-size: 1.5rem;}
+        .disclaimer-box { background-color: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin-bottom: 2rem; font-style: italic; color: #555; font-size: 0.95rem; }
+        .project-body-content h3 { color: var(--primary-color); margin: 2rem 0 1rem; font-size: 1.5rem; }
         .project-body-content p, .project-body-content li { margin-bottom: 1rem; color: #444; font-size: 1.05rem; line-height: 1.7; }
         .project-body-content ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
-        
+
         .highlight-box { background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
         .highlight-box strong { color: #166534; }
-        
+
+        .warning-box { background-color: #fff7ed; border: 1px solid #fdba74; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+        .warning-box strong { color: #9a3412; }
+
         .chart-container { text-align: center; margin: 3rem 0; }
         .chart-container img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eaeaea; }
         .chart-caption { font-size: 0.9rem; color: #666; margin-top: 10px; font-style: italic; }
+
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0 2rem;
+            font-size: 0.98rem;
+        }
+        .metrics-table th, .metrics-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.85rem;
+            text-align: left;
+        }
+        .metrics-table th {
+            background-color: #f8fafc;
+            color: #1f2937;
+        }
 
         .action-buttons { display: flex; gap: 15px; margin-top: 2rem; flex-wrap: wrap; }
     </style>
@@ -38,76 +57,232 @@
 
     <main class="project-page">
         <a href="../index.html#projects" class="back-link">&larr; Retour aux projets</a>
-        
-        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Forecasting & Détection de Pics Énergétiques (Green IT)</h1>
-        
+
+        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">
+            Forecasting & Détection de Pics Énergétiques
+        </h1>
+
         <div class="disclaimer-box">
-            <i class="fa-solid fa-circle-info"></i> <strong>Méthodologie "Proof of Concept" :</strong> Afin de garantir la robustesse du pipeline avant un déploiement sur des serveurs de production (type base ASHRAE), ce projet a été validé sur un modèle de données reproduisant la physique d'une infrastructure critique (saisonnalité, inertie thermique, charge IT, incidents de refroidissement).
+            <i class="fa-solid fa-circle-info"></i>
+            <strong>Proof of Concept sur données réelles :</strong>
+            ce projet s’appuie sur le dataset public <strong>ASHRAE Great Energy Predictor III</strong>.
+            Le pipeline a été développé sur les mesures électriques (<code>meter = 0</code>) et illustré sur un bâtiment unique
+            afin de valider proprement la démarche de prévision et de détection de pics avant généralisation multi-bâtiments.
         </div>
 
         <div class="project-body-content">
-            <h3>🎯 1. Contexte Métier & Enjeux</h3>
-            <p>Les infrastructures IT critiques (Data Centers) consomment énormément d'électricité. L'enjeu opérationnel n'est pas seulement de lisser la consommation, mais surtout d'<strong>anticiper les pics de charge horaire</strong>. Un pic non anticipé entraîne une mise en danger du matériel (surchauffe) et des pénalités financières sur le marché de l'énergie.</p>
+            <h3>1. Contexte Métier & Objectif</h3>
+            <p>
+                Les infrastructures techniques fortement consommatrices d’électricité doivent anticiper les hausses de charge
+                afin de mieux piloter l’exploitation, limiter les coûts énergétiques et réduire les risques opérationnels.
+                L’objectif de ce projet est double :
+                <strong>prévoir la consommation horaire</strong> et <strong>détecter les épisodes de forte demande</strong>.
+            </p>
 
-            <h3>🛠️ 2. Feature Engineering & Prévention du "Data Leakage"</h3>
-            <p>Dans un problème de séries temporelles (Time Series), donner une simple date à un algorithme ne suffit pas. J'ai construit un pipeline de <em>Feature Engineering</em> capturant l'inertie du bâtiment :</p>
+            <h3>2. Données & Périmètre</h3>
             <ul>
-                <li><strong>Variables d'inertie (Lags) :</strong> Consommation à J-1 (même heure) et H-1.</li>
-                <li><strong>Variables météo :</strong> Intégration de la température extérieure et de son propre <em>lag</em> pour modéliser l'inertie thermique.</li>
-                <li><strong>Tendance (Rolling Windows) :</strong> Moyennes et pics glissants sur les 6 et 24 dernières heures.</li>
+                <li><strong>Source :</strong> ASHRAE Great Energy Predictor III.</li>
+                <li><strong>Chargement initial :</strong> 2 000 000 lignes du fichier <code>train.csv</code> dans Colab.</li>
+                <li><strong>Filtrage :</strong> conservation des compteurs électriques uniquement (<code>meter = 0</code>).</li>
+                <li><strong>Fusion :</strong> consommation + météo + métadonnées bâtiments.</li>
+                <li><strong>Cas d’étude modélisé :</strong> un bâtiment individuel pour valider proprement le pipeline de forecasting.</li>
+                <li><strong>Split :</strong> Train / Validation / Test strictement chronologique pour éviter le data leakage.</li>
             </ul>
-            <p>Le split Train/Validation/Test a été réalisé de manière <strong>strictement chronologique</strong> pour éviter que le modèle n'apprenne du futur (Data Leakage).</p>
 
-            <h3>📈 3. Approche Hybride : Régression & Classification</h3>
-            <p>J'ai opté pour une double modélisation via <strong>Random Forest</strong> afin de répondre à deux besoins métiers distincts :</p>
-            
+            <h3>3. Préparation des Données & Feature Engineering</h3>
+            <p>
+                Dans un problème de séries temporelles, la qualité du modèle dépend fortement de la manière dont on représente
+                la dynamique du passé. J’ai construit un pipeline de variables orienté inertie et saisonnalité :
+            </p>
+            <ul>
+                <li><strong>Lags :</strong> H-1, H-2, H-24, H-48, H-72, H-168.</li>
+                <li><strong>Rolling features :</strong> moyennes, écarts-types, minimums et maximums glissants.</li>
+                <li><strong>Calendrier :</strong> heure, jour, semaine, week-end.</li>
+                <li><strong>Météo :</strong> température, humidité, vent et leurs retards.</li>
+                <li><strong>Encodage cyclique :</strong> représentation sin/cos pour l’heure et le jour de semaine.</li>
+            </ul>
+
             <div class="highlight-box">
-                <p><strong>1. Le Forecasting continu (Régression)</strong></p>
-                <p>Objectif : Prédire la consommation exacte. Le modèle Random Forest a largement surperformé la Baseline Naïve et la Régression Linéaire, avec une Erreur Absolue Moyenne (MAE) réduite à <strong>5.27 kWh</strong>.</p>
+                <p><strong>Point méthodologique clé :</strong></p>
+                <p>
+                    Le split Train / Validation / Test a été réalisé de manière strictement chronologique.
+                    Cette précaution évite qu’un modèle de séries temporelles n’apprenne indirectement à partir du futur.
+                </p>
             </div>
+
+            <h3>4. Modélisation</h3>
+            <p>
+                J’ai adopté une approche en deux volets afin de répondre à deux usages métiers complémentaires :
+            </p>
+
+            <div class="highlight-box">
+                <p><strong>A. Forecasting continu (Régression)</strong></p>
+                <p>
+                    Objectif : prédire la consommation exacte à l’heure suivante.
+                    Trois approches ont été comparées :
+                    <strong>Baseline naïve</strong>, <strong>Régression Linéaire</strong> et <strong>Random Forest Regressor</strong>.
+                </p>
+            </div>
+
+            <table class="metrics-table">
+                <thead>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>Jeu</th>
+                        <th>MAE</th>
+                        <th>RMSE</th>
+                        <th>MAPE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Baseline naïve</td>
+                        <td>Test</td>
+                        <td>7.94</td>
+                        <td>10.02</td>
+                        <td>7.82%</td>
+                    </tr>
+                    <tr>
+                        <td>Régression Linéaire</td>
+                        <td>Test</td>
+                        <td>7.72</td>
+                        <td>9.33</td>
+                        <td>7.59%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Random Forest</strong></td>
+                        <td><strong>Test</strong></td>
+                        <td><strong>5.27</strong></td>
+                        <td><strong>6.69</strong></td>
+                        <td><strong>5.04%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Le modèle Random Forest réduit nettement l’erreur par rapport à la baseline naïve,
+                ce qui montre qu’un modèle non linéaire capte mieux les interactions entre historique de consommation,
+                calendrier et conditions météo.
+            </p>
 
             <div class="chart-container">
-                <img src="regression.png" alt="Graphique de prédiction temporelle Random Forest">
-                <p class="chart-caption">Fig 1 : Le modèle Random Forest (en vert) anticipe la saisonnalité et les variations de charge avec une grande précision.</p>
+                <img src="regression.png" alt="Graphique de prévision de consommation">
+                <p class="chart-caption">
+                    Fig. 1 — Le modèle Random Forest suit correctement le profil global de consommation et améliore la baseline naïve,
+                    même s’il tend à lisser légèrement certains pics extrêmes.
+                </p>
             </div>
 
             <div class="highlight-box">
-                <p><strong>2. Le Système d'Alerte (Classification des Pics)</strong></p>
-                <p>Objectif : Détecter les franchissements de seuil critique (défini au 85e percentile). Un classifieur Random Forest a été entraîné avec un focus sur le <strong>Recall (Rappel)</strong>. Résultat : <strong>87.5% des pics réels ont été correctement identifiés</strong> en amont sur le jeu de Test.</p>
+                <p><strong>B. Détection de pics (Classification)</strong></p>
+                <p>
+                    Objectif : détecter les épisodes de forte consommation au-dessus d’un seuil défini au
+                    <strong>85e percentile</strong>.
+                    Cette formulation transforme le problème en système d’alerte énergétique.
+                </p>
             </div>
+
+            <table class="metrics-table">
+                <thead>
+                    <tr>
+                        <th>Modèle</th>
+                        <th>Jeu</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1-score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Naive Peak Baseline</td>
+                        <td>Test</td>
+                        <td>0.896</td>
+                        <td>0.333</td>
+                        <td>0.375</td>
+                        <td>0.353</td>
+                    </tr>
+                    <tr>
+                        <td>Logistic Regression</td>
+                        <td>Test</td>
+                        <td>0.755</td>
+                        <td>0.219</td>
+                        <td>0.875</td>
+                        <td>0.350</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Random Forest Classifier</strong></td>
+                        <td><strong>Test</strong></td>
+                        <td><strong>0.840</strong></td>
+                        <td><strong>0.304</strong></td>
+                        <td><strong>0.875</strong></td>
+                        <td><strong>0.452</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Le classifieur Random Forest atteint un <strong>recall de 87.5%</strong> sur le jeu de test,
+                ce qui signifie qu’il identifie la grande majorité des pics réels.
+                Dans une logique d’alerte, ce critère est particulièrement important :
+                rater un pic coûte souvent plus cher que générer quelques fausses alertes.
+            </p>
 
             <div class="chart-container">
                 <img src="classification.png" alt="Détection des pics de consommation">
-                <p class="chart-caption">Fig 2 : Les prédictions du classifieur (points verts) épousent parfaitement les véritables pics de tension (points bleus).</p>
+                <p class="chart-caption">
+                    Fig. 2 — Les pics prédits suivent globalement les épisodes de forte consommation.
+                    Le modèle privilégie le rappel, au prix de quelques fausses alertes acceptables en contexte opérationnel.
+                </p>
             </div>
 
-            <h3>💡 4. Insights Opérationnels (Feature Importance)</h3>
-            
+            <h3>5. Explicabilité & Insights Opérationnels</h3>
+
             <div class="chart-container" style="max-width: 800px; margin: 0 auto;">
                 <img src="features.png" alt="Importance des variables">
-                <p class="chart-caption">Fig 3 : L'inertie immédiate (Lag_1) et le cycle de la journée (Lag_24 et Hour) dominent l'arbre de décision.</p>
+                <p class="chart-caption">
+                    Fig. 3 — Les variables les plus importantes sont <code>lag_1</code>, <code>lag_24</code> et <code>hour</code>,
+                    ce qui confirme une forte inertie court terme et un cycle journalier marqué.
+                </p>
             </div>
 
-            <p>L'explicabilité du modèle permet de tirer des actions claires pour l'équipe d'exploitation :</p>
             <ul>
-                <li><strong>Dépendance temporelle forte :</strong> Le niveau de consommation actuel (Lag_1) et le profil d'activité de la veille (Lag_24) sont les meilleurs prédicteurs. Les variables météorologiques sont secondaires face à l'activité IT pure.</li>
-                <li><strong>Délestage préventif :</strong> Fort d'un Recall de 87.5%, l'algorithme peut être couplé à un moniteur. Lorsqu'un pic est annoncé, l'équipe peut décaler les traitements batchs non-critiques (entraînements ML, backups) vers les heures creuses pour lisser le PUE (Power Usage Effectiveness).</li>
+                <li><strong>Inertie forte :</strong> la consommation récente est le principal signal prédictif.</li>
+                <li><strong>Cycle journalier :</strong> le comportement de la veille à la même heure reste très informatif.</li>
+                <li><strong>Météo secondaire :</strong> sur ce cas d’étude, les variables météo pèsent moins que la dynamique interne du bâtiment.</li>
+                <li><strong>Usage opérationnel :</strong> ce type de modèle peut alimenter un système d’alerte pour décaler certaines charges non critiques et limiter les épisodes de tension énergétique.</li>
             </ul>
+
+            <h3>6. Limites & Perspectives</h3>
+            <div class="warning-box">
+                <p><strong>Limites actuelles :</strong></p>
+                <ul>
+                    <li>La démonstration de modélisation est réalisée à l’échelle d’un bâtiment unique.</li>
+                    <li>Le pipeline doit encore être généralisé en version multi-bâtiments.</li>
+                    <li>La détection des pics dépend du seuil retenu (ici 85e percentile).</li>
+                    <li>Les résultats sont solides pour un proof of concept, mais ne constituent pas encore un système de production industriel.</li>
+                </ul>
+            </div>
+
+            <p>
+                Prochaines étapes envisagées :
+                extension multi-bâtiments, validation croisée temporelle plus robuste,
+                comparaison avec XGBoost/LightGBM, et intégration dans un dashboard de monitoring.
+            </p>
 
             <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
 
-            <h3>🚀 Accéder au code source</h3>
+            <h3>Accéder au code source</h3>
             <div class="action-buttons">
-                <a href="#" target="_blank" class="btn btn-primary">
-                    <i class="fa-brands fa-python"></i> Voir le Notebook complet (Random Forest)
+                <a href="https://colab.research.google.com/drive/1ITQ5LFHPLvVftOmvSg4ZNiAnI9FujhfP?usp=sharing" target="_blank" class="btn btn-primary">
+                    <i class="fa-brands fa-python"></i> Voir le Notebook complet
                 </a>
             </div>
-
         </div>
     </main>
 
     <footer class="footer" style="padding: 2rem 5%; margin-top: 4rem;">
-        <p class="copyright" style="border: none; padding: 0;">&copy; 2024 Armand Komtcheu.</p>
+        <p class="copyright" style="border: none; padding: 0;">&copy; 2026 Armand Komtcheu.</p>
     </footer>
 
 </body>
