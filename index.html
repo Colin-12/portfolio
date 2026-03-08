@@ -307,6 +307,33 @@
   </div>
 </section>
 
+<section class="container" style="margin-top: 4rem; margin-bottom: 4rem;">
+        <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
+        <h2 class="section-title">Espace Discussions</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Un retour sur mon profil, une question ou une suggestion ? N'hésitez pas à laisser un mot ! (Vous pouvez commenter en tant qu'invité).</p>
+            
+        <div id="disqus_thread"></div>
+        <script>
+            var disqus_config = function () {
+                // URL fixe pour éviter les bugs avec les # dans l'URL
+                this.page.url = 'https://colin-12.github.io/portfolio/';  
+                this.page.identifier = 'page_accueil'; // Identifiant unique
+            };
+            
+            (function() { // NE RIEN MODIFIER SOUS CETTE LIGNE (SAUF LE SHORTNAME)
+                var d = document, s = d.createElement('script');
+                
+                // ⚠️ IMPORTANT : REMPLACE 'ton-vrai-shortname' PAR CELUI QUE TU AS CRÉÉ SUR DISQUS
+                s.src = 'https://portfolio-armand-k.disqus.com/embed.js';
+                
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Veuillez activer JavaScript pour voir les <a href="https://disqus.com/?ref_noscript">commentaires.</a></noscript>
+    </section>
+            
+
 <footer id="contact" class="footer">
     <div class="container footer-content">
         <div class="footer-cta">
