@@ -258,16 +258,16 @@
             </div>
           </article>
 
-          <article class="project-card project-card--detailed">
+<article class="project-card project-card--detailed">
             <div class="card-image project-2-bg"></div> 
             <div class="card-content">
               <div class="project-head">
-                <span class="project-tag">Data Science appliquée</span>
-                <h3>Prédiction de consommation énergétique – Data Center (CAMTEL)</h3>
+                <span class="project-tag">Time Series & Green IT</span>
+                <h3>Prévision & Détection de Pics Énergétiques (Infrastructure IT)</h3>
               </div>
               <p class="project-context">
-                <strong>Contexte :</strong> Analyse de la consommation énergétique d’un data center avec l’objectif d’anticiper les pics
-                et de contribuer à une démarche de réduction de l’impact environnemental.
+                <strong>Contexte :</strong> La gestion d'une infrastructure IT critique nécessite d'anticiper la charge électrique pour éviter les surchauffes et optimiser les coûts. 
+                Objectif : Prédire la consommation énergétique et développer un système d'alerte pour les pics critiques.
               </p>
 
               <button class="btn-toggle-more" onclick="toggleProject(this)">Voir plus <i class="fa-solid fa-chevron-down"></i></button>
@@ -276,30 +276,28 @@
                 <div class="project-body">
                   <p class="project-subtitle"><strong>Ce que j’ai fait</strong></p>
                   <ul class="project-bullets">
-                    <li>Analyse et préparation des données de consommation.</li>
-                    <li>Développement de modèles de régression pour la prédiction de consommation.</li>
-                    <li>Création de visualisations pour soutenir les décisions de la direction.</li>
-                    <li>Restitution des résultats dans une logique performance & durabilité.</li>
+                    <li><strong>PoC & Simulation :</strong> Élaboration d'un dataset synthétique complexe reproduisant les contraintes physiques (charge IT, inertie thermique, incidents, météo).</li>
+                    <li><strong>Feature Engineering Temporel :</strong> Création de variables de lags, de cyclicité calendaire et de moyennes glissantes. Prévention stricte du Data Leakage.</li>
+                    <li><strong>Approche Hybride (Random Forest) :</strong> Entraînement d'un modèle de Régression pour le forecasting continu, et d'un Classifieur pour la détection d'anomalies (pics).</li>
                   </ul>
                   <p class="project-impact">
-                    <strong>Résultat :</strong> Modèle exploitable pour anticiper la charge et appuyer une démarche d’optimisation énergétique.
+                    <strong>Résultat :</strong> Le classifieur anticipe la zone d'alerte rouge avec un <strong>Recall (rappel) de 87.5%</strong> sur des données inédites, permettant le délestage préventif des serveurs.
                   </p>
                 </div>
                 <div class="tech-stack">
                   <span>Python</span>
-                  <span>Scikit-learn</span>
-                  <span>Régression</span>
-                  <span>Visualisation</span>
-                  <span>Analyse</span>
+                  <span>Random Forest</span>
+                  <span>Time Series</span>
+                  <span>Classification</span>
                 </div>
               </div>
 
               <div class="project-links">
-                <a class="btn-link" href="#" target="_blank" rel="noopener">
-                  <i class="fa-brands fa-github"></i> Code
+                <a class="btn-link" href="projet-energie-datacenter/projet-4.html">
+                  <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
                 </a>
-                <a class="btn-link" href="#" target="_blank" rel="noopener">
-                  <i class="fa-regular fa-file-pdf"></i> Rapport
+                <a class="btn-link" href="#" target="_blank" rel="noopener"> 
+                  <i class="fa-brands fa-python"></i> Colab
                 </a>
               </div>
             </div>
