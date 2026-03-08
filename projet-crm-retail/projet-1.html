@@ -94,85 +94,93 @@
             </div>
 
 <h3>3. Résultats Statistiques & Financiers</h3>
-            <p>Le croisement des conversions entre les groupes cibles et le groupe témoin a été soumis à un <strong>test statistique de proportions (Z-test)</strong>. Un seuil de confiance de 95% (p-value < 0.05) a été utilisé pour valider la significativité de l'Uplift.</p>
+<p>L'analyse des données de campagne montre qu'aucune des variations observées n'atteint le seuil de significativité statistique (confiance 95 %). L'Uplift mesuré peut donc être dû au hasard.</p>
 
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>Segment</th>
-                        <th>Canal</th>
-                        <th>Uplift (Absolu)</th>
-                        <th>P-Value (Z-Test)</th>
-                        <th>Significatif ?</th>
-                        <th>CA Incrémental</th>
-                        <th>ROI Net</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td rowspan="2" style="vertical-align: middle; font-weight: bold;">VIP</td>
-                        <td>Email</td>
-                        <td>-0.20 pts</td>
-                        <td>0.891</td>
-                        <td class="sig-no">Non</td>
-                        <td>-150 €</td>
-                        <td class="sig-no">-3900 %</td>
-                    </tr>
-                    <tr>
-                        <td>SMS</td>
-                        <td>-0.50 pts</td>
-                        <td>0.745</td>
-                        <td class="sig-no">Non</td>
-                        <td>-500 €</td>
-                        <td class="sig-no">-641 %</td>
-                    </tr>
-                    <tr>
-                        <td rowspan="2" style="vertical-align: middle; font-weight: bold;">Réguliers</td>
-                        <td>Email</td>
-                        <td>+2.70 pts</td>
-                        <td>0.012</td>
-                        <td class="sig-yes">Oui</td>
-                        <td>+2 530 €</td>
-                        <td class="sig-yes">+28 000 %</td>
-                    </tr>
-                    <tr>
-                        <td>SMS</td>
-                        <td>+2.20 pts</td>
-                        <td>0.034</td>
-                        <td class="sig-yes">Oui</td>
-                        <td>+2 100 €</td>
-                        <td class="sig-yes">+1 071 %</td>
-                    </tr>
-                    <tr>
-                        <td rowspan="2" style="vertical-align: middle; font-weight: bold;">En Risque</td>
-                        <td>Email</td>
-                        <td>+1.50 pts</td>
-                        <td>0.041</td>
-                        <td class="sig-yes">Oui</td>
-                        <td>+480 €</td>
-                        <td class="sig-yes">+29 900 %</td>
-                    </tr>
-                    <tr>
-                        <td>SMS</td>
-                        <td>+1.80 pts</td>
-                        <td>0.028</td>
-                        <td class="sig-yes">Oui</td>
-                        <td>+590 €</td>
-                        <td class="sig-yes">+1 698 %</td>
-                    </tr>
-                </tbody>
-            </table>
+<table class="results-table">
+<thead>
+<tr>
+<th>Segment</th>
+<th>Canal</th>
+<th>Uplift (pts)</th>
+<th>P-Value</th>
+<th>Significatif ?</th>
+<th>CA Incrémental</th>
+<th>ROI Net</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="2" style="vertical-align: middle; font-weight: bold;">VIP</td>
+<td>Email</td>
+<td style="color: red;">-8.74</td>
+<td>0.212</td>
+<td class="sig-no">Non</td>
+<td style="color: red;">-14 125 €</td>
+<td class="sig-no">-3 167 180 %</td>
+</tr>
+<tr>
+<td>SMS</td>
+<td style="color: red;">-4.78</td>
+<td>0.493</td>
+<td class="sig-no">Non</td>
+<td style="color: red;">-10 917 €</td>
+<td class="sig-no">-99 707 %</td>
+</tr>
+<tr>
+<td rowspan="2" style="vertical-align: middle; font-weight: bold;">Réguliers</td>
+<td>Email</td>
+<td style="color: green;">+2.63</td>
+<td>0.386</td>
+<td class="sig-no">Non</td>
+<td style="color: green;">+5 578 €</td>
+<td class="sig-yes">+449 036 %</td>
+</tr>
+<tr>
+<td>SMS</td>
+<td style="color: green;">+2.20</td>
+<td>0.465</td>
+<td class="sig-no">Non</td>
+<td style="color: green;">+4 178 €</td>
+<td class="sig-yes">+17 253 %</td>
+</tr>
+<tr>
+<td rowspan="2" style="vertical-align: middle; font-weight: bold;">En Risque</td>
+<td>Email</td>
+<td style="color: red;">-2.56</td>
+<td>0.501</td>
+<td class="sig-no">Non</td>
+<td style="color: red;">-2 358 €</td>
+<td class="sig-no">-524 097 %</td>
+</tr>
+<tr>
+<td>SMS</td>
+<td style="color: red;">-1.74</td>
+<td>0.658</td>
+<td class="sig-no">Non</td>
+<td style="color: red;">-1 480 €</td>
+<td class="sig-no">-16 406 %</td>
+</tr>
+</tbody>
+</table>
 
             <h3>4. Insights Actionnables (Impact Business)</h3>
-            <div class="highlight-box">
-                <p><strong> 1. La cannibalisation des clients VIP</strong></p>
-                <p>Le tableau statistique montre que l'Uplift sur les VIP est négatif et <strong>non significatif (p-value > 0.05)</strong>. Le groupe témoin a converti organiquement tout aussi bien. Nous avons donc dépensé du budget de routage en pure perte sur des clients qui allaient acheter de toute façon. <strong>Recommandation :</strong> Exclure les VIP des envois promotionnels massifs pour préserver la marge et éviter la fatigue marketing.</p>
-            </div>
-            
-            <div class="highlight-box">
-                <p><strong> 2. La rentabilité écrasante de l'Email</strong></p>
-                <p>Sur les segments "Réguliers" et "En Risque", l'Uplift est statistiquement validé. Cependant, l'analyse financière révèle une asymétrie majeure : bien que le SMS génère des volumes d'achats similaires, son coût d'envoi unitaire (0.040€ vs 0.002€ pour l'Email) détruit le ROI. <strong>Recommandation :</strong> L'Email doit devenir le canal exclusif de réactivation "Always-On", le SMS devant être réservé aux alertes à très forte urgence (ex: Vente Flash 4h).</p>
-            </div>
+<div class="highlight-box">
+<p><strong> 1. Échec critique sur les segments VIP et En Risque</strong></p>
+<p>Contrairement aux attentes, les groupes traités dans ces segments ont <strong>moins converti</strong> que les groupes témoins (Uplift négatif). Sur les VIP, la perte de CA incrémental est massive (-14k€).
+<strong>Interprétation :</strong> La sollicitation a soit généré une réaction négative, soit les groupes étaient trop petits pour être représentatifs.
+<strong>Action :</strong> Arrêt immédiat des campagnes automatiques sur ces segments en attendant une révision de l'offre.</p>
+</div>
+
+<div class="highlight-box">
+<p><strong> 2. L'illusion du segment "Réguliers"</strong></p>
+<p>Bien que le segment "Réguliers" affiche un CA incrémental positif (env. +5k€) et un ROI théorique délirant, la <strong>p-value (0.38) est beaucoup trop élevée</strong> pour valider ce succès. On ne peut pas affirmer que c'est l'email qui a provoqué l'achat.
+<strong>Action :</strong> Relancer un test A/B sur un échantillon plus large (Cibles > 2000) pour espérer obtenir un résultat statistiquement fiable.</p>
+</div>
+
+<div class="highlight-box">
+<p><strong> 3. Le coût négligeable de l'Email vs SMS</strong></p>
+<p>Les coûts d'envoi Email (0.45€ pour 225 cibles) sont dérisoires par rapport au SMS. Même si les résultats ne sont pas significatifs, l'Email reste le canal à privilégier pour l'expérimentation car il ne présente aucun risque financier pour la marge, contrairement au SMS qui pèse lourd dès que le volume augmente.</p>
+</div>
 
             <h3>5. Limites de l'exercice</h3>
             <div class="limits-box">
