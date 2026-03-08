@@ -660,3 +660,43 @@ h2 {
     justify-content: center;
   }
 }
+
+/* --- ACCORDÉON DES PROJETS (Voir plus / Voir moins) --- */
+.project-details {
+    display: none; /* Caché par défaut */
+    margin-top: 1rem;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.project-details.expanded {
+    display: block; /* Affiché quand la classe est ajoutée */
+}
+
+.btn-toggle-more {
+    background: none;
+    border: none;
+    color: var(--primary-color, #0A2540);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 0;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s ease;
+}
+
+.btn-toggle-more:hover {
+    color: #007BFF;
+    text-decoration: underline;
+}
+
+.btn-toggle-more i {
+    transition: transform 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
