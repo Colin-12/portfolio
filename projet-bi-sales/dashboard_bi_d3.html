@@ -11,117 +11,99 @@
         :root {
             --primary: #0A2540;
             --accent: #007BFF;
-            --bg-light: #f4f7f6;
+            --bg-light: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
+            --text-main: #334155;
+            --text-muted: #64748b;
         }
-        body {
-            font-family: 'Open Sans', sans-serif;
-            margin: 0; background-color: var(--bg-light); color: var(--text-main);
-        }
-        .header {
-            background-color: var(--primary); color: white;
-            padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center;
-        }
+        body { font-family: 'Open Sans', sans-serif; margin: 0; background-color: var(--bg-light); color: var(--text-main); }
+        
+        .header { background-color: var(--primary); color: white; padding: 1.2rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .header h1 { margin: 0; font-family: 'Poppins', sans-serif; font-size: 1.5rem; }
-        .back-btn {
-            color: white; text-decoration: none; border: 1px solid white;
-            padding: 6px 15px; border-radius: 5px; font-size: 0.9rem; transition: 0.3s;
-        }
+        .back-btn { color: white; text-decoration: none; border: 1px solid rgba(255,255,255,0.5); padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; transition: 0.3s; }
         .back-btn:hover { background-color: white; color: var(--primary); }
         
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .container { max-width: 1250px; margin: 2rem auto; padding: 0 1.5rem; }
+        
+        /* Filtres */
+        .filters-container { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; gap: 2rem; align-items: center; border-left: 4px solid var(--primary); }
+        .filter-group { display: flex; flex-direction: column; gap: 6px; }
+        .filter-group label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-group select { padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; color: var(--text-main); outline: none; min-width: 150px; cursor: pointer; }
+        .filter-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,123,255,0.1); }
         
         /* KPI Cards */
-        .kpi-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem; margin-bottom: 2rem;
-        }
-        .kpi-card {
-            background: var(--card-bg); padding: 1.5rem; border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 4px solid var(--accent);
-        }
-        .kpi-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; }
-        .kpi-value { font-size: 2rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .kpi-card { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-top: 4px solid var(--accent); position: relative; overflow: hidden; }
+        .kpi-title { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; }
+        .kpi-value { font-size: 2.2rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; }
         
         /* Charts Layout */
         .chart-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
-        .chart-card {
-            background: var(--card-bg); padding: 1.5rem; border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex: 1; min-width: 300px;
-        }
+        .chart-card { background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1; min-width: 320px; }
         .chart-card.full-width { width: 100%; flex: 100%; }
-        .chart-header { font-family: 'Poppins', sans-serif; font-size: 1.1rem; color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+        .chart-header { font-family: 'Poppins', sans-serif; font-size: 1.1rem; color: var(--primary); margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; }
         
         /* Tooltip */
-        .tooltip {
-            position: absolute; text-align: center; padding: 8px 12px; font-size: 0.85rem;
-            background: rgba(10, 37, 64, 0.9); color: white; border-radius: 4px;
-            pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 10;
-        }
+        .tooltip { position: absolute; padding: 10px 14px; font-size: 0.85rem; background: rgba(15, 23, 42, 0.95); color: white; border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 50; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); line-height: 1.4; }
+        
         svg { width: 100%; height: 100%; }
+        .axis-text { font-size: 11px; fill: var(--text-muted); font-family: 'Open Sans', sans-serif; }
+        .grid-line { stroke: #f1f5f9; stroke-dasharray: 4; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>📊 Executive Dashboard - Superstore</h1>
-        <a href="projet-2.html" class="back-btn">Retour à l'étude</a>
+        <h1>📊 Executive Dashboard - Superstore Analytics</h1>
+        <a href="projet-2.html" class="back-btn">&larr; Retour à l'étude</a>
     </div>
 
     <div class="container">
-        <div class="chart-card" style="margin-bottom: 1.5rem;">
-  <div class="chart-header">Filtres</div>
-  <div style="display:flex; gap:12px; flex-wrap:wrap;">
-    <label>
-      <div style="font-size:0.85rem; color:#666; margin-bottom:6px;">Année</div>
-      <select id="filter-year" style="padding:8px 10px; border-radius:6px; border:1px solid #ddd;"></select>
-    </label>
-    <label>
-      <div style="font-size:0.85rem; color:#666; margin-bottom:6px;">Région</div>
-      <select id="filter-region" style="padding:8px 10px; border-radius:6px; border:1px solid #ddd;"></select>
-    </label>
-    <label>
-      <div style="font-size:0.85rem; color:#666; margin-bottom:6px;">Catégorie</div>
-      <select id="filter-category" style="padding:8px 10px; border-radius:6px; border:1px solid #ddd;"></select>
-    </label>
-  </div>
-</div>
+        
+        <div class="filters-container">
+            <div style="font-weight: 600; color: var(--primary); margin-right: 1rem;"><i class="fa-solid fa-filter"></i> Filtres d'Analyse :</div>
+            <div class="filter-group">
+                <label>Année</label>
+                <select id="filter-year"></select>
+            </div>
+            <div class="filter-group">
+                <label>Région</label>
+                <select id="filter-region"></select>
+            </div>
+            <div class="filter-group">
+                <label>Catégorie</label>
+                <select id="filter-category"></select>
+            </div>
+        </div>
+
         <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-title">Chiffre d'Affaires Global</div>
+            <div class="kpi-card" style="border-top-color: #0A2540;">
+                <div class="kpi-title">CA Global</div>
                 <div class="kpi-value" id="kpi-sales">$0</div>
             </div>
-            <div class="kpi-card" style="border-left-color: #28a745;">
-                <div class="kpi-title">Profit Total</div>
+            <div class="kpi-card" style="border-top-color: #28a745;">
+                <div class="kpi-title">Profit Net</div>
                 <div class="kpi-value" id="kpi-profit">$0</div>
             </div>
-            <div class="kpi-card" style="border-left-color: #17a2b8;">
+            <div class="kpi-card" style="border-top-color: #17a2b8;">
                 <div class="kpi-title">Panier Moyen (AOV)</div>
                 <div class="kpi-value" id="kpi-aov">$0</div>
             </div>
-            <div class="kpi-card" style="border-left-color: #ffc107;">
-                <div class="kpi-title">Total Commandes</div>
+            <div class="kpi-card" style="border-top-color: #ffc107;">
+                <div class="kpi-title">Total Commandes (Uniques)</div>
                 <div class="kpi-value" id="kpi-orders">0</div>
             </div>
-
-            <div class="kpi-card" style="border-left-color: #6f42c1;">
-              <div class="kpi-title">Taux de marge</div>
-              <div class="kpi-value" id="kpi-margin-rate">0%</div>
+            <div class="kpi-card" style="border-top-color: #6f42c1;">
+                <div class="kpi-title">Taux de Marge</div>
+                <div class="kpi-value" id="kpi-margin-rate">0%</div>
             </div>
-            
-            <div class="kpi-card" style="border-left-color: #fd7e14;">
-              <div class="kpi-title">Effort promotionnel</div>
-              <div class="kpi-value" id="kpi-promo-effort">0%</div>
-            </div>
-            
         </div>
 
         <div class="chart-row">
             <div class="chart-card full-width">
-                <div class="chart-header">Évolution du CA par trimestre (Trend)</div>
-                <div id="trend-chart" style="height: 300px;"></div>
+                <div class="chart-header">Évolution du CA par mois (Trend)</div>
+                <div id="trend-chart" style="height: 320px;"></div>
             </div>
         </div>
 
@@ -131,7 +113,7 @@
                 <div id="bar-chart" style="height: 300px;"></div>
             </div>
             <div class="chart-card" style="flex: 1;">
-                <div class="chart-header">Répartition par Région</div>
+                <div class="chart-header">Répartition du CA par Région</div>
                 <div id="donut-chart" style="height: 300px;"></div>
             </div>
         </div>
@@ -140,312 +122,249 @@
     <div id="tooltip" class="tooltip"></div>
 
     <script>
-  const tooltip = d3.select("#tooltip");
-  const formatMoney = d3.format("$,.0f");
-  const formatPct = d3.format(".1%");
+        const tooltip = d3.select("#tooltip");
+        const formatMoney = d3.format("$,.0f");
+        const formatPct = d3.format(".1%");
+        const defaultColors = d3.schemeTableau10;
 
-  // --- Etat global ---
-  let DATA = null;
+        let PAYLOAD = null;
+        let DATA = [];
 
-  const defaultColors = d3.schemeTableau10;
+        // ----------------------------------------------------
+        // 1. GESTION DES FILTRES
+        // ----------------------------------------------------
+        function initFilters(options) {
+            const createOptions = (selectId, values, allLabel = "Tous") => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = `<option value="__ALL__">${allLabel}</option>`;
+                values.forEach(v => {
+                    select.innerHTML += `<option value="${v}">${v}</option>`;
+                });
+                select.addEventListener("change", renderDashboard);
+            };
 
-  function setSelectOptions(selectEl, values, withAll=true, allLabel="Tous") {
-    selectEl.innerHTML = "";
-    if (withAll) {
-      const opt = document.createElement("option");
-      opt.value = "__ALL__";
-      opt.textContent = allLabel;
-      selectEl.appendChild(opt);
-    }
-    values.forEach(v => {
-      const opt = document.createElement("option");
-      opt.value = v;
-      opt.textContent = v;
-      selectEl.appendChild(opt);
-    });
-  }
+            createOptions("filter-year", options.years, "Toutes les années");
+            createOptions("filter-region", options.regions, "Toutes les régions");
+            createOptions("filter-category", options.categories, "Toutes les catégories");
+        }
 
-  function getFilters() {
-    const year = document.getElementById("filter-year").value;
-    const region = document.getElementById("filter-region").value;
-    const category = document.getElementById("filter-category").value;
-    return { year, region, category };
-  }
+        function getFilteredData() {
+            const y = document.getElementById("filter-year").value;
+            const r = document.getElementById("filter-region").value;
+            const c = document.getElementById("filter-category").value;
 
-  function applyFilters(records, f) {
-    return records.filter(r => {
-      const okYear = (f.year === "__ALL__") || (+r.year === +f.year);
-      const okRegion = (f.region === "__ALL__") || (r.region === f.region);
-      const okCat = (f.category === "__ALL__") || (r.category === f.category);
-      return okYear && okRegion && okCat;
-    });
-  }
+            return DATA.filter(d => {
+                return (y === "__ALL__" || d.year.toString() === y) &&
+                       (r === "__ALL__" || d.region === r) &&
+                       (c === "__ALL__" || d.category === c);
+            });
+        }
 
-  function computeKpisFromAgg(rows) {
-    const totalSales = d3.sum(rows, d => d.sales);
-    const totalProfit = d3.sum(rows, d => d.profit);
-    const totalOrders = d3.sum(rows, d => d.orders);
-    const totalCustomers = d3.sum(rows, d => d.customers);
-    const totalDiscount = d3.sum(rows, d => d.discount_amt);
-    const totalBefore = d3.sum(rows, d => d.sales_before);
+        // ----------------------------------------------------
+        // 2. CALCUL EXACT DES KPIS (La correction Senior)
+        // ----------------------------------------------------
+        function updateKPIs(filtered) {
+            // Métriques Additives
+            const totalSales = d3.sum(filtered, d => d.sales);
+            const totalProfit = d3.sum(filtered, d => d.profit);
+            
+            // Métriques Non-Additives (Utilisation de Set pour un Distinct Count Parfait)
+            // C'est ce qui corrige le bug de surcomptage identifié par ton contact !
+            const uniqueOrders = new Set(filtered.map(d => d.order_id)).size;
+            
+            // Métriques Calculées
+            const aov = uniqueOrders > 0 ? totalSales / uniqueOrders : 0;
+            const marginRate = totalSales > 0 ? totalProfit / totalSales : 0;
 
-    const aov = totalOrders ? (totalSales / totalOrders) : 0;
-    const marginRate = totalSales ? (totalProfit / totalSales) : 0;
-    const promoEffort = totalBefore ? (totalDiscount / totalBefore) : 0;
+            // Animation des compteurs
+            const animate = (id, val, formatter) => {
+                d3.select(id).transition().duration(800).tween("text", function() {
+                    const i = d3.interpolate(0, val);
+                    return function(t) { this.textContent = formatter(i(t)); };
+                });
+            };
 
-    return { totalSales, totalProfit, totalOrders, totalCustomers, aov, marginRate, promoEffort };
-  }
+            animate("#kpi-sales", totalSales, formatMoney);
+            animate("#kpi-profit", totalProfit, formatMoney);
+            animate("#kpi-aov", aov, formatMoney);
+            animate("#kpi-orders", uniqueOrders, d3.format(",.0f"));
+            animate("#kpi-margin-rate", marginRate, formatPct);
+        }
 
-  function animateNumber(selector, value, formatter) {
-    const node = d3.select(selector);
-    node.transition().duration(900).tween("text", function() {
-      const start = 0;
-      const i = d3.interpolate(start, value);
-      return function(t) { this.textContent = formatter(i(t)); };
-    });
-  }
+        // ----------------------------------------------------
+        // 3. GRAPHIQUE : TENDANCE MENSUELLE
+        // ----------------------------------------------------
+        function drawTrend(filtered) {
+            const container = document.getElementById("trend-chart");
+            d3.select(container).selectAll("*").remove();
 
-  function renderKpis(k) {
-    animateNumber("#kpi-sales", k.totalSales, v => formatMoney(v));
-    animateNumber("#kpi-profit", k.totalProfit, v => formatMoney(v));
-    animateNumber("#kpi-aov", k.aov, v => formatMoney(v));
-    animateNumber("#kpi-orders", k.totalOrders, v => d3.format(",.0f")(v));
-    animateNumber("#kpi-margin-rate", k.marginRate, v => formatPct(v));
-    animateNumber("#kpi-promo-effort", k.promoEffort, v => formatPct(v));
-  }
+            const byMonth = d3.rollups(filtered, v => d3.sum(v, d => d.sales), d => d.year_month)
+                              .map(([ym, sales]) => ({ ym, sales, date: d3.timeParse("%Y-%m")(ym) }))
+                              .sort((a, b) => d3.ascending(a.date, b.date));
 
-  function clearCharts() {
-    d3.select("#trend-chart").selectAll("*").remove();
-    d3.select("#bar-chart").selectAll("*").remove();
-    d3.select("#donut-chart").selectAll("*").remove();
-  }
+            if(byMonth.length === 0) return;
 
-  function renderTrend(rows) {
-    // Agrège par mois
-    const byMonth = d3.rollups(
-      rows,
-      v => d3.sum(v, d => d.sales),
-      d => d.year_month
-    ).map(([ym, sales]) => ({ ym, sales }));
+            const margin = {top: 10, right: 30, bottom: 30, left: 60};
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = container.clientHeight - margin.top - margin.bottom;
 
-    byMonth.sort((a,b) => d3.ascending(a.ym, b.ym));
+            const svg = d3.select(container).append("svg")
+                          .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                          .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const container = document.getElementById("trend-chart");
-    const margin = {top: 20, right: 30, bottom: 30, left: 60};
-    const width = container.clientWidth - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+            const x = d3.scaleTime().domain(d3.extent(byMonth, d => d.date)).range([0, width]);
+            const y = d3.scaleLinear().domain([0, d3.max(byMonth, d => d.sales)]).nice().range([height, 0]);
 
-    const parseYM = d3.timeParse("%Y-%m");
-    byMonth.forEach(d => d.date = parseYM(d.ym));
+            // Grille
+            svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).tickSize(-width).tickFormat("")).select(".domain").remove();
 
-    const svg = d3.select("#trend-chart").append("svg")
-      .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(8)).attr("class", "axis-text");
+            svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => "$" + (d/1000).toFixed(0) + "k")).attr("class", "axis-text");
 
-    const x = d3.scaleTime().domain(d3.extent(byMonth, d => d.date)).range([0, width]);
-    const y = d3.scaleLinear().domain([0, d3.max(byMonth, d => d.sales)]).nice().range([height, 0]);
+            const line = d3.line().x(d => x(d.date)).y(d => y(d.sales)).curve(d3.curveMonotoneX);
 
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(8));
-    svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => "$" + (d/1000).toFixed(0) + "k"));
+            const path = svg.append("path").datum(byMonth)
+                            .attr("fill", "none").attr("stroke", "var(--accent)").attr("stroke-width", 3).attr("d", line);
 
-    svg.append("g").style("stroke-dasharray", "3,3").style("opacity", 0.1)
-      .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+            // Animation tracé
+            const totalLength = path.node().getTotalLength();
+            path.attr("stroke-dasharray", totalLength + " " + totalLength)
+                .attr("stroke-dashoffset", totalLength)
+                .transition().duration(1000).ease(d3.easeLinear)
+                .attr("stroke-dashoffset", 0);
 
-    const line = d3.line()
-      .x(d => x(d.date))
-      .y(d => y(d.sales))
-      .curve(d3.curveMonotoneX);
+            // Points au survol
+            svg.selectAll("circle").data(byMonth).enter().append("circle")
+               .attr("cx", d => x(d.date)).attr("cy", d => y(d.sales)).attr("r", 5).attr("fill", "var(--primary)")
+               .on("mouseover", (event, d) => {
+                   d3.select(event.currentTarget).attr("r", 8).attr("fill", "var(--accent)");
+                   tooltip.style("opacity", 1)
+                          .html(`<strong>${d.ym}</strong><br>CA: ${formatMoney(d.sales)}`)
+                          .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
+               })
+               .on("mouseout", event => {
+                   d3.select(event.currentTarget).attr("r", 5).attr("fill", "var(--primary)");
+                   tooltip.style("opacity", 0);
+               });
+        }
 
-    const path = svg.append("path").datum(byMonth)
-      .attr("fill", "none")
-      .attr("stroke", "#007BFF")
-      .attr("stroke-width", 3)
-      .attr("d", line);
+        // ----------------------------------------------------
+        // 4. GRAPHIQUE : BARRES CATÉGORIES
+        // ----------------------------------------------------
+        function drawBar(filtered) {
+            const container = document.getElementById("bar-chart");
+            d3.select(container).selectAll("*").remove();
 
-    const totalLength = path.node().getTotalLength();
-    path.attr("stroke-dasharray", totalLength + " " + totalLength)
-      .attr("stroke-dashoffset", totalLength)
-      .transition().duration(1200).ease(d3.easeLinear)
-      .attr("stroke-dashoffset", 0);
+            const byCat = d3.rollups(filtered, v => d3.sum(v, d => d.sales), d => d.category)
+                            .map(([category, sales]) => ({ category, sales }))
+                            .sort((a, b) => d3.ascending(a.sales, b.sales));
 
-    svg.selectAll("circle").data(byMonth).enter().append("circle")
-      .attr("cx", d => x(d.date))
-      .attr("cy", d => y(d.sales))
-      .attr("r", 4)
-      .attr("fill", "#0A2540")
-      .on("mouseover", (event, d) => {
-        tooltip.style("opacity", 1)
-          .html(`<b>${d.ym}</b><br>${formatMoney(d.sales)}`)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
-        d3.select(event.currentTarget).attr("r", 7).attr("fill", "#007BFF");
-      })
-      .on("mouseout", (event) => {
-        tooltip.style("opacity", 0);
-        d3.select(event.currentTarget).attr("r", 4).attr("fill", "#0A2540");
-      });
-  }
+            if(byCat.length === 0) return;
 
-  function renderBar(rows) {
-    const byCat = d3.rollups(
-      rows,
-      v => d3.sum(v, d => d.sales),
-      d => d.category
-    ).map(([category, sales]) => ({ category, sales }));
+            const margin = {top: 10, right: 30, bottom: 20, left: 120};
+            const width = container.clientWidth - margin.left - margin.right;
+            const height = container.clientHeight - margin.top - margin.bottom;
 
-    byCat.sort((a,b) => d3.ascending(a.sales, b.sales));
+            const svg = d3.select(container).append("svg")
+                          .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                          .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const container = document.getElementById("bar-chart");
-    const margin = {top: 20, right: 30, bottom: 40, left: 140};
-    const width = container.clientWidth - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+            const x = d3.scaleLinear().domain([0, d3.max(byCat, d => d.sales)]).range([0, width]);
+            const y = d3.scaleBand().domain(byCat.map(d => d.category)).range([height, 0]).padding(0.3);
 
-    const svg = d3.select("#bar-chart").append("svg")
-      .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(4).tickFormat(d => "$" + (d/1000).toFixed(0) + "k")).attr("class", "axis-text");
+            svg.append("g").call(d3.axisLeft(y)).attr("class", "axis-text").style("font-size", "12px").style("font-weight", "600");
 
-    const x = d3.scaleLinear().domain([0, d3.max(byCat, d => d.sales)]).range([0, width]);
-    const y = d3.scaleBand().domain(byCat.map(d => d.category)).range([height, 0]).padding(0.3);
+            svg.selectAll("rect").data(byCat).enter().append("rect")
+               .attr("y", d => y(d.category)).attr("x", 0)
+               .attr("height", y.bandwidth()).attr("fill", "var(--primary)").attr("rx", 4)
+               .on("mouseover", (event, d) => {
+                   d3.select(event.currentTarget).attr("fill", "var(--accent)");
+                   tooltip.style("opacity", 1).html(`<strong>${d.category}</strong><br>${formatMoney(d.sales)}`)
+                          .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
+               })
+               .on("mouseout", event => {
+                   d3.select(event.currentTarget).attr("fill", "var(--primary)");
+                   tooltip.style("opacity", 0);
+               })
+               .attr("width", 0).transition().duration(800).attr("width", d => x(d.sales));
+        }
 
-    svg.append("g").attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(d => "$" + (d/1000).toFixed(0) + "k"));
-    svg.append("g").call(d3.axisLeft(y));
+        // ----------------------------------------------------
+        // 5. GRAPHIQUE : DONUT RÉGIONS
+        // ----------------------------------------------------
+        function drawDonut(filtered) {
+            const container = document.getElementById("donut-chart");
+            d3.select(container).selectAll("*").remove();
 
-    svg.selectAll("rect").data(byCat).enter().append("rect")
-      .attr("y", d => y(d.category))
-      .attr("x", 0)
-      .attr("height", y.bandwidth())
-      .attr("rx", 4)
-      .attr("fill", "#0A2540")
-      .attr("width", 0)
-      .on("mousemove", (event, d) => {
-        tooltip.style("opacity", 1)
-          .html(`<b>${d.category}</b><br>${formatMoney(d.sales)}`)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
-      })
-      .on("mouseout", () => tooltip.style("opacity", 0))
-      .transition().duration(900)
-      .attr("width", d => x(d.sales));
+            const byRegion = d3.rollups(filtered, v => d3.sum(v, d => d.sales), d => d.region)
+                               .map(([region, sales]) => ({ region, sales }))
+                               .sort((a, b) => d3.descending(a.sales, b.sales));
 
-    svg.selectAll(".label").data(byCat).enter().append("text")
-      .attr("y", d => y(d.category) + y.bandwidth() / 2 + 4)
-      .attr("x", 6)
-      .attr("fill", "white")
-      .style("font-size", "12px")
-      .style("font-weight", "bold")
-      .text(d => formatMoney(d.sales))
-      .style("opacity", 0)
-      .transition().delay(700).style("opacity", 1);
-  }
+            if(byRegion.length === 0) return;
 
-  function renderDonut(rows) {
-    const byRegion = d3.rollups(
-      rows,
-      v => d3.sum(v, d => d.sales),
-      d => d.region
-    ).map(([region, sales]) => ({ region, sales }));
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const margin = 20;
+            const radius = Math.min(width, height) / 2 - margin;
 
-    byRegion.sort((a,b) => d3.descending(a.sales, b.sales));
+            const svg = d3.select(container).append("svg")
+                          .attr("viewBox", `0 0 ${width} ${height}`)
+                          .append("g").attr("transform", `translate(${width/2},${height/2})`);
 
-    const container = document.getElementById("donut-chart");
-    const width = container.clientWidth;
-    const height = 300;
-    const margin = 20;
-    const radius = Math.min(width, height) / 2 - margin;
+            const color = d3.scaleOrdinal().domain(byRegion.map(d => d.region)).range(defaultColors);
+            const pie = d3.pie().value(d => d.sales);
+            const arc = d3.arc().innerRadius(radius * 0.55).outerRadius(radius * 0.85);
+            const arcHover = d3.arc().innerRadius(radius * 0.55).outerRadius(radius * 0.95);
 
-    const svg = d3.select("#donut-chart").append("svg")
-      .attr("viewBox", `0 0 ${width} ${height}`)
-      .append("g")
-      .attr("transform", `translate(${width/2},${height/2})`);
+            svg.selectAll("path").data(pie(byRegion)).enter().append("path")
+               .attr("fill", d => color(d.data.region)).attr("stroke", "white").style("stroke-width", "2px")
+               .on("mouseover", function(event, d) {
+                   d3.select(this).transition().duration(200).attr("d", arcHover);
+                   const pct = (d.data.sales / d3.sum(byRegion, r => r.sales));
+                   tooltip.style("opacity", 1).html(`<strong>${d.data.region}</strong><br>${formatMoney(d.data.sales)} (${formatPct(pct)})`)
+                          .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
+               })
+               .on("mouseout", function() {
+                   d3.select(this).transition().duration(200).attr("d", arc);
+                   tooltip.style("opacity", 0);
+               })
+               .transition().duration(800)
+               .attrTween("d", function(d) {
+                   const i = d3.interpolate({startAngle: 0, endAngle: 0}, d);
+                   return function(t) { return arc(i(t)); };
+               });
+        }
 
-    const color = d3.scaleOrdinal()
-      .domain(byRegion.map(d => d.region))
-      .range(defaultColors);
+        // ----------------------------------------------------
+        // ORCHESTRATEUR GLOBAL
+        // ----------------------------------------------------
+        function renderDashboard() {
+            const filtered = getFilteredData();
+            updateKPIs(filtered);
+            drawTrend(filtered);
+            drawBar(filtered);
+            drawDonut(filtered);
+        }
 
-    const pie = d3.pie().value(d => d.sales);
-    const data_ready = pie(byRegion);
+        async function loadData() {
+            try {
+                // Chemin vers le fichier exporté (assure-toi qu'il soit bien uploadé sur GitHub)
+                PAYLOAD = await d3.json("data/dashboard_data (1).json");
+                DATA = PAYLOAD.data;
+                initFilters(PAYLOAD.filters_options);
+                renderDashboard();
+            } catch (error) {
+                console.error("Erreur de chargement du JSON :", error);
+                document.querySelector(".container").innerHTML = `<div style="text-align:center; padding: 3rem; color:red;">Erreur de chargement des données. Assurez-vous que le fichier dashboard_data.json est bien dans le même dossier que cette page.</div>`;
+            }
+        }
 
-    const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.8);
-    const arcHover = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.9);
+        window.addEventListener("resize", () => {
+            if (DATA.length > 0) renderDashboard();
+        });
 
-    svg.selectAll("path").data(data_ready).enter().append("path")
-      .attr("d", arc)
-      .attr("fill", d => color(d.data.region))
-      .attr("stroke", "white").style("stroke-width", "2px")
-      .on("mouseover", function(event, d) {
-        d3.select(this).transition().duration(150).attr("d", arcHover);
-        tooltip.style("opacity", 1)
-          .html(`<b>${d.data.region}</b><br>${formatMoney(d.data.sales)}`)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
-      })
-      .on("mouseout", function() {
-        d3.select(this).transition().duration(150).attr("d", arc);
-        tooltip.style("opacity", 0);
-      })
-      .transition().duration(700)
-      .attrTween("d", function(d) {
-        const i = d3.interpolate({startAngle: 0, endAngle: 0}, d);
-        return function(t) { return arc(i(t)); };
-      });
-
-    // --- Legend
-    const legend = d3.select("#donut-chart").append("div")
-      .style("display", "flex")
-      .style("gap", "10px")
-      .style("flex-wrap", "wrap")
-      .style("margin-top", "8px")
-      .style("font-size", "0.9rem")
-      .style("color", "#444");
-
-    byRegion.forEach(d => {
-      const item = legend.append("div").style("display","flex").style("align-items","center").style("gap","6px");
-      item.append("span")
-        .style("width","12px").style("height","12px")
-        .style("background", color(d.region))
-        .style("display","inline-block").style("border-radius","3px");
-      item.append("span").text(`${d.region}`);
-    });
-  }
-
-  function renderAll() {
-    const f = getFilters();
-    const rows = applyFilters(DATA.agg, f);
-
-    const k = computeKpisFromAgg(rows);
-    renderKpis(k);
-
-    clearCharts();
-    renderTrend(rows);
-    renderBar(rows);
-    renderDonut(rows);
-  }
-
-  async function init() {
-    // ⚠️ Chemin relatif : adapte si besoin selon où est placé ton fichier html
-    DATA = await d3.json("data/dashboard.json");
-
-    // Populate filters
-    setSelectOptions(document.getElementById("filter-year"), DATA.filters.years.map(String), true, "Toutes");
-    setSelectOptions(document.getElementById("filter-region"), DATA.filters.regions, true, "Toutes");
-    setSelectOptions(document.getElementById("filter-category"), DATA.filters.categories, true, "Toutes");
-
-    // Events
-    ["filter-year","filter-region","filter-category"].forEach(id => {
-      document.getElementById(id).addEventListener("change", renderAll);
-    });
-
-    renderAll();
-  }
-
-  init();
-
-  // Responsivité
-  window.addEventListener("resize", () => {
-    if (!DATA) return;
-    renderAll();
-  });
-</script>
+        loadData();
+    </script>
 </body>
 </html>
