@@ -303,6 +303,76 @@
             </div>
           </article>
 
+          <article class="project-card project-card--detailed">
+
+              <div class="card-image project-2-bg"></div>
+            
+              <div class="card-content">
+            
+                <div class="project-head">
+                  <span class="project-tag">Fraude Bancaire · ML & XAI</span>
+                  <h3>Système de pilotage de la détection de fraude externe</h3>
+                </div>
+            
+                <p class="project-context">
+                  <strong>Contexte :</strong> Simuler un dispositif Data Analyst au sein d'un département
+                  Lutte contre la Fraude Externe (LCFE), inspiré des missions Arkéa / Crédit Mutuel.
+                  Objectif : dépasser les règles métier manuelles (F1 = 0,60) grâce au ML explicable,
+                  tout en restant auditable par le régulateur (ACPR).
+                </p>
+            
+                <button class="btn-toggle-more" onclick="toggleProject(this)">Voir plus <i class="fa-solid fa-chevron-down"></i></button>
+            
+                <div class="project-details">
+            
+                  <div class="project-body">
+            
+                    <p class="project-subtitle"><strong>Ce que j'ai fait</strong></p>
+            
+                    <ul class="project-bullets">
+                      <li><strong>Règles métier style LCFE :</strong> Définition et évaluation de 5 règles manuelles — la règle combinée atteint un rappel de 0,85 mais génère 10 847 faux positifs.</li>
+                      <li><strong>Comparaison de 3 modèles ML :</strong> Random Forest, XGBoost et LightGBM avec SMOTE. Test de 45 seuils de décision par modèle — LightGBM à seuil 0,91 remporte tous les critères (F1 = 0,85, seulement 13 faux positifs).</li>
+                      <li><strong>Explicabilité SHAP (XAI) :</strong> Explication transaction par transaction via waterfall plots — fraude détectée, fraude manquée, fausse alerte. Conformité IA Act 2024.</li>
+                      <li><strong>Dashboard de pilotage D3.js :</strong> Restitution orientée Direction et ACPR : KPIs clés, comparatif règles vs ML, courbe de seuils, importance SHAP globale, matrice de confusion.</li>
+                    </ul>
+            
+                    <p class="project-impact">
+                      <strong>Résultat :</strong> LightGBM améliore simultanément la précision (+57%), le rappel (+25%)
+                      et le F1 (+42%) par rapport à la meilleure règle métier, tout en réduisant les faux positifs
+                      de 10 847 à 13 — une réduction du coût opérationnel de 99,9%.
+                    </p>
+            
+                  </div>
+            
+                  <div class="tech-stack">
+                    <span>Python</span>
+                    <span>LightGBM</span>
+                    <span>SHAP / XAI</span>
+                    <span>SMOTE</span>
+                    <span>D3.js</span>
+                    <span>Seuil optimisé</span>
+                  </div>
+            
+                </div>
+            
+                <div class="project-links">
+            
+                  <a class="btn-link" href="projet-fraude-bancaire/projet-7.html">
+                    <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
+                  </a>
+            
+                  <a class="btn-link" href="projet-fraude-bancaire/dashboard_fraude.html" target="_blank" rel="noopener">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                  </a>
+            
+                  <a class="btn-link" href="https://colab.research.google.com/drive/1R77HlBDQx5IDD1HhD-Z6fyA8rDkvUNNx?usp=sharing" target="_blank" rel="noopener">
+                    <i class="fa-brands fa-python"></i> Colab
+                  </a>
+            
+                </div>
+              </div>
+            </article>
+
     </div>
   </div>
 </section>
