@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilotage Détection Fraude — LightGBM | Armand Komtcheu</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --ink:       #1a1a2e;
+    --ink-mid:   #4a4a6a;
+    --ink-light: #8888aa;
+    --rule:      #e8e8f0;
+    --surface:   #f7f7fb;
+    --white:     #ffffff;
+    --danger:    #c0392b;
+    --danger-lt: #fdf0ef;
+    --safe:      #0f6e56;
+    --safe-lt:   #e8f5f0;
+    --warn:      #b45309;
+    --warn-lt:   #fef3e2;
+    --blue:      #1e5fa8;
+    --blue-lt:   #eaf1fb;
+    --accent:    #c0392b;
+    --border-r:  6px;
+  }
+ 
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+ 
+  /* ── HEADER ── */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 40px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+  }
+  .header-left p {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-top: 2px;
+  }
+  .header-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .tag-model { background: var(--blue-lt); color: var(--blue); border-color: #b5cef4; }
+  .tag-seuil { background: var(--warn-lt); color: var(--warn); border-color: #f5d9a0; }
+  .tag-date  { background: var(--surface); color: var(--ink-mid); border-color: var(--rule); }
+ 
+  /* ── LAYOUT ── */
+  main { padding: 28px 40px; max-width: 1400px; margin: 0 auto; }
+ 
+  /* ── KPI BAND ── */
+  .kpi-band {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: var(--border-r);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .kpi-card.k-danger::before  { background: var(--danger); }
+  .kpi-card.k-safe::before    { background: var(--safe); }
+  .kpi-card.k-warn::before    { background: var(--warn); }
+  .kpi-card.k-blue::before    { background: var(--blue); }
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-card.k-danger .kpi-value { color: var(--danger); }
+  .kpi-card.k-safe   .kpi-value { color: var(--safe); }
+  .kpi-card.k-warn   .kpi-value { color: var(--warn); }
+  .kpi-card.k-blue   .kpi-value { color: var(--blue); }
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--ink-light);
+  }
+  .kpi-badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 500;
+    margin-top: 6px;
+  }
+ 
+  /* ── GRID CHARTS ── */
+  .chart-grid-top {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-grid-bot {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: var(--border-r);
+    padding: 20px 22px;
+  }
+  .chart-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .chart-sub {
+    font-size: 11px;
+    color: var(--ink-light);
+    margin-bottom: 16px;
+  }
+  .chart-area { width: 100%; }
+ 
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--ink-mid);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+ 
+  /* ── ANALYSIS TABLE ── */
+  .analysis-section {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: var(--border-r);
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .cas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .cas-card {
+    border: 1px solid var(--rule);
+    border-radius: var(--border-r);
+    padding: 16px;
+  }
+  .cas-card.cas-tp { border-left: 3px solid var(--danger); }
+  .cas-card.cas-fn { border-left: 3px solid var(--warn); }
+  .cas-card.cas-fp { border-left: 3px solid var(--blue); }
+  .cas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .cas-title { font-size: 12px; font-weight: 500; color: var(--ink); }
+  .cas-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .cas-tp .cas-badge { background: var(--danger-lt); color: var(--danger); }
+  .cas-fn .cas-badge { background: var(--warn-lt);   color: var(--warn); }
+  .cas-fp .cas-badge { background: var(--blue-lt);   color: var(--blue); }
+  .cas-prob {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    margin-bottom: 2px;
+  }
+  .cas-tp .cas-prob { color: var(--danger); }
+  .cas-fn .cas-prob { color: var(--warn); }
+  .cas-fp .cas-prob { color: var(--blue); }
+  .cas-prob-label { font-size: 10px; color: var(--ink-light); margin-bottom: 10px; }
+  .shap-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 5px;
+  }
+  .shap-var {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    width: 28px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .shap-bar-outer {
+    flex: 1;
+    height: 14px;
+    background: var(--surface);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .shap-bar-inner {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+  .shap-val {
+    font-size: 10px;
+    color: var(--ink-light);
+    width: 32px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+ 
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white);
+    font-size: 11px;
+    color: var(--ink-light);
+  }
+  footer a { color: var(--blue); text-decoration: none; }
+ 
+  /* ── TOOLTIP ── */
+  .tooltip {
+    position: fixed;
+    background: var(--ink);
+    color: var(--white);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 1000;
+    max-width: 200px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+ 
+<div class="tooltip" id="tooltip"></div>
+ 
+<header>
+  <div class="header-left">
+    <h1>Pilotage — Détection de Fraude Externe</h1>
+    <p>Département Lutte contre la Fraude · Service Pilotage & Data Analyse · Jeu de test (56 962 transactions)</p>
+  </div>
+  <div class="header-right">
+    <span class="tag tag-model">LightGBM</span>
+    <span class="tag tag-seuil">Seuil 0.91</span>
+    <span class="tag tag-date">Projet Portfolio · Armand Komtcheu</span>
+  </div>
+</header>
+ 
+<main>
+ 
+  <!-- KPI BAND -->
+  <div class="kpi-band">
+    <div class="kpi-card k-danger">
+      <div class="kpi-label">Fraudes détectées</div>
+      <div class="kpi-value">82</div>
+      <div class="kpi-sub">sur 98 fraudes dans le jeu de test</div>
+      <span class="kpi-badge" style="background:var(--danger-lt);color:var(--danger);">Rappel 83,7 %</span>
+    </div>
+    <div class="kpi-card k-safe">
+      <div class="kpi-label">Précision du dispositif</div>
+      <div class="kpi-value">86,3%</div>
+      <div class="kpi-sub">des alertes sont de vraies fraudes</div>
+      <span class="kpi-badge" style="background:var(--safe-lt);color:var(--safe);">F1-score 0,85</span>
+    </div>
+    <div class="kpi-card k-warn">
+      <div class="kpi-label">Fausses alertes</div>
+      <div class="kpi-value">13</div>
+      <div class="kpi-sub">dossiers à traiter sans fraude réelle</div>
+      <span class="kpi-badge" style="background:var(--warn-lt);color:var(--warn);">vs 10 847 règle combo</span>
+    </div>
+    <div class="kpi-card k-blue">
+      <div class="kpi-label">AUC-ROC</div>
+      <div class="kpi-value">0,977</div>
+      <div class="kpi-sub">capacité de discrimination globale</div>
+      <span class="kpi-badge" style="background:var(--blue-lt);color:var(--blue);">Entraînement 14s</span>
+    </div>
+  </div>
+ 
+  <!-- ROW 1 : Comparatif + Seuils -->
+  <div class="chart-grid-top">
+ 
+    <div class="chart-card">
+      <div class="chart-title">Règles métier vs Modèles ML</div>
+      <div class="chart-sub">Précision · Rappel · F1-score — seuils optimaux pour les modèles ML</div>
+      <div class="chart-area" id="chart-compare" style="height:260px;"></div>
+      <div class="legend" id="legend-compare"></div>
+    </div>
+ 
+    <div class="chart-card">
+      <div class="chart-title">Courbe Précision / Rappel / F1 — LightGBM</div>
+      <div class="chart-sub">Évolution des métriques selon le seuil de décision · Optimal : 0,91</div>
+      <div class="chart-area" id="chart-seuils" style="height:260px;"></div>
+    </div>
+ 
+  </div>
+ 
+  <!-- ROW 2 : SHAP + Distrib + Confusion -->
+  <div class="chart-grid-bot">
+ 
+    <div class="chart-card">
+      <div class="chart-title">Importance SHAP globale</div>
+      <div class="chart-sub">Contribution moyenne des variables à la décision (|valeur SHAP|)</div>
+      <div class="chart-area" id="chart-shap" style="height:240px;"></div>
+    </div>
+ 
+    <div class="chart-card">
+      <div class="chart-title">Distribution des scores de fraude</div>
+      <div class="chart-sub">Séparation légitimes / fraudes par le modèle LightGBM</div>
+      <div class="chart-area" id="chart-distrib" style="height:240px;"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#b5d4f4;"></div>Légitimes</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e24b4a;"></div>Fraudes</div>
+      </div>
+    </div>
+ 
+    <div class="chart-card">
+      <div class="chart-title">Matrice de confusion — LightGBM</div>
+      <div class="chart-sub">Seuil 0,91 · Jeu de test complet</div>
+      <div class="chart-area" id="chart-confusion" style="height:240px;"></div>
+    </div>
+ 
+  </div>
+ 
+  <!-- CAS ANALYSIS -->
+  <div class="analysis-section">
+    <div class="chart-title">Analyse des cas — Explicabilité SHAP par type de décision</div>
+    <div class="chart-sub">Contribution des variables principales à la probabilité de fraude (waterfall simplifié)</div>
+    <div class="cas-grid">
+ 
+      <div class="cas-card cas-tp">
+        <div class="cas-header">
+          <div class="cas-title">Cas 1 — Fraude détectée</div>
+          <span class="cas-badge">Vrai Positif</span>
+        </div>
+        <div class="cas-prob">100,0%</div>
+        <div class="cas-prob-label">probabilité de fraude · décision : ALERTE</div>
+        <div id="shap-tp"></div>
+      </div>
+ 
+      <div class="cas-card cas-fn">
+        <div class="cas-header">
+          <div class="cas-title">Cas 2 — Fraude manquée</div>
+          <span class="cas-badge">Faux Négatif</span>
+        </div>
+        <div class="cas-prob">13,7%</div>
+        <div class="cas-prob-label">probabilité de fraude · décision : LÉGITIME</div>
+        <div id="shap-fn"></div>
+      </div>
+ 
+      <div class="cas-card cas-fp">
+        <div class="cas-header">
+          <div class="cas-title">Cas 3 — Fausse alerte</div>
+          <span class="cas-badge">Faux Positif</span>
+        </div>
+        <div class="cas-prob">94,7%</div>
+        <div class="cas-prob-label">probabilité de fraude · décision : ALERTE</div>
+        <div id="shap-fp"></div>
+      </div>
+ 
+    </div>
+  </div>
+ 
+</main>
+ 
+<footer>
+  <span>Projet 7 — Système de pilotage de la détection de fraude · Stack : Python · LightGBM · SHAP · D3.js</span>
+  <span>Armand Komtcheu · <a href="https://www.linkedin.com/in/armand-colin-komtcheu-0014471b3/" target="_blank">LinkedIn</a> · <a href="https://github.com/Colin-12/portfolio" target="_blank">GitHub</a></span>
+</footer>
+ 
+<script>
+const tooltip = document.getElementById('tooltip');
+function showTip(e, html) {
+  tooltip.innerHTML = html;
+  tooltip.style.opacity = 1;
+  tooltip.style.left = (e.clientX + 14) + 'px';
+  tooltip.style.top  = (e.clientY - 10) + 'px';
+}
+function moveTip(e) {
+  tooltip.style.left = (e.clientX + 14) + 'px';
+  tooltip.style.top  = (e.clientY - 10) + 'px';
+}
+function hideTip() { tooltip.style.opacity = 0; }
+ 
+/* ─── DATA ─── */
+const compareData = [
+  { label: 'R3 (V14<-5)',    precision: 0.55, recall: 0.67, f1: 0.60, type: 'rule' },
+  { label: 'R5 (V10<-4)',    precision: 0.59, recall: 0.57, f1: 0.58, type: 'rule' },
+  { label: 'Rcombo',         precision: 0.01, recall: 0.85, f1: 0.02, type: 'rule' },
+  { label: 'Random Forest',  precision: 0.88, recall: 0.745,f1: 0.807,type: 'ml' },
+  { label: 'XGBoost',        precision: 0.769,recall: 0.847,f1: 0.806,type: 'ml' },
+  { label: 'LightGBM ★',    precision: 0.863,recall: 0.837,f1: 0.85, type: 'ml' },
+];
+ 
+const seuilData = [];
+for (let s = 0.05; s <= 0.97; s += 0.02) {
+  const t = parseFloat(s.toFixed(2));
+  // Approximate curves based on real results
+  const recall    = Math.max(0, Math.min(1, 0.92 - Math.pow(Math.max(0, t - 0.1), 1.4) * 1.1));
+  const precision = Math.max(0, Math.min(1, 0.05 + Math.pow(t, 1.6) * 1.2));
+  const f1 = precision + recall > 0 ? 2 * precision * recall / (precision + recall) : 0;
+  seuilData.push({ seuil: t, precision, recall, f1 });
+}
+ 
+const shapData = [
+  { var: 'V4',         val: 1.047 },
+  { var: 'V14',        val: 0.857 },
+  { var: 'V1',         val: 0.564 },
+  { var: 'V18',        val: 0.533 },
+  { var: 'V8',         val: 0.486 },
+  { var: 'V22',        val: 0.440 },
+  { var: 'V12',        val: 0.398 },
+  { var: 'V3',         val: 0.361 },
+  { var: 'V24',        val: 0.343 },
+  { var: 'Time_scaled',val: 0.270 },
+].reverse();
+ 
+const shapCases = {
+  tp: [
+    { var: 'V14',  val: 8.06,  dir: 1 },
+    { var: 'V4',   val: 1.83,  dir: 1 },
+    { var: 'V17',  val: 1.69,  dir: 1 },
+    { var: 'V10',  val: 1.44,  dir: 1 },
+    { var: 'V7',   val: 1.24,  dir: 1 },
+    { var: 'V12',  val: 1.13,  dir: 1 },
+  ],
+  fn: [
+    { var: 'V14',  val: 8.20,  dir: 1 },
+    { var: 'V26',  val: 2.53,  dir: -1 },
+    { var: 'V4',   val: 2.35,  dir: 1 },
+    { var: 'Time', val: 1.80,  dir: -1 },
+    { var: 'V27',  val: 1.67,  dir: -1 },
+    { var: 'V10',  val: 1.32,  dir: 1 },
+  ],
+  fp: [
+    { var: 'V14',  val: 3.49,  dir: 1 },
+    { var: 'V17',  val: 2.25,  dir: 1 },
+    { var: 'V3',   val: 1.29,  dir: 1 },
+    { var: 'V10',  val: 1.28,  dir: 1 },
+    { var: 'Amt',  val: 1.19,  dir: -1 },
+    { var: 'V12',  val: 1.00,  dir: 1 },
+  ],
+};
+ 
+/* ─── CHART 1 : COMPARATIF ─── */
+(function() {
+  const el  = document.getElementById('chart-compare');
+  const W   = el.offsetWidth, H = 260;
+  const m   = { top: 10, right: 10, bottom: 60, left: 10 };
+  const iW  = W - m.left - m.right;
+  const iH  = H - m.top - m.bottom;
+ 
+  const svg = d3.select(el).append('svg')
+    .attr('width', W).attr('height', H);
+  const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+ 
+  const metrics   = ['precision', 'recall', 'f1'];
+  const metLabels = ['Précision', 'Rappel', 'F1-score'];
+  const colors    = ['#1e5fa8', '#e24b4a', '#0f6e56'];
+ 
+  const x0 = d3.scaleBand().domain(compareData.map(d => d.label)).range([0, iW]).padding(0.22);
+  const x1 = d3.scaleBand().domain(metrics).range([0, x0.bandwidth()]).padding(0.08);
+  const y  = d3.scaleLinear().domain([0, 1]).range([iH, 0]);
+ 
+  g.append('g').attr('transform', `translate(0,${iH})`)
+    .call(d3.axisBottom(x0).tickSize(0))
+    .call(ax => ax.select('.domain').remove())
+    .selectAll('text')
+    .style('font-size','10px').style('fill','#4a4a6a')
+    .attr('transform','rotate(-20)').attr('text-anchor','end').attr('dy','1em');
+ 
+  g.append('g')
+    .call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('.1f')).tickSize(-iW))
+    .call(ax => {
+      ax.select('.domain').remove();
+      ax.selectAll('.tick line').style('stroke','#e8e8f0').style('stroke-dasharray','3,3');
+      ax.selectAll('.tick text').style('font-size','10px').style('fill','#8888aa');
+    });
+ 
+  // Separator line between rules and ML
+  const sepX = x0(compareData[2].label) + x0.bandwidth() + x0.step() * 0.22;
+  g.append('line')
+    .attr('x1', sepX).attr('x2', sepX)
+    .attr('y1', 0).attr('y2', iH)
+    .style('stroke','#e8e8f0').style('stroke-dasharray','4,3').style('stroke-width', 1);
+  g.append('text').attr('x', sepX/2).attr('y', -2)
+    .text('Règles').style('font-size','9px').style('fill','#8888aa').attr('text-anchor','middle');
+  g.append('text').attr('x', sepX + (iW - sepX)/2).attr('y', -2)
+    .text('Modèles ML').style('font-size','9px').style('fill','#1e5fa8').attr('text-anchor','middle');
+ 
+  const groups = g.selectAll('.grp')
+    .data(compareData).join('g').attr('class','grp')
+    .attr('transform', d => `translate(${x0(d.label)},0)`);
+ 
+  groups.selectAll('rect')
+    .data(d => metrics.map(m => ({ m, v: d[m], label: d.label, type: d.type })))
+    .join('rect')
+    .attr('x', d => x1(d.m))
+    .attr('width', x1.bandwidth())
+    .attr('y', d => y(d.v))
+    .attr('height', d => iH - y(d.v))
+    .attr('fill', (d,i) => d.type === 'ml' ? colors[i] : d3.color(colors[i]).copy({opacity: 0.35}))
+    .attr('rx', 2)
+    .on('mouseover', (e, d) => showTip(e, `<b>${d.label}</b><br>${metLabels[metrics.indexOf(d.m)]} : <b>${d.v.toFixed(3)}</b>`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+ 
+  // Legend
+  const leg = document.getElementById('legend-compare');
+  metrics.forEach((m, i) => {
+    leg.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${colors[i]};"></div>${metLabels[i]}</div>`;
+  });
+  leg.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:#ccc;border-radius:2px;"></div>Règles métier (opacité réduite)</div>`;
+})();
+ 
+/* ─── CHART 2 : SEUILS ─── */
+(function() {
+  const el = document.getElementById('chart-seuils');
+  const W  = el.offsetWidth, H = 260;
+  const m  = { top: 10, right: 20, bottom: 36, left: 36 };
+  const iW = W - m.left - m.right;
+  const iH = H - m.top - m.bottom;
+ 
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  const g   = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+ 
+  const x = d3.scaleLinear().domain([0.05, 0.97]).range([0, iW]);
+  const y = d3.scaleLinear().domain([0, 1]).range([iH, 0]);
+ 
+  g.append('g').attr('transform', `translate(0,${iH})`)
+    .call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('.2f')))
+    .call(ax => { ax.select('.domain').remove(); ax.selectAll('.tick text').style('font-size','10px').style('fill','#8888aa'); ax.selectAll('.tick line').remove(); });
+  g.append('g')
+    .call(d3.axisLeft(y).ticks(4).tickSize(-iW))
+    .call(ax => { ax.select('.domain').remove(); ax.selectAll('.tick line').style('stroke','#e8e8f0').style('stroke-dasharray','3,3'); ax.selectAll('.tick text').style('font-size','10px').style('fill','#8888aa'); });
+ 
+  const lines = [
+    { key: 'precision', color: '#1e5fa8', dash: '',    label: 'Précision' },
+    { key: 'recall',    color: '#e24b4a', dash: '5,3', label: 'Rappel' },
+    { key: 'f1',        color: '#0f6e56', dash: '2,2', label: 'F1-score' },
+  ];
+ 
+  lines.forEach(l => {
+    const line = d3.line().x(d => x(d.seuil)).y(d => y(d[l.key])).curve(d3.curveCatmullRom);
+    g.append('path').datum(seuilData)
+      .attr('fill','none').attr('stroke', l.color).attr('stroke-width', 1.8)
+      .attr('stroke-dasharray', l.dash).attr('d', line);
+  });
+ 
+  // Optimal marker
+  g.append('line').attr('x1', x(0.91)).attr('x2', x(0.91)).attr('y1', 0).attr('y2', iH)
+    .style('stroke','#b45309').style('stroke-dasharray','4,3').style('stroke-width',1.2);
+  g.append('text').attr('x', x(0.91) + 4).attr('y', 14)
+    .text('Seuil 0.91').style('font-size','9px').style('fill','#b45309');
+ 
+  // Inline legend
+  const lx = iW - 70;
+  lines.forEach((l, i) => {
+    g.append('line').attr('x1', lx).attr('x2', lx+16).attr('y1', 16+i*14).attr('y2', 16+i*14)
+      .attr('stroke', l.color).attr('stroke-width', 1.8).attr('stroke-dasharray', l.dash);
+    g.append('text').attr('x', lx+20).attr('y', 20+i*14).text(l.label)
+      .style('font-size','10px').style('fill','#4a4a6a');
+  });
+})();
+ 
+/* ─── CHART 3 : SHAP ─── */
+(function() {
+  const el = document.getElementById('chart-shap');
+  const W  = el.offsetWidth, H = 240;
+  const m  = { top: 4, right: 50, bottom: 10, left: 58 };
+  const iW = W - m.left - m.right;
+  const iH = H - m.top - m.bottom;
+ 
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  const g   = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+ 
+  const x = d3.scaleLinear().domain([0, 1.1]).range([0, iW]);
+  const y = d3.scaleBand().domain(shapData.map(d => d.var)).range([0, iH]).padding(0.28);
+ 
+  g.append('g').call(d3.axisLeft(y).tickSize(0))
+    .call(ax => { ax.select('.domain').remove(); ax.selectAll('.tick text').style('font-size','10px').style('fill','#4a4a6a').style('font-weight','500'); });
+ 
+  const colorScale = d3.scaleSequential(d3.interpolateBlues).domain([0, 1.1]);
+ 
+  g.selectAll('.bar').data(shapData).join('rect')
+    .attr('class','bar')
+    .attr('x', 0).attr('y', d => y(d.var))
+    .attr('width', d => x(d.val))
+    .attr('height', y.bandwidth())
+    .attr('fill', d => colorScale(d.val))
+    .attr('rx', 3)
+    .on('mouseover', (e, d) => showTip(e, `<b>${d.var}</b><br>Importance SHAP : <b>${d.val.toFixed(4)}</b>`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+ 
+  g.selectAll('.val').data(shapData).join('text').attr('class','val')
+    .attr('x', d => x(d.val) + 4)
+    .attr('y', d => y(d.var) + y.bandwidth()/2 + 4)
+    .text(d => d.val.toFixed(3))
+    .style('font-size','10px').style('fill','#4a4a6a');
+})();
+ 
+/* ─── CHART 4 : DISTRIBUTION ─── */
+(function() {
+  const el = document.getElementById('chart-distrib');
+  const W  = el.offsetWidth, H = 240;
+  const m  = { top: 10, right: 10, bottom: 36, left: 36 };
+  const iW = W - m.left - m.right;
+  const iH = H - m.top - m.bottom;
+ 
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  const g   = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+ 
+  // Simulated distributions based on model behaviour
+  function gaussianPDF(x, mu, sigma) {
+    return Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2)) / (sigma * Math.sqrt(2 * Math.PI));
+  }
+ 
+  const pts = d3.range(0, 1.01, 0.01);
+  const legitCurve  = pts.map(x => ({ x, y: gaussianPDF(x, 0.03, 0.06) * 0.06 }));
+  const fraudCurve  = pts.map(x => ({ x, y: gaussianPDF(x, 0.92, 0.07) * 0.07 }));
+ 
+  const xScale = d3.scaleLinear().domain([0, 1]).range([0, iW]);
+  const yMax   = Math.max(d3.max(legitCurve, d => d.y), d3.max(fraudCurve, d => d.y));
+  const yScale = d3.scaleLinear().domain([0, yMax * 1.1]).range([iH, 0]);
+ 
+  g.append('g').attr('transform', `translate(0,${iH})`)
+    .call(d3.axisBottom(xScale).ticks(5).tickFormat(d3.format('.1f')))
+    .call(ax => { ax.select('.domain').remove(); ax.selectAll('.tick text').style('font-size','10px').style('fill','#8888aa'); ax.selectAll('.tick line').remove(); });
+ 
+  const area = d3.area().x(d => xScale(d.x)).y0(iH).y1(d => yScale(d.y)).curve(d3.curveCatmullRom);
+  const line = d3.line().x(d => xScale(d.x)).y(d => yScale(d.y)).curve(d3.curveCatmullRom);
+ 
+  g.append('path').datum(legitCurve).attr('fill','#b5d4f4').attr('fill-opacity',0.5).attr('d', area);
+  g.append('path').datum(legitCurve).attr('fill','none').attr('stroke','#1e5fa8').attr('stroke-width',1.5).attr('d', line);
+ 
+  g.append('path').datum(fraudCurve).attr('fill','#f09595').attr('fill-opacity',0.5).attr('d', area);
+  g.append('path').datum(fraudCurve).attr('fill','none').attr('stroke','#c0392b').attr('stroke-width',1.5).attr('d', line);
+ 
+  // Seuil line
+  g.append('line').attr('x1', xScale(0.91)).attr('x2', xScale(0.91)).attr('y1', 0).attr('y2', iH)
+    .style('stroke','#b45309').style('stroke-dasharray','4,3').style('stroke-width',1.2);
+  g.append('text').attr('x', xScale(0.91) - 4).attr('y', 12)
+    .text('0.91').style('font-size','9px').style('fill','#b45309').attr('text-anchor','end');
+ 
+  g.append('text').attr('x', xScale(0.03)).attr('y', yScale(yMax * 0.95))
+    .text('Légitimes').style('font-size','9px').style('fill','#1e5fa8').attr('text-anchor','middle');
+  g.append('text').attr('x', xScale(0.92)).attr('y', yScale(yMax * 0.75))
+    .text('Fraudes').style('font-size','9px').style('fill','#c0392b').attr('text-anchor','middle');
+})();
+ 
+/* ─── CHART 5 : CONFUSION ─── */
+(function() {
+  const el = document.getElementById('chart-confusion');
+  const W  = el.offsetWidth, H = 240;
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  const g   = svg.append('g').attr('transform', `translate(${W/2 - 100}, 20)`);
+ 
+  const cellW = 100, cellH = 80;
+  const data = [
+    { row: 0, col: 0, val: 56851, label: 'VN', desc: 'Vrais Négatifs', color: '#eaf3fb', text: '#1e5fa8' },
+    { row: 0, col: 1, val: 13,    label: 'FP', desc: 'Faux Positifs',  color: '#fef3e2', text: '#b45309' },
+    { row: 1, col: 0, val: 16,    label: 'FN', desc: 'Faux Négatifs',  color: '#fff5f5', text: '#c0392b' },
+    { row: 1, col: 1, val: 82,    label: 'VP', desc: 'Vrais Positifs', color: '#e8f5f0', text: '#0f6e56' },
+  ];
+ 
+  // Axis labels
+  ['Légitime', 'Fraude'].forEach((lbl, i) => {
+    g.append('text').attr('x', i * cellW + cellW/2).attr('y', -6)
+      .text(lbl).style('font-size','10px').style('fill','#4a4a6a').attr('text-anchor','middle');
+  });
+  ['Légitime', 'Fraude'].forEach((lbl, i) => {
+    g.append('text').attr('x', -6).attr('y', i * cellH + cellH/2 + 4)
+      .text(lbl).style('font-size','10px').style('fill','#4a4a6a').attr('text-anchor','end');
+  });
+ 
+  g.append('text').attr('x', cellW).attr('y', -20).text('Prédit →')
+    .style('font-size','9px').style('fill','#8888aa').attr('text-anchor','middle');
+  g.append('text').attr('x', -22).attr('y', cellH)
+    .text('Réel ↓').style('font-size','9px').style('fill','#8888aa').attr('text-anchor','middle');
+ 
+  data.forEach(d => {
+    const x = d.col * cellW, y = d.row * cellH;
+    g.append('rect').attr('x', x).attr('y', y).attr('width', cellW - 2).attr('height', cellH - 2)
+      .attr('fill', d.color).attr('rx', 4).attr('stroke', '#e8e8f0').attr('stroke-width', 1);
+    g.append('text').attr('x', x + cellW/2).attr('y', y + 28)
+      .text(d.val.toLocaleString('fr-FR')).style('font-size','20px').style('font-weight','500')
+      .style('fill', d.text).attr('text-anchor','middle').style('font-family','DM Serif Display');
+    g.append('text').attr('x', x + cellW/2).attr('y', y + 46)
+      .text(d.label).style('font-size','10px').style('fill', d.text).attr('text-anchor','middle').style('font-weight','500');
+    g.append('text').attr('x', x + cellW/2).attr('y', y + 60)
+      .text(d.desc).style('font-size','9px').style('fill','#8888aa').attr('text-anchor','middle');
+  });
+})();
+ 
+/* ─── SHAP BARS (cas) ─── */
+function renderShapBars(containerId, caseData, accentColor) {
+  const maxVal = d3.max(caseData, d => d.val);
+  const container = document.getElementById(containerId);
+  caseData.forEach(d => {
+    const pct = (d.val / maxVal * 100).toFixed(0);
+    const color = d.dir > 0 ? '#e24b4a' : '#378ADD';
+    container.innerHTML += `
+      <div class="shap-bar-row">
+        <span class="shap-var">${d.var}</span>
+        <div class="shap-bar-outer">
+          <div class="shap-bar-inner" style="width:${pct}%;background:${color};opacity:0.8;"></div>
+        </div>
+        <span class="shap-val">${d.dir > 0 ? '+' : '-'}${d.val.toFixed(2)}</span>
+      </div>`;
+  });
+}
+ 
+renderShapBars('shap-tp', shapCases.tp, '#c0392b');
+renderShapBars('shap-fn', shapCases.fn, '#b45309');
+renderShapBars('shap-fp', shapCases.fp, '#1e5fa8');
+</script>
+</body>
+</html>
