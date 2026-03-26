@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Projet 7 — Système de pilotage de la détection de fraude bancaire. LightGBM, SHAP, D3.js. Portfolio Armand Komtcheu.">
+<title>Projet 7 — Détection de Fraude Bancaire | Armand Komtcheu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:     #2563eb;
+    --primary-dk:  #1d4ed8;
+    --accent:      #c0392b;
+    --safe:        #0f6e56;
+    --warn:        #b45309;
+    --ink:         #1e293b;
+    --ink-mid:     #475569;
+    --ink-light:   #94a3b8;
+    --rule:        #e2e8f0;
+    --surface:     #f8fafc;
+    --white:       #ffffff;
+    --radius:      12px;
+    --radius-sm:   8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--ink);
+    background: var(--white);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--ink-mid);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--primary); }
+  .btn-back {
+    background: var(--primary);
+    color: var(--white) !important;
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-size: 13px !important;
+    transition: background 0.2s !important;
+  }
+  .btn-back:hover { background: var(--primary-dk) !important; text-decoration: none !important; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%);
+    padding: 72px 40px 56px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .breadcrumb {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .breadcrumb a { color: rgba(255,255,255,0.5); }
+  .breadcrumb a:hover { color: rgba(255,255,255,0.8); text-decoration: none; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(37,99,235,0.3);
+    border: 1px solid rgba(37,99,235,0.5);
+    color: #93c5fd;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .hero h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    color: var(--white);
+  }
+  .hero-desc {
+    font-size: 16px;
+    color: rgba(255,255,255,0.75);
+    max-width: 680px;
+    margin-bottom: 28px;
+    line-height: 1.7;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 32px;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+  .hero-meta i { font-size: 12px; }
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+    transition: all 0.2s;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary-hero {
+    background: var(--primary);
+    color: var(--white);
+  }
+  .btn-primary-hero:hover { background: var(--primary-dk); text-decoration: none; color: var(--white); }
+  .btn-outline-hero {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .btn-outline-hero:hover { background: rgba(255,255,255,0.08); text-decoration: none; color: var(--white); }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+    padding: 24px 40px;
+  }
+  .kpi-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .kpi-item { text-align: center; }
+  .kpi-num {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-item:nth-child(1) .kpi-num { color: var(--safe); }
+  .kpi-item:nth-child(2) .kpi-num { color: var(--primary); }
+  .kpi-item:nth-child(3) .kpi-num { color: var(--warn); }
+  .kpi-item:nth-child(4) .kpi-num { color: var(--accent); }
+  .kpi-lbl { font-size: 12px; color: var(--ink-light); font-weight: 500; }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 52px; }
+  .section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .section-intro {
+    font-size: 15px;
+    color: var(--ink-mid);
+    margin-bottom: 24px;
+  }
+
+  /* ── CONTEXT BOX ── */
+  .context-box {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .context-box p { color: var(--ink-mid); font-size: 14px; }
+  .context-box strong { color: var(--ink); }
+
+  /* ── BRICKS TIMELINE ── */
+  .bricks { display: flex; flex-direction: column; gap: 0; }
+  .brick {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    padding-bottom: 28px;
+  }
+  .brick:last-child { padding-bottom: 0; }
+  .brick-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 40px;
+  }
+  .brick-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: var(--white);
+  }
+  .b1 { background: #0f6e56; }
+  .b2 { background: #7c3aed; }
+  .b3 { background: #b45309; }
+  .b4 { background: #c0392b; }
+  .b5 { background: #1e5fa8; }
+  .b6 { background: #0f6e56; }
+  .brick-line {
+    flex: 1;
+    width: 1px;
+    background: var(--rule);
+    margin-top: 4px;
+  }
+  .brick:last-child .brick-line { display: none; }
+  .brick-body { flex: 1; padding-top: 6px; }
+  .brick-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .brick-desc { font-size: 14px; color: var(--ink-mid); margin-bottom: 10px; }
+  .brick-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--ink-mid);
+    border: 1px solid var(--rule);
+  }
+
+  /* ── RESULTS GRID ── */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+  }
+  .result-card h4 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13px;
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-name { color: var(--ink-mid); }
+  .metric-val  { font-weight: 600; color: var(--ink); font-family: 'Poppins', sans-serif; }
+  .metric-val.good { color: var(--safe); }
+  .metric-val.best { color: var(--primary); }
+
+  /* ── INSIGHT BOX ── */
+  .insight {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #1e40af;
+    display: flex;
+    gap: 10px;
+  }
+  .insight i { margin-top: 2px; flex-shrink: 0; }
+  .insight.warn-insight {
+    background: #fef3c7;
+    border-color: #fcd34d;
+    color: #92400e;
+  }
+  .insight.danger-insight {
+    background: #fff1f2;
+    border-color: #fda4af;
+    color: #9f1239;
+  }
+
+  /* ── SHAP TABLE ── */
+  .shap-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+  .shap-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface);
+    border-bottom: 2px solid var(--rule);
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .shap-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-mid);
+  }
+  .shap-table tr:last-child td { border-bottom: none; }
+  .shap-table .var-name { font-weight: 600; color: var(--ink); font-family: 'Poppins', sans-serif; }
+  .shap-bar-wrap { width: 120px; }
+  .shap-mini-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: #bfdbfe;
+    display: inline-block;
+  }
+
+  /* ── TECH STACK ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .stack-item {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stack-item i { font-size: 18px; margin-bottom: 6px; display: block; color: var(--primary); }
+  .stack-name { font-size: 12px; font-weight: 600; color: var(--ink); display: block; margin-bottom: 2px; }
+  .stack-role { font-size: 11px; color: var(--ink-light); }
+
+  /* ── CTA FOOTER ── */
+  .cta-section {
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+    padding: 40px;
+    text-align: center;
+  }
+  .cta-section h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .cta-section p { color: var(--ink-mid); font-size: 14px; margin-bottom: 20px; }
+  .cta-btns { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+  .btn-primary { background: var(--primary); color: var(--white); }
+  .btn-primary:hover { background: var(--primary-dk); text-decoration: none; color: var(--white); }
+  .btn-outline { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+  .btn-outline:hover { background: var(--surface); text-decoration: none; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.5);
+    padding: 20px 40px;
+    text-align: center;
+    font-size: 12px;
+  }
+  footer a { color: rgba(255,255,255,0.6); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="../index.html" class="nav-logo">Armand K.</a>
+  <ul class="nav-links">
+    <li><a href="../index.html#about">À propos</a></li>
+    <li><a href="../index.html#projects">Projets</a></li>
+    <li><a href="../index.html#contact" class="btn-back">Me contacter</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="../index.html"><i class="fa-solid fa-house"></i> Accueil</a>
+      <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i>
+      <span>Projet 7</span>
+    </div>
+    <div class="hero-tag">Fraude Bancaire · Machine Learning · XAI</div>
+    <h1>Système de pilotage de la<br>détection de fraude externe</h1>
+    <p class="hero-desc">
+      Simulation d'un dispositif Data Analyst au sein d'un département Lutte contre la Fraude Externe (LCFE),
+      inspiré des missions Arkéa / Crédit Mutuel. De la règle métier au modèle ML explicable,
+      en passant par le dashboard de pilotage pour la Direction et l'ACPR.
+    </p>
+    <div class="hero-meta">
+      <span><i class="fa-solid fa-database"></i> 284 807 transactions · Dataset ULB (Kaggle)</span>
+      <span><i class="fa-solid fa-microchip"></i> LightGBM · seuil optimisé 0,91</span>
+      <span><i class="fa-solid fa-shield-halved"></i> Contexte bancaire · IA Act 2024</span>
+      <span><i class="fa-solid fa-location-dot"></i> Bretagne · Cible Arkéa / ESN</span>
+    </div>
+    <div class="hero-ctas">
+      <a href="dashboard_fraude.html" target="_blank" class="btn btn-primary-hero">
+        <i class="fa-solid fa-chart-line"></i> Voir le dashboard
+      </a>
+      <a href="https://colab.research.google.com/drive/VOTRE_LIEN" target="_blank" class="btn btn-outline-hero">
+        <i class="fa-brands fa-python"></i> Notebook Colab
+      </a>
+      <a href="../Mon_CV.pdf" target="_blank" class="btn btn-outline-hero">
+        <i class="fa-regular fa-file-pdf"></i> Mon CV
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi-inner">
+    <div class="kpi-item">
+      <div class="kpi-num">85,0%</div>
+      <div class="kpi-lbl">F1-score LightGBM</div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-num">0,977</div>
+      <div class="kpi-lbl">AUC-ROC</div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-num">13</div>
+      <div class="kpi-lbl">Faux positifs (vs 10 847 règle combo)</div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-num">83,7%</div>
+      <div class="kpi-lbl">Taux de détection (Rappel)</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- CONTEXTE -->
+  <section class="section">
+    <h2 class="section-title">Contexte & objectif</h2>
+    <div class="context-box">
+      <p>
+        <strong>Problématique :</strong> Un département Lutte contre la Fraude Externe (LCFE) de banque de détail
+        pilote son dispositif via des règles manuelles configurées dans un outil de détection. Ces règles
+        plafonnent à un F1-score de 0,60 et génèrent des milliers de fausses alertes — un coût opérationnel
+        direct pour les analystes. L'enjeu : <strong>dépasser les règles métier sur tous les indicateurs
+        simultanément</strong>, tout en restant explicable pour le régulateur (ACPR) et les équipes métier.
+      </p>
+    </div>
+    <p class="section-intro">
+      Ce projet reproduit le cycle complet d'un Data Analyst fraude : définition des règles métier,
+      entraînement et sélection du modèle ML, explicabilité SHAP transaction par transaction,
+      et restitution via un dashboard de pilotage orienté Direction.
+    </p>
+  </section>
+
+  <!-- BRIQUES -->
+  <section class="section">
+    <h2 class="section-title">Construction du projet</h2>
+    <div class="bricks">
+
+      <div class="brick">
+        <div class="brick-left">
+          <div class="brick-num b1">1</div>
+          <div class="brick-line"></div>
+        </div>
+        <div class="brick-body">
+          <div class="brick-title">Dataset & Analyse Exploratoire</div>
+          <div class="brick-desc">
+            Chargement du dataset ULB (284 807 transactions réelles anonymisées par PCA).
+            Quantification du déséquilibre extrême : 0,17% de fraudes. Analyse temporelle
+            et comportementale — le montant médian des fraudes est de 22€ (card testing).
+          </div>
+          <div class="brick-tags">
+            <span class="chip">Kaggle API</span>
+            <span class="chip">Google Colab</span>
+            <span class="chip">EDA</span>
+            <span class="chip">Classe déséquilibrée</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left">
+          <div class="brick-num b2">2</div>
+          <div class="brick-line"></div>
+        </div>
+        <div class="brick-body">
+          <div class="brick-title">Règles métier style LCFE</div>
+          <div class="brick-desc">
+            Définition de 5 règles manuelles (montant, horaire, V14, V10, combinée) et évaluation
+            sur précision, rappel et F1. La règle combinée atteint un rappel de 0,85 mais génère
+            <strong>10 847 faux positifs</strong> — intenable pour une équipe d'analystes.
+          </div>
+          <div class="brick-tags">
+            <span class="chip">Règles seuils</span>
+            <span class="chip">Précision / Rappel</span>
+            <span class="chip">Matrice de confusion</span>
+            <span class="chip">Coût opérationnel</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left">
+          <div class="brick-num b3">3</div>
+          <div class="brick-line"></div>
+        </div>
+        <div class="brick-body">
+          <div class="brick-title">Modèles ML & Optimisation du seuil</div>
+          <div class="brick-desc">
+            Entraînement de 3 modèles (Random Forest, XGBoost, LightGBM) avec SMOTE
+            pour le déséquilibre. Test de 45 seuils de décision (0,05 → 0,97) pour chaque modèle.
+            <strong>LightGBM à seuil 0,91 remporte tous les critères</strong> : F1 0,85,
+            précision 0,863, seulement 13 faux positifs.
+          </div>
+          <div class="brick-tags">
+            <span class="chip">SMOTE</span>
+            <span class="chip">Random Forest</span>
+            <span class="chip">XGBoost</span>
+            <span class="chip">LightGBM</span>
+            <span class="chip">Optimisation seuil</span>
+            <span class="chip">AUC-ROC 0,977</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left">
+          <div class="brick-num b4">4</div>
+          <div class="brick-line"></div>
+        </div>
+        <div class="brick-body">
+          <div class="brick-title">Explicabilité SHAP — IA Act ready</div>
+          <div class="brick-desc">
+            Calcul des SHAP values sur 56 962 transactions. Explication transaction par
+            transaction (waterfall plot) pour 3 cas types : fraude détectée, fraude manquée,
+            fausse alerte. Analyse du profil des faux positifs et proposition d'une règle
+            d'exclusion ciblée (V14 modéré + montant faible).
+          </div>
+          <div class="brick-tags">
+            <span class="chip">SHAP TreeExplainer</span>
+            <span class="chip">Waterfall plot</span>
+            <span class="chip">XAI / IA explicable</span>
+            <span class="chip">Conformité ACPR</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left">
+          <div class="brick-num b5">5</div>
+          <div class="brick-line"></div>
+        </div>
+        <div class="brick-body">
+          <div class="brick-title">Dashboard de pilotage D3.js</div>
+          <div class="brick-desc">
+            Dashboard interactif orienté Direction : 4 KPIs clés, comparatif règles vs ML,
+            courbe de seuils, importance SHAP globale, distribution des scores, matrice de confusion
+            et analyse des 3 cas SHAP. Hébergé statiquement sur GitHub Pages.
+          </div>
+          <div class="brick-tags">
+            <span class="chip">D3.js v7</span>
+            <span class="chip">GitHub Pages</span>
+            <span class="chip">Reporting Direction</span>
+            <span class="chip">HTML / CSS</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RÉSULTATS -->
+  <section class="section">
+    <h2 class="section-title">Résultats clés</h2>
+
+    <div class="results-grid">
+      <div class="result-card">
+        <h4>Comparaison — Meilleure règle vs LightGBM</h4>
+        <div class="metric-row">
+          <span class="metric-name">Précision (règle R3)</span>
+          <span class="metric-val">0,55</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Précision (LightGBM)</span>
+          <span class="metric-val good">0,863 <small style="font-weight:400;color:#94a3b8;">+57%</small></span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Rappel (règle R3)</span>
+          <span class="metric-val">0,67</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Rappel (LightGBM)</span>
+          <span class="metric-val good">0,837 <small style="font-weight:400;color:#94a3b8;">+25%</small></span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">F1-score (règle R3)</span>
+          <span class="metric-val">0,60</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">F1-score (LightGBM)</span>
+          <span class="metric-val best">0,850 <small style="font-weight:400;color:#94a3b8;">+42%</small></span>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <h4>Coût opérationnel — Faux positifs</h4>
+        <div class="metric-row">
+          <span class="metric-name">Règle combo (0,85 rappel)</span>
+          <span class="metric-val" style="color:var(--accent);">10 847 FP</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Random Forest</span>
+          <span class="metric-val" style="color:var(--warn);">10 FP</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">XGBoost</span>
+          <span class="metric-val" style="color:var(--warn);">25 FP</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">LightGBM ★</span>
+          <span class="metric-val good">13 FP</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Fraudes détectées (LightGBM)</span>
+          <span class="metric-val best">82 / 98</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">AUC-ROC (LightGBM)</span>
+          <span class="metric-val best">0,977</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <i class="fa-solid fa-lightbulb"></i>
+      <div>
+        <strong>Insight principal :</strong> L'optimisation du seuil de décision (0,5 → 0,91) améliore
+        le F1 de LightGBM de +29% (0,66 → 0,85). Le seuil par défaut est rarement optimal sur des
+        données bancaires déséquilibrées — cette calibration est une décision métier, pas technique.
+      </div>
+    </div>
+
+    <div class="insight warn-insight">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <div>
+        <strong>Analyse des faux positifs :</strong> Les 13 fausses alertes présentent des valeurs V14
+        modérément négatives (-3,96 en moyenne vs -8,24 pour les vraies fraudes) et de faibles montants
+        (médiane 1€). Piste d'amélioration identifiée : règle d'exclusion hybride ML+métier sur
+        V14 ∈ [-5, -3] et Amount &lt; 10€.
+      </div>
+    </div>
+
+    <div class="insight danger-insight">
+      <i class="fa-solid fa-eye"></i>
+      <div>
+        <strong>Analyse XAI — fraude manquée :</strong> La fraude non détectée (proba 13,7%) présente
+        un signal V14 fort (+8,2 SHAP) mais est contrebalancée par 5 variables (V26, Time, V27...).
+        Ce cas justifie une revue du paramétrage des seuils en comité opérationnel.
+      </div>
+    </div>
+  </section>
+
+  <!-- SHAP TOP 5 -->
+  <section class="section">
+    <h2 class="section-title">Variables discriminantes — SHAP global</h2>
+    <p class="section-intro">
+      Les 10 variables les plus importantes selon les SHAP values moyennes sur le jeu de test.
+      V4 et V14 dominent — leur combinaison dans le modèle capture des patterns que les règles individuelles ne peuvent pas saisir.
+    </p>
+    <table class="shap-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Variable</th>
+          <th>Importance SHAP</th>
+          <th>Visualisation</th>
+          <th>Direction (fraude)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td class="var-name">V4</td><td>1,047</td><td><div class="shap-mini-bar" style="width:120px;background:#1e5fa8;"></div></td><td>Valeurs élevées → fraude</td></tr>
+        <tr><td>2</td><td class="var-name">V14</td><td>0,857</td><td><div class="shap-mini-bar" style="width:99px;background:#1e5fa8;"></div></td><td>Valeurs très négatives → fraude</td></tr>
+        <tr><td>3</td><td class="var-name">V1</td><td>0,564</td><td><div class="shap-mini-bar" style="width:65px;background:#378add;"></div></td><td>Mixte selon valeur</td></tr>
+        <tr><td>4</td><td class="var-name">V18</td><td>0,533</td><td><div class="shap-mini-bar" style="width:61px;background:#378add;"></div></td><td>Mixte selon valeur</td></tr>
+        <tr><td>5</td><td class="var-name">V8</td><td>0,486</td><td><div class="shap-mini-bar" style="width:56px;background:#5b9bd5;"></div></td><td>Mixte selon valeur</td></tr>
+        <tr><td>6</td><td class="var-name">V22</td><td>0,440</td><td><div class="shap-mini-bar" style="width:51px;background:#5b9bd5;"></div></td><td>Mixte selon valeur</td></tr>
+        <tr><td>7</td><td class="var-name">V12</td><td>0,398</td><td><div class="shap-mini-bar" style="width:46px;background:#85b7eb;"></div></td><td>Valeurs très négatives → fraude</td></tr>
+        <tr><td>8</td><td class="var-name">V3</td><td>0,361</td><td><div class="shap-mini-bar" style="width:41px;background:#85b7eb;"></div></td><td>Mixte selon valeur</td></tr>
+        <tr><td>9</td><td class="var-name">V24</td><td>0,343</td><td><div class="shap-mini-bar" style="width:39px;background:#b5d4f4;"></div></td><td>Mixte selon valeur</td></tr>
+        <tr><td>10</td><td class="var-name">Time_scaled</td><td>0,270</td><td><div class="shap-mini-bar" style="width:31px;background:#b5d4f4;"></div></td><td>Transactions nocturnes légèrement suspectes</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- STACK -->
+  <section class="section">
+    <h2 class="section-title">Stack technique</h2>
+    <div class="stack-grid">
+      <div class="stack-item">
+        <i class="fa-brands fa-python"></i>
+        <span class="stack-name">Python</span>
+        <span class="stack-role">Analyse & ML</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-brain"></i>
+        <span class="stack-name">LightGBM</span>
+        <span class="stack-role">Modèle retenu</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-scale-balanced"></i>
+        <span class="stack-name">SHAP</span>
+        <span class="stack-role">Explicabilité XAI</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-chart-bar"></i>
+        <span class="stack-name">D3.js v7</span>
+        <span class="stack-role">Dashboard</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-flask"></i>
+        <span class="stack-name">Scikit-learn</span>
+        <span class="stack-role">Pipeline ML</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-shuffle"></i>
+        <span class="stack-name">SMOTE</span>
+        <span class="stack-role">Rééquilibrage</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-brands fa-google"></i>
+        <span class="stack-name">Colab</span>
+        <span class="stack-role">Environnement</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-brands fa-github"></i>
+        <span class="stack-name">GitHub Pages</span>
+        <span class="stack-role">Déploiement</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h3>Voir ce projet en action</h3>
+  <p>Dashboard interactif · Notebook commenté · Étude de cas complète</p>
+  <div class="cta-btns">
+    <a href="dashboard_fraude.html" target="_blank" class="btn btn-primary">
+      <i class="fa-solid fa-chart-line"></i> Dashboard de pilotage
+    </a>
+    <a href="https://colab.research.google.com/drive/1R77HlBDQx5IDD1HhD-Z6fyA8rDkvUNNx?usp=sharing" target="_blank" class="btn btn-outline">
+      <i class="fa-brands fa-python"></i> Notebook Colab
+    </a>
+    <a href="../index.html#projects" class="btn btn-outline">
+      <i class="fa-solid fa-arrow-left"></i> Retour aux projets
+    </a>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Armand Komtcheu · <a href="mailto:colinarmand60@gmail.com">colinarmand60@gmail.com</a> · <a href="https://www.linkedin.com/in/armand-colin-komtcheu-0014471b3/" target="_blank">LinkedIn</a></p>
+</footer>
+
+</body>
+</html>
