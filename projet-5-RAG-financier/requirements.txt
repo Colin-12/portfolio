@@ -9,3 +9,4 @@ sentence-transformers
 pymupdf4llm
 rank_bm25
 numpy
+gdown
