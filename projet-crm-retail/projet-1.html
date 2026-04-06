@@ -3,43 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet 1 | CRM & Incrémentalité - Armand K.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <title>Projet 1 | CRM & Incrémentalité — Armand K.</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
 
-    
     <style>
-        .project-page { padding: 100px 5% 40px; background-color: #fff; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
-        .back-link { display: inline-block; margin-bottom: 2rem; color: var(--accent-color); font-weight: 600; }
+        :root {
+            --ink: #0f172a;
+            --ink-light: #475569;
+            --ink-muted: #94a3b8;
+            --surface: #f8fafc;
+            --card: #ffffff;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --positive: #059669;
+            --positive-light: #d1fae5;
+            --negative: #dc2626;
+            --negative-light: #fee2e2;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --border: #e2e8f0;
+            --radius: 10px;
+        }
+
+        .project-page {
+            padding: 100px 5% 40px;
+            background-color: var(--card);
+            min-height: 100vh;
+            max-width: 820px;
+            margin: 0 auto;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
         .back-link:hover { text-decoration: underline; }
-        .disclaimer-box { background-color: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin-bottom: 2rem; font-style: italic; color: #555; font-size: 0.9rem; }
-        .project-body-content h3 { color: var(--primary-color); margin: 2rem 0 1rem; font-size: 1.5rem;}
-        .project-body-content p, .project-body-content li { margin-bottom: 1rem; color: #444; font-size: 1.05rem; line-height: 1.7; }
-        .project-body-content ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
-        .dataset-link { display: inline-flex; align-items: center; gap: 8px; background: #eef2f7; padding: 8px 15px; border-radius: 5px; color: var(--primary-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 2rem; }
-        
-        .highlight-box { background-color: #e0f2fe; border: 1px solid #bae6fd; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
-        .highlight-box strong { color: #0284c7; }
-        
-        .limits-box { background-color: #fff5f5; border: 1px solid #ffe3e3; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
-        .limits-box strong { color: #e53e3e; }
 
-        /* Pipeline CSS pur */
-        .pipeline-container { display: flex; flex-direction: column; gap: 10px; margin: 2rem 0; padding: 1.5rem; background: #f9fafb; border-radius: 8px; border: 1px dashed #e5e7eb; }
-        .pipeline-step { display: flex; align-items: center; gap: 15px; }
-        .step-box { background: var(--primary-color); color: white; padding: 10px 15px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; min-width: 180px; text-align: center; }
-        .step-desc { font-size: 0.9rem; color: #555; }
-        .step-arrow { color: var(--accent-color); font-size: 1.2rem; margin-left: 80px; }
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            color: var(--ink);
+            margin-bottom: 0.75rem;
+            line-height: 1.25;
+        }
 
-        .action-buttons { display: flex; gap: 15px; margin-top: 2rem; flex-wrap: wrap; }
+        /* ── Disclaimer ── */
+        .disclaimer {
+            background: var(--surface);
+            border-left: 4px solid var(--ink-muted);
+            padding: 1rem 1.25rem;
+            margin-bottom: 2rem;
+            font-size: 0.88rem;
+            color: var(--ink-light);
+            line-height: 1.6;
+            border-radius: 0 var(--radius) var(--radius) 0;
+        }
+        .disclaimer strong { color: var(--ink); }
 
-        .results-table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; }
-        .results-table th, .results-table td { padding: 10px 12px; border: 1px solid #ddd; text-align: center; }
-        .results-table th { background-color: var(--primary-color); color: white; font-weight: 600; }
-        .results-table tr:nth-child(even) { background-color: #f9f9f9; }
-        .sig-yes { color: #16a34a; font-weight: bold; }
-        .sig-no { color: #dc2626; font-weight: bold; }
+        .dataset-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--accent-light); padding: 8px 16px;
+            border-radius: 6px; color: var(--accent);
+            font-weight: 600; font-size: 0.85rem;
+            text-decoration: none; margin-bottom: 2rem;
+        }
+        .dataset-link:hover { opacity: 0.85; }
+
+        /* ── Body content ── */
+        .body h3 {
+            color: var(--ink);
+            margin: 2.5rem 0 0.75rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .body p, .body li {
+            margin-bottom: 1rem;
+            color: var(--ink-light);
+            font-size: 1rem;
+            line-height: 1.75;
+        }
+        .body ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
+
+        /* ── Pipeline ── */
+        .pipeline {
+            display: flex; flex-direction: column; gap: 0;
+            margin: 1.5rem 0 2rem;
+            padding: 1.5rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .pipe-step {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 0.75rem 0;
+        }
+        .pipe-step:not(:last-child) { border-bottom: 1px dashed var(--border); }
+        .pipe-num {
+            min-width: 28px; height: 28px;
+            background: var(--ink);
+            color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700;
+            flex-shrink: 0;
+        }
+        .pipe-label { font-weight: 700; color: var(--ink); font-size: 0.92rem; }
+        .pipe-desc { font-size: 0.85rem; color: var(--ink-light); margin-top: 2px; }
+
+        /* ── Results Table ── */
+        .results-table {
+            width: 100%; border-collapse: collapse;
+            margin: 1.5rem 0; font-size: 0.82rem;
+        }
+        .results-table th {
+            background: var(--ink); color: white;
+            padding: 10px 10px; text-align: center;
+            font-size: 0.72rem; text-transform: uppercase;
+            letter-spacing: 0.04em; font-weight: 600;
+        }
+        .results-table td {
+            padding: 9px 10px; border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        .results-table tr:hover td { background: #f1f5f9; }
+        .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+        .pos { color: var(--positive); font-weight: 600; }
+        .neg { color: var(--negative); font-weight: 600; }
+        .badge {
+            display: inline-block; padding: 2px 8px;
+            border-radius: 20px; font-size: 0.7rem; font-weight: 600;
+        }
+        .badge.no { background: var(--negative-light); color: var(--negative); }
+        .badge.yes { background: var(--positive-light); color: var(--positive); }
+
+        /* ── Insight Boxes ── */
+        .insight {
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius);
+            margin: 1.25rem 0;
+            line-height: 1.65;
+        }
+        .insight p { margin-bottom: 0.5rem; }
+        .insight p:last-child { margin-bottom: 0; }
+        .insight-blue { background: var(--accent-light); border-left: 4px solid var(--accent); }
+        .insight-blue strong { color: var(--accent); }
+        .insight-amber { background: var(--warning-light); border-left: 4px solid var(--warning); }
+        .insight-amber strong { color: var(--warning); }
+        .insight-red { background: var(--negative-light); border-left: 4px solid var(--negative); }
+        .insight-red strong { color: var(--negative); }
+        .insight-green { background: var(--positive-light); border-left: 4px solid var(--positive); }
+        .insight-green strong { color: var(--positive); }
+
+        /* ── Power Analysis Image ── */
+        .power-img {
+            width: 100%; border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin: 1rem 0;
+        }
+
+        /* ── Limits ── */
+        .limits {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+        }
+        .limits strong { color: var(--ink); }
+
+        /* ── CTAs ── */
+        .cta-row { display: flex; gap: 12px; margin-top: 2rem; flex-wrap: wrap; }
+        .cta-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 22px; border-radius: 8px;
+            font-weight: 600; font-size: 0.9rem;
+            text-decoration: none; transition: 0.2s;
+        }
+        .cta-primary { background: var(--ink); color: white; }
+        .cta-primary:hover { background: #1e293b; }
+        .cta-secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--border); }
+        .cta-secondary:hover { background: var(--border); }
     </style>
 </head>
 <body>
@@ -52,180 +203,243 @@
     </nav>
 
     <main class="project-page">
-        <a href="../index.html#projects" class="back-link">&larr; Retour aux projets</a>
-        
-        <h1 style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; line-height: 1.2;">Mesure de l'Incrémentalité & ROI de campagnes CRM (A/B Test)</h1>
-        
-        <div class="disclaimer-box">
-            <i class="fa-solid fa-circle-info"></i> <strong>Note de transparence :</strong> Les données transactionnelles et la segmentation RFM sont <strong>réelles</strong> (basées sur le dataset public UCI). Afin de démontrer ma méthodologie métier (A/B testing, mesure d'uplift), l'assignation des clients aux canaux marketing (Email, SMS, Témoin) a été <strong>simulée aléatoirement</strong>.
+        <a href="../index.html#projects" class="back-link"><i class="fa-solid fa-arrow-left"></i> Retour aux projets</a>
+
+        <h1>Mesure de l'Incrémentalité & ROI de campagnes CRM (A/B Test)</h1>
+
+        <div class="disclaimer">
+            <i class="fa-solid fa-circle-info"></i>
+            <strong>Note de transparence :</strong> Les données transactionnelles et la segmentation RFM sont réelles (dataset public UCI Online Retail).
+            L'assignation des clients aux canaux marketing (Email, SMS, Témoin) a été <strong>simulée aléatoirement</strong> pour démontrer la méthodologie.
+            Une vraie campagne intègrerait le consentement (opt-in/opt-out) et des mécanismes de randomisation stratifiée.
         </div>
 
         <a href="https://archive.ics.uci.edu/ml/datasets/online+retail" target="_blank" class="dataset-link">
-            <i class="fa-solid fa-database"></i> Dataset transactionnel : UCI Online Retail
+            <i class="fa-solid fa-database"></i> Dataset : UCI Online Retail
         </a>
 
-        <div class="project-body-content">
-            <h3>1. Contexte & Objectif</h3>
-            <p>Dans de nombreuses entreprises, le reporting marketing s'approprie 100% du chiffre d'affaires des clients contactés. L'objectif de ce projet est de dépasser cette vision "vanity metrics" pour isoler la <strong>valeur purement incrémentale</strong> (Uplift) générée par les campagnes Email et SMS, et d'en déduire un ROI Net basé sur les coûts de routage.</p>
+        <div class="body">
 
+            <!-- ── 1. CONTEXTE ── -->
+            <h3>1. Contexte & Objectif</h3>
+            <p>
+                Dans de nombreuses entreprises, le reporting marketing s'approprie 100 % du chiffre d'affaires des clients contactés.
+                Or une partie de ces clients aurait acheté <em>de toute façon</em>, même sans être sollicités.
+            </p>
+            <p>
+                L'objectif de ce projet est de dépasser cette vision « vanity metrics » pour isoler la <strong>valeur purement incrémentale</strong> (Uplift) générée par les campagnes Email et SMS,
+                en comparant les groupes traités à un groupe témoin non sollicité.
+            </p>
+
+            <!-- ── 2. PIPELINE ── -->
             <h3>2. Pipeline de Données & Méthodologie</h3>
-            <p>Pour éviter tout "Data Leakage", j'ai reconstruit l'historique client strict à l'instant T-1 de la campagne :</p>
-            
-            <div class="pipeline-container">
-                <div class="pipeline-step">
-                    <div class="step-box"><i class="fa-solid fa-filter"></i> Nettoyage SQL/Pandas</div>
-                    <div class="step-desc">Filtrage des retours, valeurs nulles, et anomalies.</div>
+            <p>Pour éviter tout data leakage, l'historique client est reconstruit strictement à T-1 (veille de la campagne, 01/05/2011) :</p>
+
+            <div class="pipeline">
+                <div class="pipe-step">
+                    <div class="pipe-num">1</div>
+                    <div>
+                        <div class="pipe-label">Nettoyage (Pandas)</div>
+                        <div class="pipe-desc">Suppression des retours (InvoiceNo commençant par « C »), valeurs nulles et anomalies de prix.</div>
+                    </div>
                 </div>
-                <div class="step-arrow"><i class="fa-solid fa-arrow-down"></i></div>
-                <div class="pipeline-step">
-                    <div class="step-box"><i class="fa-solid fa-layer-group"></i> Segmentation RFM</div>
-                    <div class="step-desc">Score Récence, Fréquence, Montant (à T-1) -> VIP, Réguliers, En Risque.</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">2</div>
+                    <div>
+                        <div class="pipe-label">Segmentation RFM à T-1</div>
+                        <div class="pipe-desc">Récence, Fréquence, Montant calculés <em>uniquement</em> sur les transactions antérieures au 01/05/2011 → 3 segments : VIP, Régulier, En Risque.</div>
+                    </div>
                 </div>
-                <div class="step-arrow"><i class="fa-solid fa-arrow-down"></i></div>
-                <div class="pipeline-step">
-                    <div class="step-box"><i class="fa-solid fa-shuffle"></i> Split A/B/C Test</div>
-                    <div class="step-desc">Assignation aléatoire : 10% Groupe Témoin (Control) / 45% Email / 45% SMS.</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">3</div>
+                    <div>
+                        <div class="pipe-label">Split A/B/C (randomisation)</div>
+                        <div class="pipe-desc">10 % Groupe Témoin (Control) / 45 % Email / 45 % SMS. Seed fixe pour reproductibilité.</div>
+                    </div>
                 </div>
-                <div class="step-arrow"><i class="fa-solid fa-arrow-down"></i></div>
-                <div class="pipeline-step">
-                    <div class="step-box"><i class="fa-solid fa-chart-line"></i> Z-Test & ROI</div>
-                    <div class="step-desc">Uplift absolu, CA Incrémental et test de significativité statistique (Z-test).</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">4</div>
+                    <div>
+                        <div class="pipe-label">Z-Test & CA Incrémental</div>
+                        <div class="pipe-desc">Uplift absolu (pts), CA incrémental net (traités − témoins extrapolé − coûts), et test de significativité (α = 0.05).</div>
+                    </div>
                 </div>
             </div>
 
-<h3>3. Résultats Statistiques & Financiers</h3>
-<p>L'analyse des données de campagne montre qu'aucune des variations observées n'atteint le seuil de significativité statistique (confiance 95 %). L'Uplift mesuré peut donc être dû au hasard.</p>
+            <!-- ── 3. RÉSULTATS ── -->
+            <h3>3. Résultats Statistiques</h3>
+            <p>
+                L'analyse montre qu'<strong>aucune des 6 combinaisons Segment × Canal</strong> n'atteint le seuil de significativité statistique (p &lt; 0.05).
+                Les variations observées — positives ou négatives — ne peuvent pas être distinguées du bruit statistique.
+            </p>
 
-<table class="results-table">
-<thead>
-<tr>
-<th>Segment</th>
-<th>Canal</th>
-<th>Uplift (pts)</th>
-<th>P-Value</th>
-<th>Significatif ?</th>
-<th>CA Incrémental</th>
-<th>ROI Net</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td rowspan="2" style="vertical-align: middle; font-weight: bold;">VIP</td>
-<td>Email</td>
-<td style="color: red;">-8.74</td>
-<td>0.212</td>
-<td class="sig-no">Non</td>
-<td style="color: red;">-14 125 €</td>
-<td class="sig-no">-3 167 180 %</td>
-</tr>
-<tr>
-<td>SMS</td>
-<td style="color: red;">-4.78</td>
-<td>0.493</td>
-<td class="sig-no">Non</td>
-<td style="color: red;">-10 917 €</td>
-<td class="sig-no">-99 707 %</td>
-</tr>
-<tr>
-<td rowspan="2" style="vertical-align: middle; font-weight: bold;">Réguliers</td>
-<td>Email</td>
-<td style="color: green;">+2.63</td>
-<td>0.386</td>
-<td class="sig-no">Non</td>
-<td style="color: green;">+5 578 €</td>
-<td class="sig-yes">+449 036 %</td>
-</tr>
-<tr>
-<td>SMS</td>
-<td style="color: green;">+2.20</td>
-<td>0.465</td>
-<td class="sig-no">Non</td>
-<td style="color: green;">+4 178 €</td>
-<td class="sig-yes">+17 253 %</td>
-</tr>
-<tr>
-<td rowspan="2" style="vertical-align: middle; font-weight: bold;">En Risque</td>
-<td>Email</td>
-<td style="color: red;">-2.56</td>
-<td>0.501</td>
-<td class="sig-no">Non</td>
-<td style="color: red;">-2 358 €</td>
-<td class="sig-no">-524 097 %</td>
-</tr>
-<tr>
-<td>SMS</td>
-<td style="color: red;">-1.74</td>
-<td>0.658</td>
-<td class="sig-no">Non</td>
-<td style="color: red;">-1 480 €</td>
-<td class="sig-no">-16 406 %</td>
-</tr>
-</tbody>
-</table>
+            <div style="overflow-x:auto;">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Segment</th><th>Canal</th><th>N traités</th>
+                        <th>Conv. traités</th><th>Conv. témoins</th>
+                        <th>Uplift (pts)</th><th>P-Value</th>
+                        <th>Significatif ?</th><th>CA Incrémental</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="2" style="vertical-align:middle;font-weight:700;">VIP</td>
+                        <td>Email</td><td class="mono">223</td>
+                        <td class="mono">33.6 %</td><td class="mono">42.4 %</td>
+                        <td class="mono neg">−8.7</td><td class="mono">0.212</td>
+                        <td><span class="badge no">Non</span></td>
+                        <td class="mono neg">−14 125 €</td>
+                    </tr>
+                    <tr>
+                        <td>SMS</td><td class="mono">274</td>
+                        <td class="mono">37.6 %</td><td class="mono">42.4 %</td>
+                        <td class="mono neg">−4.8</td><td class="mono">0.493</td>
+                        <td><span class="badge no">Non</span></td>
+                        <td class="mono neg">−10 917 €</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" style="vertical-align:middle;font-weight:700;">Régulier</td>
+                        <td>Email</td><td class="mono">621</td>
+                        <td class="mono">12.6 %</td><td class="mono">9.9 %</td>
+                        <td class="mono pos">+2.6</td><td class="mono">0.387</td>
+                        <td><span class="badge no">Non</span></td>
+                        <td class="mono pos">+5 578 €</td>
+                    </tr>
+                    <tr>
+                        <td>SMS</td><td class="mono">602</td>
+                        <td class="mono">12.1 %</td><td class="mono">9.9 %</td>
+                        <td class="mono pos">+2.2</td><td class="mono">0.465</td>
+                        <td><span class="badge no">Non</span></td>
+                        <td class="mono pos">+4 179 €</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" style="vertical-align:middle;font-weight:700;">En Risque</td>
+                        <td>Email</td><td class="mono">225</td>
+                        <td class="mono">7.1 %</td><td class="mono">9.7 %</td>
+                        <td class="mono neg">−2.6</td><td class="mono">0.501</td>
+                        <td><span class="badge no">Non</span></td>
+                        <td class="mono neg">−2 358 €</td>
+                    </tr>
+                    <tr>
+                        <td>SMS</td><td class="mono">227</td>
+                        <td class="mono">7.9 %</td><td class="mono">9.7 %</td>
+                        <td class="mono neg">−1.7</td><td class="mono">0.658</td>
+                        <td><span class="badge no">Non</span></td>
+                        <td class="mono neg">−1 481 €</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
 
-            <h3>4. Insights Actionnables (Impact Business)</h3>
-<div class="highlight-box">
-<p><strong> 1. Échec critique sur les segments VIP et En Risque</strong></p>
-<p>Contrairement aux attentes, les groupes traités dans ces segments ont <strong>moins converti</strong> que les groupes témoins (Uplift négatif). Sur les VIP, la perte de CA incrémental est massive (-14k€).
-<strong>Interprétation :</strong> La sollicitation a soit généré une réaction négative, soit les groupes étaient trop petits pour être représentatifs.
-<strong>Action :</strong> Arrêt immédiat des campagnes automatiques sur ces segments en attendant une révision de l'offre.</p>
-</div>
+            <!-- ── 4. POWER ANALYSIS ── -->
+            <h3>4. Pourquoi rien n'est significatif ? (Power Analysis)</h3>
+            <p>
+                Avant de conclure à l'inefficacité des canaux, il faut se demander :
+                <strong>l'expérience avait-elle la puissance statistique nécessaire pour détecter un effet ?</strong>
+            </p>
+            <p>
+                La réponse est non. Une analyse de puissance a posteriori montre que pour détecter un uplift
+                de 3 points de pourcentage avec 80 % de puissance et un seuil α = 0.05, il aurait fallu :
+            </p>
 
-<div class="highlight-box">
-<p><strong> 2. L'illusion du segment "Réguliers"</strong></p>
-<p>Bien que le segment "Réguliers" affiche un CA incrémental positif (env. +5k€) et un ROI théorique délirant, la <strong>p-value (0.38) est beaucoup trop élevée</strong> pour valider ce succès. On ne peut pas affirmer que c'est l'email qui a provoqué l'achat.
-<strong>Action :</strong> Relancer un test A/B sur un échantillon plus large (Cibles > 2000) pour espérer obtenir un résultat statistiquement fiable.</p>
-</div>
+            <div class="insight insight-amber">
+                <p><strong>Tailles d'échantillon requises par cellule (pour détecter 3 pts d'uplift) :</strong></p>
+                <p>
+                    <strong>VIP :</strong> ≈ 4 300 (vs 223 actuels — <span style="color:var(--negative);font-weight:600;">×19 trop petit</span>)<br>
+                    <strong>Régulier :</strong> ≈ 1 760 (vs 621 actuels — <span style="color:var(--negative);font-weight:600;">×2.8 trop petit</span>)<br>
+                    <strong>En Risque :</strong> ≈ 1 730 (vs 225 actuels — <span style="color:var(--negative);font-weight:600;">×7.7 trop petit</span>)
+                </p>
+                <p style="font-size:0.88rem;color:var(--ink-light);margin-top:0.5rem;">
+                    Les résultats non significatifs étaient donc <strong>prévisibles</strong>. L'absence de preuve d'effet n'est pas une preuve d'absence d'effet.
+                </p>
+            </div>
 
-<div class="highlight-box">
-<p><strong> 3. Le coût négligeable de l'Email vs SMS</strong></p>
-<p>Les coûts d'envoi Email (0.45€ pour 225 cibles) sont dérisoires par rapport au SMS. Même si les résultats ne sont pas significatifs, l'Email reste le canal à privilégier pour l'expérimentation car il ne présente aucun risque financier pour la marge, contrairement au SMS qui pèse lourd dès que le volume augmente.</p>
-</div>
+            <img src="power_analysis.png" alt="Power Analysis — Taille d'échantillon requise vs uplift minimum détectable" class="power-img">
 
-            <h3>5. Limites de l'exercice</h3>
-            <div class="limits-box">
-                <p><strong>Pour aller plus loin en conditions réelles :</strong></p>
+            <!-- ── 5. INSIGHTS ── -->
+            <h3>5. Insights & Recommandations</h3>
+
+            <div class="insight insight-blue">
+                <p><strong>1. Les résultats sont non concluants, pas négatifs.</strong></p>
+                <p>
+                    Avec des p-values toutes supérieures à 0.20, on ne peut ni confirmer ni infirmer l'effet des campagnes.
+                    L'uplift négatif observé sur les VIP (−8.7 pts Email) est <em>probablement</em> du bruit d'échantillonnage dû
+                    au très petit groupe témoin (~59 VIP témoins). Ne pas le confondre avec un effet de cannibalisation réel.
+                </p>
+            </div>
+
+            <div class="insight insight-green">
+                <p><strong>2. Le segment « Régulier » est le plus prometteur pour un re-test.</strong></p>
+                <p>
+                    C'est le seul segment affichant un uplift positif (≈ +2.5 pts) sur les deux canaux.
+                    Bien que non significatif, c'est un signal encourageant. Une recommandation concrète :
+                    relancer un test A/B sur ce segment avec <strong>≥ 1 800 clients par cellule</strong> pour obtenir un résultat fiable.
+                </p>
+            </div>
+
+            <div class="insight insight-amber">
+                <p><strong>3. Privilégier l'Email pour l'expérimentation.</strong></p>
+                <p>
+                    Le coût d'envoi Email est dérisoire (0.45 € pour 225 contacts vs 24 € pour 602 en SMS).
+                    Même en cas d'uplift nul, le risque financier de l'Email est quasi inexistant.
+                    Le SMS ne se justifie que si un uplift supérieur y est démontré statistiquement.
+                </p>
+            </div>
+
+            <div class="insight insight-red">
+                <p><strong>4. En conditions réelles : intégrer la power analysis en amont.</strong></p>
+                <p>
+                    Ce projet illustre un piège classique : lancer un test A/B sans avoir d'abord vérifié que la taille
+                    d'échantillon est suffisante. En pratique, le calcul de puissance doit être fait <em>avant</em> le lancement,
+                    pas après — pour éviter de gaspiller du budget sur un test qui ne pourra jamais conclure.
+                </p>
+            </div>
+
+            <!-- ── 6. LIMITES ── -->
+            <h3>6. Limites de l'exercice</h3>
+            <div class="limits">
                 <ul>
-                    <li>L'assignation des campagnes a été simulée aléatoirement. Une vraie campagne devrait intégrer le consentement (opt-in/opt-out).</li>
-                    <li>L'analyse repose sur une attribution "Last Click" simple sur une fenêtre de 15 jours.</li>
+                    <li>L'assignation des campagnes a été simulée aléatoirement. Une vraie campagne intègrerait le consentement (opt-in/opt-out) et une randomisation stratifiée.</li>
+                    <li>L'attribution est de type « Last Click » simple, sur une fenêtre de 15 jours. En production, un modèle d'attribution multi-touch serait plus approprié.</li>
+                    <li>Le groupe témoin (10 %) est trop petit pour certains segments. Un ratio 50/25/25 aurait donné plus de puissance statistique.</li>
+                    <li>Les coûts de routage utilisés (0.2 ct/email, 4 ct/SMS) sont des estimations moyennes — les coûts réels varient selon le prestataire.</li>
                 </ul>
             </div>
 
+            <!-- ── 7. LIVRABLES ── -->
             <h3>Accéder aux Livrables</h3>
-            <p>Visualisez les KPI incrémentaux via le Dashboard D3.js interactif, ou plongez dans le code statistique Python :</p>
-            
-            <div class="action-buttons">
-                <a href="dashboard_d3.html" target="_blank" class="btn btn-primary">
-                    <i class="fa-solid fa-chart-line"></i> Ouvrir le Dashboard Incrémental
+            <p>Explorez le dashboard interactif ou plongez dans le code :</p>
+
+            <div class="cta-row">
+                <a href="dashboard_d3.html" target="_blank" class="cta-btn cta-primary">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard Incrémental (D3.js)
                 </a>
-                
-                <a href="https://colab.research.google.com/drive/1BSxf13vRJmmYmLcJXGXhP7gjtNcKuxRy?usp=sharing" target="_blank" class="btn btn-secondary">
-                    <i class="fa-brands fa-python"></i> Code Python (Z-Test & RFM)
+                <a href="https://colab.research.google.com/drive/1BSxf13vRJmmYmLcJXGXhP7gjtNcKuxRy?usp=sharing" target="_blank" class="cta-btn cta-secondary">
+                    <i class="fa-brands fa-python"></i> Notebook Python (Z-Test & RFM)
+                </a>
+                <a href="02_Power_Analysis.py" target="_blank" class="cta-btn cta-secondary">
+                    <i class="fa-solid fa-bolt"></i> Script Power Analysis
                 </a>
             </div>
-
         </div>
     </main>
 
-    <section class="container" style="margin-top: 4rem; margin-bottom: 4rem;">
+    <section class="container" style="max-width:820px;margin:3rem auto;">
         <hr style="margin: 3rem 0; border: none; border-top: 1px solid #eaeaea;">
-        <h2 class="section-title">Espace Discussions</h2>
-        <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Un retour sur ce projet, une question ou une suggestion ? N'hésitez pas à laisser un mot !.</p>
-            
+        <h2 style="text-align:center;font-family:'DM Serif Display',serif;color:var(--ink);font-size:1.5rem;margin-bottom:0.5rem;">Espace Discussions</h2>
+        <p style="text-align:center;color:var(--ink-muted);margin-bottom:2rem;font-size:0.9rem;">Un retour, une question ? N'hésitez pas.</p>
+
         <div id="disqus_thread"></div>
         <script>
             var disqus_config = function () {
-                // URL fixe pour éviter les bugs avec les # dans l'URL
-                this.page.url = 'https://colin-12.github.io/portfolio/projet-crm-retail/projet-1.html';  
-                this.page.identifier = 'projet-1'; // Identifiant unique
+                this.page.url = 'https://colin-12.github.io/portfolio/projet-crm-retail/projet-1.html';
+                this.page.identifier = 'projet-1';
             };
-            
-            (function() { // NE RIEN MODIFIER SOUS CETTE LIGNE (SAUF LE SHORTNAME)
+            (function() {
                 var d = document, s = d.createElement('script');
-                
-                // ⚠️ IMPORTANT : REMPLACE 'ton-vrai-shortname' PAR CELUI QUE TU AS CRÉÉ SUR DISQUS
                 s.src = 'https://portfolio-armand-k.disqus.com/embed.js';
-                
                 s.setAttribute('data-timestamp', +new Date());
                 (d.head || d.body).appendChild(s);
             })();
@@ -233,8 +447,8 @@
         <noscript>Veuillez activer JavaScript pour voir les <a href="https://disqus.com/?ref_noscript">commentaires.</a></noscript>
     </section>
 
-    <footer class="footer" style="padding: 2rem 5%; margin-top: 4rem;">
-        <p class="copyright" style="border: none; padding: 0;">&copy; 2024 Armand Komtcheu.</p>
+    <footer style="text-align:center;padding:2rem;color:var(--ink-muted);font-size:0.85rem;">
+        &copy; 2024 Armand Komtcheu.
     </footer>
 
 </body>
