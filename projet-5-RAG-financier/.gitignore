@@ -1,1 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv/
+venv/
 
+# Streamlit
+.streamlit/secrets.toml
+
+# Data (PDFs téléchargés au runtime)
+docs/*.pdf
+
+# ChromaDB local
+chroma_v2/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
