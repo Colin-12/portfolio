@@ -372,6 +372,59 @@
                 </div>
               </div>
             </article>
+        
+            <article class="project-card project-card--detailed">
+                        <div class="card-image project-6-bg"></div>
+                        <div class="card-content">
+                          <div class="project-head">
+                            <span class="project-tag">NLP · RAG · Multi-Agents</span>
+                            <h3>Système RAG Multi-Agents sur Corpus Financier</h3>
+                          </div>
+                          <p class="project-context">
+                            <strong>Contexte :</strong> Simuler l'outil d'un analyste dans un département financier bancaire
+                            (style LCFE Arkéa) qui interroge des rapports annuels et de la documentation réglementaire.
+                            Objectif : construire un système RAG de production avec architecture multi-agents, sécurité et gouvernance.
+                          </p>
+ 
+                          <button class="btn-toggle-more" onclick="toggleProject(this)">Voir plus <i class="fa-solid fa-chevron-down"></i></button>
+             
+                          <div class="project-details">
+                            <div class="project-body">
+                              <p class="project-subtitle"><strong>Ce que j'ai fait</strong></p>
+                              <ul class="project-bullets">
+                                <li><strong>Ingestion intelligente :</strong> Extraction PDF → Markdown via pymupdf4llm — les tableaux financiers (PNB, CET1, ratios) sont préservés là où PyMuPDF brut les éclatait.</li>
+                                <li><strong>Architecture multi-agents :</strong> 3 agents spécialisés (Rapports, Réglementation, Direct) avec chacun son ChatPromptTemplate, sa logique de retrieval, et son format de réponse adapté.</li>
+                                <li><strong>Hybrid Search :</strong> Recherche BM25 (lexicale) + Embeddings (sémantique) fusionnée par Reciprocal Rank Fusion — le BM25 trouve "CET1", les embeddings comprennent "ratio de solvabilité".</li>
+                                <li><strong>Sécurité :</strong> Guards à 2 niveaux (regex + LLM 8B), router LLM, orchestrateur central avec logging JSON complet.</li>
+                              </ul>
+                              <p class="project-impact">
+                                <strong>Résultat :</strong> 92% de routing accuracy, ~1.2s de latence moyenne, stack 100% gratuite (Groq + HuggingFace + ChromaDB).
+                                Déployé en production sur Streamlit Cloud.
+                              </p>
+                            </div>
+                            <div class="tech-stack">
+                              <span>LangChain</span>
+                              <span>Groq / Llama 70B</span>
+                              <span>ChromaDB</span>
+                              <span>BM25 + RRF</span>
+                              <span>pymupdf4llm</span>
+                              <span>Streamlit</span>
+                            </div>
+                          </div>
+             
+                          <div class="project-links">
+                            <a class="btn-link" href="projet-5-RAG-financier/projet-5.html">
+                              <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
+                            </a>
+                            <a class="btn-link" href="https://portfolio-app-rag-agent-financier.streamlit.app/" target="_blank" rel="noopener">
+                              <i class="fa-solid fa-rocket"></i> Démo live
+                            </a>
+                            <a class="btn-link" href="https://github.com/Colin-12/portfolio/tree/main/projet-5-RAG-financier" target="_blank" rel="noopener">
+                              <i class="fa-brands fa-github"></i> Code
+                            </a>
+                  </div>
+                </div>
+              </article>
 
     </div>
   </div>
