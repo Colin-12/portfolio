@@ -1,5 +1,5 @@
 # RAG Financier V2 — Dependencies
-# Streamlit Cloud installs these automatically
+# Versions épinglées pour compatibilité Streamlit Cloud
 
 streamlit>=1.37.0
 langchain>=1.2.0
@@ -7,10 +7,16 @@ langchain-groq>=1.1.0
 langchain-huggingface>=1.2.0
 langchain-core>=1.2.0
 langchain-text-splitters>=0.2.0
-chromadb>=1.3.0
 sentence-transformers>=3.0.0
 pymupdf4llm>=1.0.0
 rank-bm25>=0.2.2
 gdown>=5.1.0
 numpy>=1.26.0
 tiktoken>=0.7.0
+
+# ChromaDB + fix protobuf/opentelemetry
+chromadb>=1.3.0
+protobuf>=5.29.0,<6.0.0
+opentelemetry-exporter-otlp-proto-grpc>=1.20.0
+opentelemetry-proto>=1.20.0
+grpcio>=1.58.0
