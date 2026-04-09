@@ -310,6 +310,7 @@ h2 {
 .project-3-bg { background: linear-gradient(120deg, #ffcb90 0%, #d57eeb 100%); }
 .project-4-bg { background: linear-gradient(120deg, #94ec40 0%, #5ac9de 100%); }
 .project-5-bg { background: linear-gradient(120deg, #1a1a2e 0%, #c0392b 100%); }
+.project-6-bg { background: linear-gradient(120deg, #0f172a 0%, #378ADD 100%); }
 
 .card-content {
     padding: 1.5rem;
