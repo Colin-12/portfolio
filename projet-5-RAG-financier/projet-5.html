@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Projet 5 — Système RAG multi-agents sur corpus financier hétérogène. LangChain, Groq, ChromaDB, Streamlit. Portfolio Armand Komtcheu.">
+<title>Projet 5 — RAG Financier Multi-Agents | Armand Komtcheu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:     #2563eb;
+    --primary-dk:  #1d4ed8;
+    --accent:      #378ADD;
+    --safe:        #0f6e56;
+    --warn:        #b45309;
+    --danger:      #c0392b;
+    --ink:         #1e293b;
+    --ink-mid:     #475569;
+    --ink-light:   #94a3b8;
+    --rule:        #e2e8f0;
+    --surface:     #f8fafc;
+    --white:       #ffffff;
+    --radius:      12px;
+    --radius-sm:   8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--ink);
+    background: var(--white);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--ink-mid);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--primary); }
+  .btn-back {
+    background: var(--primary);
+    color: var(--white) !important;
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-size: 13px !important;
+    transition: background 0.2s !important;
+  }
+  .btn-back:hover { background: var(--primary-dk) !important; text-decoration: none !important; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%);
+    padding: 72px 40px 56px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(55,138,221,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .breadcrumb {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .breadcrumb a { color: rgba(255,255,255,0.5); }
+  .breadcrumb a:hover { color: rgba(255,255,255,0.8); text-decoration: none; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(55,138,221,0.3);
+    border: 1px solid rgba(55,138,221,0.5);
+    color: #93c5fd;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .hero h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    color: var(--white);
+  }
+  .hero-desc {
+    font-size: 16px;
+    color: rgba(255,255,255,0.75);
+    max-width: 680px;
+    margin-bottom: 28px;
+    line-height: 1.7;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 32px;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+  .hero-meta i { font-size: 12px; }
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+    transition: all 0.2s;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary-hero {
+    background: var(--primary);
+    color: var(--white);
+  }
+  .btn-primary-hero:hover { background: var(--primary-dk); text-decoration: none; color: var(--white); }
+  .btn-outline-hero {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .btn-outline-hero:hover { background: rgba(255,255,255,0.08); text-decoration: none; color: var(--white); }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+    padding: 24px 40px;
+  }
+  .kpi-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+  }
+  .kpi-item { text-align: center; }
+  .kpi-num {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-item:nth-child(1) .kpi-num { color: var(--safe); }
+  .kpi-item:nth-child(2) .kpi-num { color: var(--primary); }
+  .kpi-item:nth-child(3) .kpi-num { color: var(--warn); }
+  .kpi-item:nth-child(4) .kpi-num { color: var(--accent); }
+  .kpi-item:nth-child(5) .kpi-num { color: var(--safe); }
+  .kpi-lbl { font-size: 12px; color: var(--ink-light); font-weight: 500; }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 40px;
+  }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 52px; }
+  .section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .section-intro {
+    font-size: 15px;
+    color: var(--ink-mid);
+    margin-bottom: 24px;
+  }
+
+  /* ── CONTEXT BOX ── */
+  .context-box {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .context-box p { color: var(--ink-mid); font-size: 14px; }
+  .context-box strong { color: var(--ink); }
+
+  /* ── BRICKS TIMELINE ── */
+  .bricks { display: flex; flex-direction: column; gap: 0; }
+  .brick {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    padding-bottom: 28px;
+  }
+  .brick:last-child { padding-bottom: 0; }
+  .brick-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 40px;
+  }
+  .brick-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: var(--white);
+  }
+  .b1 { background: #378ADD; }
+  .b2 { background: #7c3aed; }
+  .b3 { background: #0f6e56; }
+  .b4 { background: #b45309; }
+  .b5 { background: #c0392b; }
+  .b6 { background: #1e5fa8; }
+  .brick-line {
+    flex: 1;
+    width: 1px;
+    background: var(--rule);
+    margin-top: 4px;
+  }
+  .brick:last-child .brick-line { display: none; }
+  .brick-body { flex: 1; padding-top: 6px; }
+  .brick-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .brick-desc { font-size: 14px; color: var(--ink-mid); margin-bottom: 10px; }
+  .brick-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--ink-mid);
+    border: 1px solid var(--rule);
+  }
+
+  /* ── RESULTS GRID ── */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+  }
+  .result-card h4 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13px;
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-name { color: var(--ink-mid); }
+  .metric-val  { font-weight: 600; color: var(--ink); font-family: 'Poppins', sans-serif; }
+  .metric-val.good { color: var(--safe); }
+  .metric-val.best { color: var(--primary); }
+
+  /* ── INSIGHT BOX ── */
+  .insight {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #1e40af;
+    display: flex;
+    gap: 10px;
+  }
+  .insight i { margin-top: 2px; flex-shrink: 0; }
+  .insight.warn-insight {
+    background: #fef3c7;
+    border-color: #fcd34d;
+    color: #92400e;
+  }
+  .insight.safe-insight {
+    background: #ecfdf5;
+    border-color: #6ee7b7;
+    color: #065f46;
+  }
+
+  /* ── COMPARE GRID ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+  }
+  .compare-card.v1 { border-top: 3px solid var(--danger); }
+  .compare-card.v2 { border-top: 3px solid var(--safe); }
+  .compare-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .compare-card.v1 .compare-label { color: var(--danger); }
+  .compare-card.v2 .compare-label { color: var(--safe); }
+  .compare-item {
+    font-size: 13px;
+    color: var(--ink-mid);
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+  }
+  .compare-item::before {
+    position: absolute;
+    left: 0;
+  }
+  .compare-card.v1 .compare-item::before { content: '✗'; color: var(--danger); }
+  .compare-card.v2 .compare-item::before { content: '✓'; color: var(--safe); font-weight: 700; }
+
+  /* ── TECH STACK ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .stack-item {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stack-item i { font-size: 18px; margin-bottom: 6px; display: block; color: var(--primary); }
+  .stack-name { font-size: 12px; font-weight: 600; color: var(--ink); display: block; margin-bottom: 2px; }
+  .stack-role { font-size: 11px; color: var(--ink-light); }
+
+  /* ── BENCHMARK TABLE ── */
+  .bench-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+  .bench-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface);
+    border-bottom: 2px solid var(--rule);
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .bench-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-mid);
+  }
+  .bench-table tr:last-child td { border-bottom: none; }
+  .bench-val { font-weight: 600; font-family: 'Poppins', sans-serif; }
+  .bench-val.perfect { color: var(--safe); }
+  .bench-val.good { color: var(--warn); }
+
+  /* ── CTA FOOTER ── */
+  .cta-section {
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+    padding: 40px;
+    text-align: center;
+  }
+  .cta-section h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .cta-section p { color: var(--ink-mid); font-size: 14px; margin-bottom: 20px; }
+  .cta-btns { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+  .btn-primary { background: var(--primary); color: var(--white); }
+  .btn-primary:hover { background: var(--primary-dk); text-decoration: none; color: var(--white); }
+  .btn-outline { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+  .btn-outline:hover { background: var(--surface); text-decoration: none; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 24px 40px;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,0.7); }
+  footer a:hover { color: var(--white); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    .hero { padding: 60px 16px 40px; }
+    .hero h1 { font-size: 24px; }
+    .kpi-inner { grid-template-columns: repeat(3, 1fr); }
+    .content { padding: 32px 16px; }
+    .results-grid, .compare-grid { grid-template-columns: 1fr; }
+    .stack-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <a href="../index.html" class="nav-logo">Armand K.</a>
+  <ul class="nav-links">
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#benchmark">Benchmark</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="https://portfolio-app-rag-agent-financier.streamlit.app/" target="_blank" class="btn-back"><i class="fa-solid fa-rocket"></i> Démo live</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="../index.html">Portfolio</a>
+      <span>/</span>
+      <span>Projet 5</span>
+    </div>
+    <span class="hero-tag">NLP · RAG · Multi-Agents</span>
+    <h1>Système RAG Multi-Agents sur Corpus Financier Hétérogène</h1>
+    <p class="hero-desc">
+      Architecture de production pour l'analyse de rapports annuels bancaires
+      et de documentation réglementaire. 3 agents spécialisés avec prompts dédiés,
+      recherche hybride BM25 + Embeddings, guards de sécurité, orchestrateur central.
+    </p>
+    <div class="hero-meta">
+      <span><i class="fa-solid fa-building-columns"></i> Contexte : Département financier bancaire (style LCFE Arkéa)</span>
+      <span><i class="fa-solid fa-calendar"></i> 2025</span>
+      <span><i class="fa-solid fa-code-branch"></i> V2 — Refonte complète</span>
+    </div>
+    <div class="hero-ctas">
+      <a href="https://portfolio-app-rag-agent-financier.streamlit.app/" target="_blank" class="btn btn-primary-hero">
+        <i class="fa-solid fa-rocket"></i> Tester l'application
+      </a>
+      <a href="https://github.com/Colin-12/portfolio/tree/main/projet-5-RAG-financier" target="_blank" class="btn btn-outline-hero">
+        <i class="fa-brands fa-github"></i> Code source
+      </a>
+      <a href="#" target="_blank" class="btn btn-outline-hero">
+        <i class="fa-brands fa-python"></i> Notebook Colab
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ KPI STRIP ═══ -->
+<div class="kpi-strip">
+  <div class="kpi-inner">
+    <div class="kpi-item"><div class="kpi-num">92%</div><div class="kpi-lbl">Routing accuracy</div></div>
+    <div class="kpi-item"><div class="kpi-num">3 890</div><div class="kpi-lbl">Chunks indexés</div></div>
+    <div class="kpi-item"><div class="kpi-num">~1.2s</div><div class="kpi-lbl">Latence moyenne</div></div>
+    <div class="kpi-item"><div class="kpi-num">3</div><div class="kpi-lbl">Agents spécialisés</div></div>
+    <div class="kpi-item"><div class="kpi-num">0€</div><div class="kpi-lbl">Coût API</div></div>
+  </div>
+</div>
+
+<!-- ═══ CONTENU PRINCIPAL ═══ -->
+<div class="content">
+
+  <!-- CONTEXTE -->
+  <div class="section">
+    <h2 class="section-title">Contexte & Objectif</h2>
+    <div class="context-box">
+      <p>
+        <strong>Besoin marché identifié :</strong> les recruteurs (Arkéa, ESN) cherchent des AI Engineers capables de construire
+        des systèmes RAG de production — pas juste des chatbots. Ce projet démontre : architecture, sécurité, gouvernance,
+        pilotage des coûts, UI/UX.
+      </p>
+    </div>
+    <p class="section-intro">
+      Simuler l'outil d'un analyste dans un département financier bancaire qui interroge
+      des rapports annuels (résultats Arkéa 2025, URD 2024, SFH 2025) et de la documentation réglementaire (ACPR 2024).
+      Le système doit répondre avec des <strong>chiffres exacts</strong>, des <strong>références normatives</strong>,
+      et bloquer les questions hors périmètre.
+    </p>
+  </div>
+
+  <!-- ARCHITECTURE -->
+  <div class="section" id="architecture">
+    <h2 class="section-title">Architecture multi-agents</h2>
+    <p class="section-intro">
+      Pipeline complet en 6 briques : ingestion PDF → chunking sémantique → indexation → guards → routing → agents spécialisés.
+    </p>
+
+    <div class="bricks">
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num b1">1</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Ingestion PDF → Markdown structuré</div>
+          <div class="brick-desc">
+            <code>pymupdf4llm</code> convertit chaque PDF en Markdown. Les tableaux financiers (PNB, CET1, résultats)
+            deviennent du texte structuré avec leurs valeurs préservées — là où PyMuPDF brut les éclatait.
+          </div>
+          <div class="brick-tags"><span class="chip">pymupdf4llm</span><span class="chip">4 PDFs</span><span class="chip">Tableaux préservés</span></div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num b2">2</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Chunking sémantique en 2 passes</div>
+          <div class="brick-desc">
+            Passe 1 : <code>MarkdownHeaderTextSplitter</code> découpe par sections (#, ##, ###).
+            Passe 2 : <code>RecursiveCharacterTextSplitter</code> sous-découpe les sections longues.
+            Chaque chunk conserve son chemin de section en métadonnée.
+          </div>
+          <div class="brick-tags"><span class="chip">MarkdownHeaderTextSplitter</span><span class="chip">1000 tokens</span><span class="chip">3 890 chunks</span></div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num b3">3</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Indexation + Hybrid Search</div>
+          <div class="brick-desc">
+            2 collections ChromaDB (rapports / réglementation). Recherche hybride :
+            embeddings sémantiques (all-MiniLM-L6-v2) + BM25 lexical + fusion
+            <strong>Reciprocal Rank Fusion</strong>. Le BM25 trouve les termes exacts (CET1, PNB),
+            les embeddings capturent le sens.
+          </div>
+          <div class="brick-tags"><span class="chip">ChromaDB</span><span class="chip">BM25</span><span class="chip">RRF</span><span class="chip">HuggingFace</span></div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num b4">4</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Guards de sécurité (2 niveaux)</div>
+          <div class="brick-desc">
+            Niveau 1 (statique) : regex pour injections et hors-sujet évident (< 1ms).
+            Niveau 2 (LLM) : le modèle rapide 8B évalue la pertinence métier (~90ms).
+            Les questions hors périmètre sont rejetées avant d'atteindre les agents.
+          </div>
+          <div class="brick-tags"><span class="chip">Regex</span><span class="chip">LLM 8B</span><span class="chip">Fail-open</span></div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num b5">5</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Router LLM → 3 agents spécialisés</div>
+          <div class="brick-desc">
+            Le router (Llama 8B) classifie chaque question vers l'agent approprié.
+            Chaque agent a son propre <code>ChatPromptTemplate</code>, sa logique de retrieval,
+            et son format de réponse adapté au domaine.
+          </div>
+          <div class="brick-tags"><span class="chip">AgentRapports</span><span class="chip">AgentRéglementation</span><span class="chip">AgentDirect</span></div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num b6">6</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Orchestrateur central</div>
+          <div class="brick-desc">
+            Classe <code>Orchestrateur</code> qui gère le cycle complet : guards → routing → sélection agent → exécution → log JSON.
+            Chaque requête produit une trace complète (latences, sources, confiance) pour le monitoring.
+          </div>
+          <div class="brick-tags"><span class="chip">Logging</span><span class="chip">JSON</span><span class="chip">Monitoring</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V1 vs V2 -->
+  <div class="section">
+    <h2 class="section-title">Itération V1 → V2</h2>
+    <p class="section-intro">Diagnostic des causes racines puis refonte complète — pas de patches sur une base fragile.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card v1">
+        <div class="compare-label">V1 — Fragile</div>
+        <div class="compare-item">PyMuPDF brut — tableaux financiers éclatés</div>
+        <div class="compare-item">RecursiveCharacterTextSplitter aveugle</div>
+        <div class="compare-item">Pipeline linéaire (query → retrieve → LLM)</div>
+        <div class="compare-item">Routing vers des collections, pas des agents</div>
+        <div class="compare-item">Patches empilés V1→V2→V3→V4</div>
+      </div>
+      <div class="compare-card v2">
+        <div class="compare-label">V2 — Solide</div>
+        <div class="compare-item">pymupdf4llm → Markdown structuré</div>
+        <div class="compare-item">MarkdownHeaderTextSplitter sémantique</div>
+        <div class="compare-item">3 agents spécialisés avec prompts dédiés</div>
+        <div class="compare-item">Routing vers des agents à comportements distincts</div>
+        <div class="compare-item">Architecture propre dès le départ</div>
+      </div>
+    </div>
+
+    <div class="insight safe-insight">
+      <i class="fa-solid fa-lightbulb"></i>
+      <span><strong>Décision clé :</strong> recommencer sur des bases solides (3-4h) plutôt que patcher l'existant (1h).
+      Le résultat : un système présentable en production, pas un prototype déguisé.</span>
+    </div>
+  </div>
+
+  <!-- BENCHMARK -->
+  <div class="section" id="benchmark">
+    <h2 class="section-title">Benchmark</h2>
+    <p class="section-intro">12 cas de test couvrant routing, retrieval, guards et latence.</p>
+
+    <table class="bench-table">
+      <thead>
+        <tr>
+          <th>Catégorie</th>
+          <th>Tests</th>
+          <th>Routing</th>
+          <th>Latence</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>📈 Rapports financiers</strong></td>
+          <td>4 questions</td>
+          <td><span class="bench-val perfect">4/4 — 100%</span></td>
+          <td>1 345 ms</td>
+          <td><span class="bench-val perfect">✅ Pass</span></td>
+        </tr>
+        <tr>
+          <td><strong>📜 Réglementation</strong></td>
+          <td>3 questions</td>
+          <td><span class="bench-val good">2/3 — 67%</span></td>
+          <td>2 083 ms</td>
+          <td><span class="bench-val good">⚠️ Acceptable</span></td>
+        </tr>
+        <tr>
+          <td><strong>💡 Agent direct</strong></td>
+          <td>2 questions</td>
+          <td><span class="bench-val perfect">2/2 — 100%</span></td>
+          <td>1 672 ms</td>
+          <td><span class="bench-val perfect">✅ Pass</span></td>
+        </tr>
+        <tr>
+          <td><strong>🛡️ Sécurité (guards)</strong></td>
+          <td>3 questions</td>
+          <td><span class="bench-val perfect">3/3 — 100%</span></td>
+          <td>30 ms</td>
+          <td><span class="bench-val perfect">✅ Pass</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="insight warn-insight" style="margin-top: 16px;">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span><strong>REG-02 :</strong> "Qu'est-ce que le ratio de levier ?" routé vers l'agent direct au lieu de réglementation —
+      cas limite entre définition générale et norme réglementaire. Amélioration possible via enrichissement du prompt router.</span>
+    </div>
+  </div>
+
+  <!-- EXEMPLES -->
+  <div class="section">
+    <h2 class="section-title">Exemples de résultats</h2>
+
+    <div class="results-grid">
+      <div class="result-card">
+        <h4>📈 Agent Rapports</h4>
+        <div class="metric-row">
+          <span class="metric-name">Question</span>
+          <span class="metric-val" style="font-size:12px;">Ratio CET1 Arkéa ?</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Réponse</span>
+          <span class="metric-val best">17,9% en 2025</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Évolution</span>
+          <span class="metric-val good">+1,1 point vs 2024</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Confiance</span>
+          <span class="metric-val" style="color:var(--safe);">🟢 high</span>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <h4>📜 Agent Réglementation</h4>
+        <div class="metric-row">
+          <span class="metric-name">Question</span>
+          <span class="metric-val" style="font-size:12px;">Missions de l'ACPR ?</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Réponse</span>
+          <span class="metric-val best">6 missions listées</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Sources</span>
+          <span class="metric-val">5 chunks</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Confiance</span>
+          <span class="metric-val" style="color:var(--safe);">🟢 high</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STACK -->
+  <div class="section" id="stack">
+    <h2 class="section-title">Stack technique</h2>
+    <p class="section-intro">Composants de production optimisés coût/performance — stack 100% gratuite.</p>
+
+    <div class="stack-grid">
+      <div class="stack-item">
+        <i class="fa-solid fa-robot"></i>
+        <span class="stack-name">Groq / Llama 3.3 70B</span>
+        <span class="stack-role">LLM principal</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-bolt"></i>
+        <span class="stack-name">Llama 3.1 8B</span>
+        <span class="stack-role">Router + Guards</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-calculator"></i>
+        <span class="stack-name">all-MiniLM-L6-v2</span>
+        <span class="stack-role">Embeddings 384d</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-database"></i>
+        <span class="stack-name">ChromaDB</span>
+        <span class="stack-role">Vector store</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span class="stack-name">BM25 + RRF</span>
+        <span class="stack-role">Hybrid search</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span class="stack-name">pymupdf4llm</span>
+        <span class="stack-role">PDF → Markdown</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-link"></i>
+        <span class="stack-name">LangChain</span>
+        <span class="stack-role">Framework RAG</span>
+      </div>
+      <div class="stack-item">
+        <i class="fa-solid fa-display"></i>
+        <span class="stack-name">Streamlit</span>
+        <span class="stack-role">UI + Déploiement</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPÉTENCES -->
+  <div class="section">
+    <h2 class="section-title">Compétences démontrées</h2>
+
+    <div class="results-grid">
+      <div class="result-card">
+        <h4>🏗️ Architecture système</h4>
+        <p style="font-size:13px; color:var(--ink-mid);">
+          Multi-agents avec orchestrateur, routing LLM, agents spécialisés — pas un simple chatbot.
+        </p>
+      </div>
+      <div class="result-card">
+        <h4>🛡️ Sécurité & Gouvernance</h4>
+        <p style="font-size:13px; color:var(--ink-mid);">
+          Guards à 2 niveaux, anti-injection, périmètre métier, logging complet.
+        </p>
+      </div>
+      <div class="result-card">
+        <h4>💰 Pilotage des coûts</h4>
+        <p style="font-size:13px; color:var(--ink-mid);">
+          Stack gratuite. Modèle 8B pour routing, 70B pour agents — optimisation coût/perf.
+        </p>
+      </div>
+      <div class="result-card">
+        <h4>🔬 Méthodologie</h4>
+        <p style="font-size:13px; color:var(--ink-mid);">
+          Diagnostic V1, refonte V2, benchmark systématique avec métriques quantitatives.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ CTA ═══ -->
+<div class="cta-section">
+  <h3>Tester le système en live</h3>
+  <p>Posez vos questions sur les documents financiers Arkéa et la réglementation ACPR.</p>
+  <div class="cta-btns">
+    <a href="https://portfolio-app-rag-agent-financier.streamlit.app/" target="_blank" class="btn btn-primary">
+      <i class="fa-solid fa-rocket"></i> Démo live Streamlit
+    </a>
+    <a href="https://github.com/Colin-12/portfolio/tree/main/projet-5-RAG-financier" target="_blank" class="btn btn-outline">
+      <i class="fa-brands fa-github"></i> Code source
+    </a>
+    <a href="../index.html" class="btn btn-outline">
+      <i class="fa-solid fa-arrow-left"></i> Retour au portfolio
+    </a>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p>&copy; 2025 Armand Komtcheu · <a href="../index.html">Portfolio</a> · <a href="https://www.linkedin.com/in/armand-colin-komtcheu-0014471b3/" target="_blank">LinkedIn</a> · <a href="https://github.com/Colin-12" target="_blank">GitHub</a></p>
+</footer>
+
+</body>
+</html>
