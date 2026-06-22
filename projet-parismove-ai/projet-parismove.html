@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="ParisMove AI — Plateforme de monitoring temps-réel de la mobilité francilienne : pipeline ETL, prédiction ML de pollution et de trafic, coach IA conversationnel data-aware. Portfolio Armand Komtcheu.">
-<title>ParisMove AI — Mobilité francilienne temps-réel & IA | Armand Komtcheu</title>
+<meta name="description" content="ParisMove AI, plateforme de monitoring temps-réel de la mobilité francilienne : pipeline ETL, prédiction ML de pollution et de trafic, coach IA conversationnel data-aware. Portfolio Armand Komtcheu.">
+<title>ParisMove AI : Mobilité francilienne temps-réel & IA | Armand Komtcheu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
       <span>ParisMove AI</span>
     </div>
     <span class="hero-tag">Data Engineering · ML · IA conversationnelle</span>
-    <h1>ParisMove AI — la mobilité francilienne en temps réel, augmentée par l'IA</h1>
+    <h1>ParisMove AI, la mobilité francilienne en temps réel, augmentée par l'IA</h1>
     <p class="hero-desc">
       Une plateforme end-to-end qui ingère trafic IDFM, qualité de l'air Airparif et météo toutes les
       30 minutes, calcule un score santé multicritère par trajet, prédit la pollution et les perturbations
@@ -39,7 +39,7 @@
       Architecture monorepo à 7 services, 100 % free-tier.
     </p>
     <div class="hero-meta">
-      <span><i class="fa-solid fa-calendar"></i> Projet de fin d'études — Mastère 2 Big Data &amp; IA</span>
+      <span><i class="fa-solid fa-calendar"></i> Projet de fin d'études, Mastère 2 Big Data &amp; IA</span>
       <span><i class="fa-solid fa-layer-group"></i> 7 services autonomes</span>
       <span><i class="fa-solid fa-flask"></i> 300+ tests · CI verte</span>
     </div>
@@ -85,7 +85,7 @@
       </p>
     </div>
     <p class="disclaimer">
-      Projet personnel de fin d'études (Mastère 2 Big Data &amp; IA, Sup de Vinci — campus Brest).
+      Projet personnel de fin d'études (Mastère 2 Big Data &amp; IA, Sup de Vinci, campus Brest).
       Données 100 % réelles via APIs publiques (PRIM IDFM, AQICN/Airparif, Open-Meteo).
     </p>
   </section>
@@ -133,8 +133,8 @@ IDFM réf. ───┘        │
         <div class="brick-body">
           <div class="brick-title">Pipeline ETL multi-sources robuste</div>
           <p class="brick-desc">
-            Ingestion async (httpx) de 3 APIs hétérogènes — ~2 000 passages IDFM, 7 stations Airparif
-            géo-vérifiées, 10 points météo — transformées en modèles Pydantic puis chargées dans Postgres.
+            Ingestion async (httpx) de 3 APIs hétérogènes (environ 2 000 passages IDFM, 7 stations Airparif
+            géo-vérifiées, 10 points météo), transformées en modèles Pydantic puis chargées dans Postgres.
             Garde géographique et référentiel statique de 2 123 lignes IDFM pour fiabiliser la donnée.
           </p>
           <div class="brick-tags">
@@ -180,7 +180,7 @@ IDFM réf. ───┘        │
       <div class="brick">
         <div class="brick-left"><div class="brick-num">4</div><div class="brick-line"></div></div>
         <div class="brick-body">
-          <div class="brick-title">Modèle ML pollution — PM2.5 à H+1</div>
+          <div class="brick-title">Modèle ML pollution : PM2.5 à H+1</div>
           <p class="brick-desc">
             Un seul modèle XGBoost global avec <code>station_id</code> en feature catégorielle
             (<code>enable_categorical=True</code>), nourri de features temporelles, de lags PM2.5 (h-1, h-24)
@@ -196,7 +196,7 @@ IDFM réf. ───┘        │
       <div class="brick">
         <div class="brick-left"><div class="brick-num">5</div><div class="brick-line"></div></div>
         <div class="brick-body">
-          <div class="brick-title">Modèle ML trafic — perturbations à H+1</div>
+          <div class="brick-title">Modèle ML trafic : perturbations à H+1</div>
           <p class="brick-desc">
             Classification binaire : une ligne sera-t-elle perturbée dans l'heure (retard &gt; 120 s ou
             ≥ 2 passages &gt; 60 s) ? XGBoost retenu après comparaison face à une baseline (ADR-011) :
@@ -212,7 +212,7 @@ IDFM réf. ───┘        │
       <div class="brick">
         <div class="brick-left"><div class="brick-num">6</div><div class="brick-line"></div></div>
         <div class="brick-body">
-          <div class="brick-title">Dashboard Streamlit — 6 modules publics</div>
+          <div class="brick-title">Dashboard Streamlit : 6 modules publics</div>
           <p class="brick-desc">
             Accueil (KPIs &amp; historique d'ingestion), Qualité de l'air (carte Folium + tendances 48h),
             Coach IA, Trafic (heatmap des retards), Score santé (calculateur de trajet), Prévision air.
@@ -233,14 +233,14 @@ IDFM réf. ───┘        │
     <h2 class="section-title"><i class="fa-solid fa-chart-line"></i> Résultats &amp; métriques</h2>
     <div class="results-grid">
       <div class="result-card">
-        <h4>ML Trafic — perturbations H+1</h4>
+        <h4>ML Trafic : perturbations H+1</h4>
         <div class="metric-row"><span class="metric-name">AUC</span><span class="metric-val best">0,745</span></div>
         <div class="metric-row"><span class="metric-name">F1</span><span class="metric-val">0,594</span></div>
         <div class="metric-row"><span class="metric-name">Accuracy</span><span class="metric-val">0,654</span></div>
         <div class="metric-row"><span class="metric-name">Baseline AUC</span><span class="metric-val">0,717</span></div>
       </div>
       <div class="result-card">
-        <h4>ML Pollution — PM2.5 H+1</h4>
+        <h4>ML Pollution : PM2.5 H+1</h4>
         <div class="metric-row"><span class="metric-name">MAE</span><span class="metric-val good">2,63 µg/m³</span></div>
         <div class="metric-row"><span class="metric-name">Split</span><span class="metric-val">chrono 80/20</span></div>
         <div class="metric-row"><span class="metric-name">Stations</span><span class="metric-val">7 (Airparif)</span></div>
@@ -249,8 +249,8 @@ IDFM réf. ───┘        │
     <div class="insight">
       <div class="insight-head"><i class="fa-solid fa-lightbulb"></i> Ce que ce projet démontre</div>
       <p>
-        La capacité à livrer une <strong>chaîne data complète et en production</strong> — de l'ingestion
-        temps-réel jusqu'à l'IA conversationnelle — avec une <strong>discipline d'ingénierie</strong>
+        La capacité à livrer une <strong>chaîne data complète et en production</strong>, de l'ingestion
+        temps-réel jusqu'à l'IA conversationnelle, avec une <strong>discipline d'ingénierie</strong>
         (typage strict Mypy, Ruff, 300+ tests, CI verte, 11 ADRs) et une contrainte budgétaire forte
         respectée : <strong>0 € d'hébergement</strong> via les free-tiers Supabase, Streamlit Cloud,
         Groq et GitHub Actions.
@@ -294,7 +294,7 @@ IDFM réf. ───┘        │
     <a href="https://github.com/Colin-12" target="_blank" rel="noopener">GitHub</a>
     <a href="https://www.linkedin.com/in/armand-colin-komtcheu-0014471b3/" target="_blank" rel="noopener">LinkedIn</a>
   </div>
-  <p class="copy">&copy; 2025 Armand Komtcheu — ParisMove AI</p>
+  <p class="copy">&copy; 2025 Armand Komtcheu · ParisMove AI</p>
 </footer>
 
 </body>
