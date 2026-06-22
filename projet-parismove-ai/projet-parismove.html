@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ParisMove AI — Plateforme de monitoring temps-réel de la mobilité francilienne : pipeline ETL, prédiction ML de pollution et de trafic, coach IA conversationnel data-aware. Portfolio Armand Komtcheu.">
+<title>ParisMove AI — Mobilité francilienne temps-réel & IA | Armand Komtcheu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="../case-study.css">
+</head>
+<body data-theme="mobilite">
+
+<nav>
+  <a href="../index.html" class="nav-logo">Armand K.</a>
+  <ul class="nav-links">
+    <li><a href="../index.html#about">À propos</a></li>
+    <li><a href="../index.html#projects">Projets</a></li>
+    <li><a href="../index.html#contact">Contact</a></li>
+  </ul>
+  <a href="../index.html#projects" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Retour</a>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="../index.html">Accueil</a> <i class="fa-solid fa-chevron-right" style="font-size:9px"></i>
+      <a href="../index.html#projects">Projets</a> <i class="fa-solid fa-chevron-right" style="font-size:9px"></i>
+      <span>ParisMove AI</span>
+    </div>
+    <span class="hero-tag">Data Engineering · ML · IA conversationnelle</span>
+    <h1>ParisMove AI — la mobilité francilienne en temps réel, augmentée par l'IA</h1>
+    <p class="hero-desc">
+      Une plateforme end-to-end qui ingère trafic IDFM, qualité de l'air Airparif et météo toutes les
+      30 minutes, calcule un score santé multicritère par trajet, prédit la pollution et les perturbations
+      à H+1, et répond aux usagers via un coach conversationnel branché sur les vraies données.
+      Architecture monorepo à 7 services, 100 % free-tier.
+    </p>
+    <div class="hero-meta">
+      <span><i class="fa-solid fa-calendar"></i> Projet de fin d'études — Mastère 2 Big Data &amp; IA</span>
+      <span><i class="fa-solid fa-layer-group"></i> 7 services autonomes</span>
+      <span><i class="fa-solid fa-flask"></i> 300+ tests · CI verte</span>
+    </div>
+    <div class="hero-ctas">
+      <a href="https://parismove-ai.streamlit.app" target="_blank" rel="noopener" class="btn btn-primary-hero">
+        <i class="fa-solid fa-rocket"></i> Démo live
+      </a>
+      <a href="https://github.com/Colin-12/parismove-ai" target="_blank" rel="noopener" class="btn btn-outline-hero">
+        <i class="fa-brands fa-github"></i> Code source
+      </a>
+    </div>
+  </div>
+</header>
+
+<section class="kpi-strip">
+  <div class="kpi-inner">
+    <div class="kpi-item"><div class="kpi-num safe">7</div><div class="kpi-lbl">Services monorepo</div></div>
+    <div class="kpi-item"><div class="kpi-num">3</div><div class="kpi-lbl">Sources temps-réel</div></div>
+    <div class="kpi-item"><div class="kpi-num">0,745</div><div class="kpi-lbl">AUC trafic H+1</div></div>
+    <div class="kpi-item"><div class="kpi-num">11</div><div class="kpi-lbl">ADRs documentés</div></div>
+    <div class="kpi-item"><div class="kpi-num safe">0 €</div><div class="kpi-lbl">Coût d'hébergement</div></div>
+  </div>
+</section>
+
+<main class="content">
+
+  <!-- CONTEXTE -->
+  <section class="section">
+    <h2 class="section-title"><i class="fa-solid fa-bullseye"></i> Le problème</h2>
+    <div class="context-box">
+      <p>
+        Les applis de mobilité grand public (Google Maps, Citymapper, IDFM) affichent l'<strong>horaire
+        théorique</strong>. Dans la réalité : ~30 % des passages RATP/SNCF arrivent avec un retard
+        significatif, et les niveaux de pollution PM2.5 varient énormément d'une zone à l'autre
+        (Cergy ~30 µg/m³ vs Paris Halles ~90 µg/m³).
+      </p>
+      <p>
+        <strong>Aucune appli ne croise trafic, qualité de l'air et météo</strong> pour juger de la
+        qualité réelle d'un trajet. ParisMove AI ingère ces trois sources, calcule un score santé
+        multicritère, prédit l'état de l'air et du réseau à H+1, et expose le tout via un coach
+        conversationnel qui ne répond qu'avec des données vérifiées.
+      </p>
+    </div>
+    <p class="disclaimer">
+      Projet personnel de fin d'études (Mastère 2 Big Data &amp; IA, Sup de Vinci — campus Brest).
+      Données 100 % réelles via APIs publiques (PRIM IDFM, AQICN/Airparif, Open-Meteo).
+    </p>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section class="section">
+    <h2 class="section-title"><i class="fa-solid fa-sitemap"></i> Architecture</h2>
+    <p class="section-intro">
+      Monorepo Python à 7 packages installables indépendamment. Un seul service écrit en base
+      (ingestion) ; les autres sont des lecteurs spécialisés. Séparation stricte des responsabilités.
+    </p>
+    <div class="code-block"><span class="muted"># Flux de données</span>
+PRIM IDFM ───┐
+AQICN/Airparif ─┤
+Open-Meteo ──┤──► <span class="accent">ingestion</span>  <span class="muted">(ETL · cron 30 min · GitHub Actions)</span>
+IDFM réf. ───┘        │
+                      ▼
+        <span class="accent">PostgreSQL · Supabase</span>  <span class="muted">(stop_visits · air_measurements · weather)</span>
+                      │
+      ┌───────────┬───┴───────┬──────────────┐
+      ▼           ▼           ▼              ▼
+ <span class="accent">healthscore</span>   <span class="accent">coach</span>     <span class="accent">ml-pollution</span>    <span class="accent">ml-traffic</span>
+  score A-E    LLM RAG    XGBoost PM2.5    XGBoost perturb.
+      │           │           │              │
+      └───────────┴─────┬─────┴──────────────┘
+                        ▼
+              <span class="accent">dashboard</span>  <span class="muted">(Streamlit · 6 pages · Streamlit Cloud)</span></div>
+    <div class="stack-grid">
+      <div class="stack-cell"><div class="lbl">shared</div><div class="val">Pydantic v2 · helpers BDD</div></div>
+      <div class="stack-cell"><div class="lbl">ingestion</div><div class="val">ETL 3 sources · cron 30 min</div></div>
+      <div class="stack-cell"><div class="lbl">healthscore</div><div class="val">Score A-E multicritère</div></div>
+      <div class="stack-cell"><div class="lbl">coach</div><div class="val">RAG data-aware · 5 tools</div></div>
+      <div class="stack-cell"><div class="lbl">ml-pollution</div><div class="val">XGBoost PM2.5 H+1</div></div>
+      <div class="stack-cell"><div class="lbl">ml-traffic</div><div class="val">XGBoost perturbations H+1</div></div>
+    </div>
+  </section>
+
+  <!-- CE QUE J'AI FAIT -->
+  <section class="section">
+    <h2 class="section-title"><i class="fa-solid fa-screwdriver-wrench"></i> Ce que j'ai construit</h2>
+    <div class="bricks">
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num">1</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Pipeline ETL multi-sources robuste</div>
+          <p class="brick-desc">
+            Ingestion async (httpx) de 3 APIs hétérogènes — ~2 000 passages IDFM, 7 stations Airparif
+            géo-vérifiées, 10 points météo — transformées en modèles Pydantic puis chargées dans Postgres.
+            Garde géographique et référentiel statique de 2 123 lignes IDFM pour fiabiliser la donnée.
+          </p>
+          <div class="brick-tags">
+            <span class="chip">httpx async</span><span class="chip">Pydantic v2</span>
+            <span class="chip">SQLAlchemy 2.0</span><span class="chip">psycopg 3</span>
+            <span class="chip">GitHub Actions cron</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num">2</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Score santé A-E multicritère</div>
+          <p class="brick-desc">
+            Agrégation pondérée 60/30/10 (Pollution / Météo / Trafic) en une note lisible A→E par trajet,
+            décomposée en sous-scores explicables. Choix de pondération documenté dans l'ADR-004.
+          </p>
+          <div class="brick-tags">
+            <span class="chip">Scoring multicritère</span><span class="chip">Star schema</span>
+            <span class="chip">Enrichissement par JOIN</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num">3</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Coach IA data-aware (anti-hallucination)</div>
+          <p class="brick-desc">
+            Architecture LLM-as-controller : un classifieur d'intent (LLaMA 3.1 8B, rapide) route vers
+            5 tools data-aware, puis un générateur (LLaMA 3.3 70B) rédige la réponse à partir des seuls
+            résultats de tools. Trois garde-fous anti-hallucination : forcing des tools, citation
+            obligatoire des sources, mode ⚠️ quand aucune donnée temps-réel n'est disponible. Bilingue FR/EN.
+          </p>
+          <div class="brick-tags">
+            <span class="chip">Groq</span><span class="chip">LLaMA 3.3 70B + 3.1 8B</span>
+            <span class="chip">RAG data-aware</span><span class="chip">Tool calling</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num">4</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Modèle ML pollution — PM2.5 à H+1</div>
+          <p class="brick-desc">
+            Un seul modèle XGBoost global avec <code>station_id</code> en feature catégorielle
+            (<code>enable_categorical=True</code>), nourri de features temporelles, de lags PM2.5 (h-1, h-24)
+            et de la météo. Split chronologique strict pour éviter toute fuite temporelle.
+          </p>
+          <div class="brick-tags">
+            <span class="chip">XGBoost 2.0</span><span class="chip">Feature engineering temporel</span>
+            <span class="chip">Lags</span><span class="chip">Split chronologique</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num">5</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Modèle ML trafic — perturbations à H+1</div>
+          <p class="brick-desc">
+            Classification binaire : une ligne sera-t-elle perturbée dans l'heure (retard &gt; 120 s ou
+            ≥ 2 passages &gt; 60 s) ? XGBoost retenu après comparaison face à une baseline (ADR-011) :
+            AUC 0,745 contre 0,717. Inférence probabiliste exposée au dashboard.
+          </p>
+          <div class="brick-tags">
+            <span class="chip">XGBoost binaire</span><span class="chip">Baseline vs ML</span>
+            <span class="chip">AUC / F1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brick">
+        <div class="brick-left"><div class="brick-num">6</div><div class="brick-line"></div></div>
+        <div class="brick-body">
+          <div class="brick-title">Dashboard Streamlit — 6 modules publics</div>
+          <p class="brick-desc">
+            Accueil (KPIs &amp; historique d'ingestion), Qualité de l'air (carte Folium + tendances 48h),
+            Coach IA, Trafic (heatmap des retards), Score santé (calculateur de trajet), Prévision air.
+            Déployé en service indépendant sur Streamlit Cloud, redéploiement automatique sur push.
+          </p>
+          <div class="brick-tags">
+            <span class="chip">Streamlit</span><span class="chip">Plotly</span>
+            <span class="chip">Folium</span><span class="chip">Cache</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RESULTATS -->
+  <section class="section">
+    <h2 class="section-title"><i class="fa-solid fa-chart-line"></i> Résultats &amp; métriques</h2>
+    <div class="results-grid">
+      <div class="result-card">
+        <h4>ML Trafic — perturbations H+1</h4>
+        <div class="metric-row"><span class="metric-name">AUC</span><span class="metric-val best">0,745</span></div>
+        <div class="metric-row"><span class="metric-name">F1</span><span class="metric-val">0,594</span></div>
+        <div class="metric-row"><span class="metric-name">Accuracy</span><span class="metric-val">0,654</span></div>
+        <div class="metric-row"><span class="metric-name">Baseline AUC</span><span class="metric-val">0,717</span></div>
+      </div>
+      <div class="result-card">
+        <h4>ML Pollution — PM2.5 H+1</h4>
+        <div class="metric-row"><span class="metric-name">MAE</span><span class="metric-val good">8,13 µg/m³</span></div>
+        <div class="metric-row"><span class="metric-name">RMSE</span><span class="metric-val">11,79 µg/m³</span></div>
+        <div class="metric-row"><span class="metric-name">Split</span><span class="metric-val">chrono 80/20</span></div>
+        <div class="metric-row"><span class="metric-name">Stations</span><span class="metric-val">7 (Airparif)</span></div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="insight-head"><i class="fa-solid fa-lightbulb"></i> Ce que ce projet démontre</div>
+      <p>
+        La capacité à livrer une <strong>chaîne data complète et en production</strong> — de l'ingestion
+        temps-réel jusqu'à l'IA conversationnelle — avec une <strong>discipline d'ingénierie</strong>
+        (typage strict Mypy, Ruff, 300+ tests, CI verte, 11 ADRs) et une contrainte budgétaire forte
+        respectée : <strong>0 € d'hébergement</strong> via les free-tiers Supabase, Streamlit Cloud,
+        Groq et GitHub Actions.
+      </p>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section class="section">
+    <h2 class="section-title"><i class="fa-solid fa-cubes"></i> Stack technique</h2>
+    <div class="stack-grid">
+      <div class="stack-cell"><div class="lbl">Langage</div><div class="val">Python 3.11+ · Mypy strict</div></div>
+      <div class="stack-cell"><div class="lbl">Base de données</div><div class="val">PostgreSQL · Supabase</div></div>
+      <div class="stack-cell"><div class="lbl">ORM / SQL</div><div class="val">SQLAlchemy 2.0 · psycopg 3</div></div>
+      <div class="stack-cell"><div class="lbl">Modèles</div><div class="val">Pydantic v2</div></div>
+      <div class="stack-cell"><div class="lbl">LLM</div><div class="val">Groq · LLaMA 3.3 70B / 3.1 8B</div></div>
+      <div class="stack-cell"><div class="lbl">ML</div><div class="val">XGBoost 2.0 · scikit-learn</div></div>
+      <div class="stack-cell"><div class="lbl">Dashboard</div><div class="val">Streamlit · Plotly · Folium</div></div>
+      <div class="stack-cell"><div class="lbl">Orchestration</div><div class="val">GitHub Actions (CI + cron)</div></div>
+      <div class="stack-cell"><div class="lbl">Qualité code</div><div class="val">Ruff · Mypy · Pytest</div></div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="section" style="margin-bottom:0;">
+    <div class="hero-ctas">
+      <a href="https://parismove-ai.streamlit.app" target="_blank" rel="noopener" class="btn btn-primary-hero" style="background:var(--accent);">
+        <i class="fa-solid fa-rocket"></i> Tester la démo live
+      </a>
+      <a href="https://github.com/Colin-12/parismove-ai" target="_blank" rel="noopener" class="btn" style="background:var(--surface);color:var(--ink);border:1px solid var(--rule);">
+        <i class="fa-brands fa-github"></i> Explorer le code
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="cs-footer">
+  <div class="footer-nav">
+    <a href="../index.html#projects">← Tous les projets</a>
+    <a href="https://github.com/Colin-12" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.linkedin.com/in/armand-colin-komtcheu-0014471b3/" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+  <p class="copy">&copy; 2025 Armand Komtcheu — ParisMove AI</p>
+</footer>
+
+</body>
+</html>
