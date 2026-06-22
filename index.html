@@ -426,6 +426,60 @@
                 </div>
               </article>
 
+          <article class="project-card project-card--detailed">
+            <div class="card-image project-7-bg"></div>
+            <div class="card-content">
+              <div class="project-head">
+                <span class="project-tag">Data Engineering · ML · IA</span>
+                <h3>ParisMove AI — Mobilité francilienne temps-réel</h3>
+              </div>
+              <p class="project-context">
+                <strong>Contexte :</strong> Les applis de mobilité affichent l'horaire théorique, jamais la
+                qualité réelle d'un trajet. Objectif : croiser trafic IDFM, pollution Airparif et météo en
+                temps réel, prédire l'air et le réseau à H+1, et exposer le tout via un coach IA data-aware.
+              </p>
+
+              <button class="btn-toggle-more" onclick="toggleProject(this)">Voir plus <i class="fa-solid fa-chevron-down"></i></button>
+
+              <div class="project-details">
+                <div class="project-body">
+                  <p class="project-subtitle"><strong>Ce que j'ai fait</strong></p>
+                  <ul class="project-bullets">
+                    <li><strong>Pipeline ETL temps-réel :</strong> ingestion async de 3 sources toutes les 30 min (GitHub Actions cron) dans Supabase/PostgreSQL — architecture monorepo à 7 services.</li>
+                    <li><strong>Coach IA anti-hallucination :</strong> LLM-as-controller (LLaMA 3.1 8B intent + 3.3 70B génération) avec 5 tools data-aware et 3 garde-fous sources obligatoires.</li>
+                    <li><strong>2 modèles ML :</strong> XGBoost pollution PM2.5 H+1 (MAE 8,13 µg/m³) et trafic perturbations H+1 (AUC 0,745 vs 0,717 baseline).</li>
+                    <li><strong>Dashboard Streamlit 6 pages :</strong> carte Folium, heatmap retards, score santé A-E, prévisions — déployé en production.</li>
+                  </ul>
+                  <p class="project-impact">
+                    <strong>Résultat :</strong> Chaîne data complète en production, 300+ tests, CI verte, 11 ADRs,
+                    pour <strong>0 € d'hébergement</strong> grâce aux free-tiers.
+                  </p>
+                </div>
+                <div class="tech-stack">
+                  <span>Python</span>
+                  <span>XGBoost</span>
+                  <span>Groq / LLaMA</span>
+                  <span>Supabase</span>
+                  <span>SQLAlchemy 2.0</span>
+                  <span>Streamlit</span>
+                  <span>GitHub Actions</span>
+                </div>
+              </div>
+
+              <div class="project-links">
+                <a class="btn-link" href="projet-parismove-ai/projet-parismove.html">
+                  <i class="fa-regular fa-file-pdf"></i> Voir l'étude de cas
+                </a>
+                <a class="btn-link" href="https://parismove-ai.streamlit.app" target="_blank" rel="noopener">
+                  <i class="fa-solid fa-rocket"></i> Démo live
+                </a>
+                <a class="btn-link" href="https://github.com/Colin-12/parismove-ai" target="_blank" rel="noopener">
+                  <i class="fa-brands fa-github"></i> Code
+                </a>
+              </div>
+            </div>
+          </article>
+
     </div>
   </div>
 </section>
