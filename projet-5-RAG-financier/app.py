@@ -139,7 +139,7 @@ def init_rag_system():
             st.warning(f"⚠️ ID Google Drive manquant pour {filename} — fichier ignoré.")
             continue
         try:
-            gdown.download(id=gdrive_id, output=str(dest), quiet=False, fuzzy=True)
+            gdown.download(id=gdrive_id, output=str(dest), quiet=False)
         except Exception as e:
             st.warning(f"⚠️ Erreur téléchargement {filename} : {e}")
 
