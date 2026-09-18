@@ -10,7 +10,7 @@ langchain-text-splitters>=0.2.0
 sentence-transformers>=3.0.0
 pymupdf4llm>=1.0.0
 rank-bm25>=0.2.2
-gdown>=5.1.0
+gdown==6.4.0
 numpy>=1.26.0
 tiktoken>=0.7.0
 
