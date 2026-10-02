@@ -131,6 +131,21 @@ def init_rag_system():
     PDF_DIR = pathlib.Path("docs")
     PDF_DIR.mkdir(exist_ok=True)
 
+    def download_pdf(gdrive_id, dest, tries=3, base_delay=5):
+        """Télécharge un PDF depuis Drive avec retries + backoff.
+        Renvoie True si le fichier existe et n'est pas vide à la fin."""
+        for attempt in range(1, tries + 1):
+            try:
+                gdown.download(id=gdrive_id, output=str(dest), quiet=False)
+                if dest.exists() and dest.stat().st_size > 0:
+                    return True
+            except Exception as e:
+                if attempt == tries:
+                    st.warning(f"⚠️ Échec définitif pour {dest.name} : {e}")
+            if attempt < tries:
+                time.sleep(base_delay * attempt)  # backoff : 5s, 10s...
+        return False
+
     for filename, gdrive_id in GDRIVE_FILES.items():
         dest = PDF_DIR / filename
         if dest.exists():
@@ -138,10 +153,9 @@ def init_rag_system():
         if not gdrive_id:
             st.warning(f"⚠️ ID Google Drive manquant pour {filename} — fichier ignoré.")
             continue
-        try:
-            gdown.download(id=gdrive_id, output=str(dest), quiet=False)
-        except Exception as e:
-            st.warning(f"⚠️ Erreur téléchargement {filename} : {e}")
+        if not download_pdf(gdrive_id, dest):
+            st.warning(f"⚠️ Téléchargement impossible pour {filename} après plusieurs tentatives, fichier ignoré.")
+        time.sleep(2)  # petite pause entre deux fichiers pour éviter le throttling Drive
 
     pdf_files = list(PDF_DIR.glob("*.pdf"))
     if not pdf_files:
